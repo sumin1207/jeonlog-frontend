@@ -2,13 +2,19 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect } from "react";
 import { Platform } from "react-native";
+import Constants from "expo-constants";
+
+const { EXPO_GOOGLE_CLIENT_ID, EXPO_GOOGLE_CLIENT_SECRET } = Constants
+  .expoConfig?.extra as {
+  EXPO_GOOGLE_CLIENT_ID: string;
+  EXPO_GOOGLE_CLIENT_SECRET: string;
+};
 
 WebBrowser.maybeCompleteAuthSession();
 
 const useGoogleLogin = () => {
-  const CLIENT_ID =
-    "565177569555-b7gj3b75pqldhsdosot9lfo0cbjhr8gd.apps.googleusercontent.com";
-  const CLIENT_SECRET = "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";
+  const CLIENT_ID = EXPO_GOOGLE_CLIENT_ID;
+  const CLIENT_SECRET = EXPO_GOOGLE_CLIENT_SECRET;
   const discovery = {
     authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
     tokenEndpoint: "https://oauth2.googleapis.com/token",
