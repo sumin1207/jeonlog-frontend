@@ -1,16 +1,16 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-import useNaverLogin from "../hooks/useNaverLogin";
+import useGoogleLogin from "@/hooks/useGoogleLogin";
 
-const SocialLoginButton = () => {
-  const { promptAsync } = useNaverLogin();
+const GoogleLoginButton = () => {
+  const { promptAsync } = useGoogleLogin();
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#1EC800" }]}
+        style={styles.button}
         onPress={() => promptAsync()}>
-        <Text style={styles.text}>네이버로 로그인</Text>
+        <Text style={styles.text}>구글로 로그인</Text>
       </TouchableOpacity>
     </View>
   );
@@ -19,8 +19,9 @@ const SocialLoginButton = () => {
 const styles = StyleSheet.create({
   container: { alignItems: "center", marginTop: 20 },
   button: {
-    width: "80%",
+    backgroundColor: "#4285F4",
     padding: 12,
+    width: "80%",
     borderRadius: 8,
     alignItems: "center",
   },
@@ -30,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SocialLoginButton;
+export default GoogleLoginButton;

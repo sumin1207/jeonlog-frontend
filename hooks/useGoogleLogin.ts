@@ -5,13 +5,14 @@ import { Platform } from "react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const useNaverLogin = () => {
-  const NAVER_CLIENT_ID = "y1Hp9eqM11WwuL5rhdfn";
-  const NAVER_CLIENT_SECRET = "rnIV0twBdr";
-
+const useGoogleLogin = () => {
+  const CLIENT_ID =
+    "565177569555-b7gj3b75pqldhsdosot9lfo0cbjhr8gd.apps.googleusercontent.com";
+  const CLIENT_SECRET = "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";
   const discovery = {
-    authorizationEndpoint: "https://nid.naver.com/oauth2.0/authorize",
-    tokenEndpoint: "https://nid.naver.com/oauth2.0/token",
+    authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+    tokenEndpoint: "https://oauth2.googleapis.com/token",
+    revocationEndpoint: "https://oauth2.googleapis.com/revoke",
   };
 
   const redirectUri =
@@ -21,11 +22,10 @@ const useNaverLogin = () => {
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
-      clientId: NAVER_CLIENT_ID,
-      clientSecret: NAVER_CLIENT_SECRET,
+      clientId: CLIENT_ID,
       redirectUri: redirectUri,
+      scopes: ["openid", "profile", "email"],
       responseType: AuthSession.ResponseType.Code,
-      scopes: ["name", "email"],
     },
     discovery
   );
@@ -33,7 +33,7 @@ const useNaverLogin = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { code } = response.params;
-      console.log("✅ 네이버 인증 코드:", code);
+      console.log("✅ 구글 인증 코드:", code);
     }
   }, [response]);
 
@@ -43,4 +43,4 @@ const useNaverLogin = () => {
   };
 };
 
-export default useNaverLogin;
+export default useGoogleLogin;
