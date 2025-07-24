@@ -2,14 +2,25 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import useGoogleLogin from "@/hooks/useGoogleLogin";
 
-const GoogleLoginButton = () => {
+interface GoogleLoginButtonProps {
+  onSuccess?: () => void;
+}
+
+const GoogleLoginButton = ({ onSuccess }: GoogleLoginButtonProps) => {
   const { promptAsync } = useGoogleLogin();
+
+  const handlePress = async () => {
+    const result = await promptAsync();
+    if (result?.type === "success" && onSuccess) {
+      onSuccess();
+    }
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => promptAsync()}>
+        onPress={handlePress}>
         <Text style={styles.text}>구글로 로그인</Text>
       </TouchableOpacity>
     </View>

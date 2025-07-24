@@ -1,14 +1,4 @@
-import React from "react";
-import { View, Text } from "react-native";
-import NaverLoginButton from "@/components/NaverLoginButton";
-import GoogleLoginButton from "@/components/GoogleLoginButton";
+import { useRouter } from "expo-router";
+import { Button } from "react-native";
 
-export default function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
-      <Text style={{ fontSize: 24, textAlign: "center" }}>전:록</Text>
-      <NaverLoginButton />
-      <GoogleLoginButton />
-    </View>
-  );
-}
+export default function IndexPage() {}

@@ -2,14 +2,25 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import useNaverLogin from "../hooks/useNaverLogin";
 
-const NaverLoginButton = () => {
+interface NaverLoginButtonProps {
+  onSuccess?: () => void;
+}
+
+const NaverLoginButton = ({ onSuccess }: NaverLoginButtonProps) => {
   const { promptAsync } = useNaverLogin();
+
+  const handlePress = async () => {
+    const result = await promptAsync();
+    if (result?.type === "success" && onSuccess) {
+      onSuccess();
+    }
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={[styles.button, { backgroundColor: "#1EC800" }]}
-        onPress={() => promptAsync()}>
+        onPress={handlePress}>
         <Text style={styles.text}>네이버로 로그인</Text>
       </TouchableOpacity>
     </View>
