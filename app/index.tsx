@@ -7,7 +7,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   // 브랜드 컬러로 배경 고정
-  const backgroundColor = "#1a2e1a";
+  const backgroundColor = "#1c3519";
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
@@ -15,18 +15,21 @@ export default function LoginPage() {
         {/* 로고와 앱 이름 */}
         <View style={{ alignItems: "center", marginBottom: 40 }}>
           <Image
-            source={require("../assets/images/icon.jpg")}
-            style={{ width: 80, height: 80, marginBottom: 16 }}
+            source={require("../assets/images/mainIcon.png")}
+            style={{
+              width: 200,
+              height: 200,
+              marginBottom: 16,
+              borderRadius: 0,
+              backgroundColor: "transparent",
+            }}
             resizeMode='contain'
           />
-          <Text style={{ fontSize: 32, fontWeight: "bold", color: "#fff" }}>
-            전:록
-          </Text>
         </View>
         <Text
           style={{
             fontSize: 20,
-            marginBottom: 20,
+            marginBottom: 5,
             textAlign: "center",
             color: "#fff",
           }}>
