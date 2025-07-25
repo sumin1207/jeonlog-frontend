@@ -10,7 +10,7 @@ export default function CategoryPage() {
       </Text>
       {/* 카테고리 선택 UI는 추후 추가 */}
       <Button
-        title='다음으로 넘어가기'
+        title="다음으로 넘어가기"
         onPress={() => router.replace("/onboarding/interest")}
       />
     </View>
