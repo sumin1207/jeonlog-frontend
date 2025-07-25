@@ -1,5 +1,7 @@
 import "dotenv/config";
 
+console.log('Naver Client ID from .env:', process.env.NAVER_CLIENT_ID);
+
 export default ({ config }) => {
   return {
     ...config,
