@@ -1,3 +1,4 @@
+<<<<<<< main
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
@@ -14,23 +15,33 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
+=======
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+>>>>>>> main
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
+<<<<<<< main
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
       }}
     >
+=======
+        tabBarActiveTintColor: "#1c3519",
+        tabBarInactiveTintColor: "gray",
+        headerShown: false,
+      }}>
+>>>>>>> main
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
           title: "홈",
+<<<<<<< main
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
@@ -45,13 +56,22 @@ export default function TabLayout() {
                 )}
               </Pressable>
             </Link>
+=======
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name='home-outline'
+              size={size}
+              color={color}
+            />
+>>>>>>> main
           ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name='category'
         options={{
           title: "카테고리",
+<<<<<<< main
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
@@ -67,6 +87,41 @@ export default function TabLayout() {
         options={{
           title: "마이페이지",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+=======
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name='grid-outline'
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='search'
+        options={{
+          title: "검색",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name='search-outline'
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='mypage'
+        options={{
+          title: "마이페이지",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name='person-outline'
+              size={size}
+              color={color}
+            />
+          ),
+>>>>>>> main
         }}
       />
     </Tabs>
