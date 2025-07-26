@@ -33,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='index'
         options={{
-          headerTitle: "홈",
+          title: "홈",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='home-outline'
@@ -46,7 +46,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='category'
         options={{
-          headerTitle: "카테고리",
+          title: "카테고리",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='grid-outline'
@@ -59,7 +59,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='search'
         options={{
-          headerTitle: "검색",
+          title: "검색",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='search-outline'
@@ -72,7 +72,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='mypage'
         options={{
-          headerTitle: "마이페이지",
+          title: "마이페이지",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='person-outline'
