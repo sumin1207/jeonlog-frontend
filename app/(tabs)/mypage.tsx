@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -10,10 +10,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTheme, ThemeType } from "../../contexts/ThemeContext";
 
 export default function MyPageScreen() {
   const router = useRouter();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
   const userData = {
@@ -93,6 +94,8 @@ export default function MyPageScreen() {
     </TouchableOpacity>
   );
 
+  const styles = getStyles(theme);
+
   return (
     <ScrollView style={styles.container}>
       {/* 사용자 정보 섹션 */}
@@ -161,10 +164,10 @@ export default function MyPageScreen() {
               </View>
             </View>
             <Switch
-              value={isDarkMode}
-              onValueChange={setIsDarkMode}
+              value={theme === "dark"}
+              onValueChange={(value) => setTheme(value ? "dark" : "light")}
               trackColor={{ false: "#ccc", true: "#1c3519" }}
-              thumbColor={isDarkMode ? "#fff" : "#f4f3f4"}
+              thumbColor={theme === "dark" ? "#fff" : "#f4f3f4"}
             />
           </View>
         </View>
@@ -194,89 +197,90 @@ export default function MyPageScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1c3519",
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  userSection: {
-    backgroundColor: "#fff",
-    marginHorizontal: 20,
-    borderRadius: 12,
-    padding: 20,
-  },
-  userInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#1c3519",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  userDetails: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1c3519",
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  loginType: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  loginTypeText: {
-    fontSize: 12,
-    color: "#1c3519",
-    marginLeft: 4,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  menuItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  menuItemText: {
-    marginLeft: 15,
-    flex: 1,
-  },
-  menuItemTitle: {
-    fontSize: 16,
-    color: "#1c3519",
-  },
-  menuItemSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 2,
-  },
-});
+const getStyles = (theme: ThemeType) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+    },
+    section: {
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginHorizontal: 20,
+      marginVertical: 10,
+    },
+    userSection: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      marginHorizontal: 20,
+      borderRadius: 12,
+      padding: 20,
+    },
+    userInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    avatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#1c3519",
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 15,
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginBottom: 4,
+    },
+    loginType: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    loginTypeText: {
+      fontSize: 12,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginLeft: 4,
+    },
+    menuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    menuItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    menuItemText: {
+      marginLeft: 15,
+      flex: 1,
+    },
+    menuItemTitle: {
+      fontSize: 16,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    menuItemSubtitle: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 2,
+    },
+  });

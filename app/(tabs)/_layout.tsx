@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -23,12 +24,18 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#1c3519",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: theme === "dark" ? "#666" : "gray",
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+          borderTopColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
+        },
       }}>
       <Tabs.Screen
         name='index'
