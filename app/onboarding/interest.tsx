@@ -25,7 +25,7 @@ export default function InterestPage() {
       {/* 관심 선택 UI는 추후 추가 */}
       <Button
         title='다음으로 넘어가기'
-        onPress={() => router.replace("/(tabs)")}
+        onPress={() => router.replace("/(tabs)/home")}
       />
     </View>
   );

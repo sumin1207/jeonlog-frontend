@@ -11,10 +11,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme, ThemeType } from "../../contexts/ThemeContext";
+import { useAuth } from "../../components/AuthContext";
 
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
   const userData = {
@@ -30,8 +32,8 @@ export default function MyPageScreen() {
         text: "로그아웃",
         style: "destructive",
         onPress: () => {
-          // 로그아웃 로직 구현
-          router.replace("/");
+          setIsLoggedIn(false); // 로그아웃 처리
+          router.replace("/"); // 첫 페이지로 이동
         },
       },
     ]);

@@ -36,9 +36,10 @@ export default function TabLayout() {
           backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
           borderTopColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
         },
-      }}>
+      }}
+      initialRouteName='home'>
       <Tabs.Screen
-        name='index'
+        name='home'
         options={{
           title: "홈",
           tabBarIcon: ({ color, size }) => (

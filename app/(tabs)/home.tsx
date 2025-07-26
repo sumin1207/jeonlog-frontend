@@ -1,8 +1,9 @@
+import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import HorizontalSliding from "@/components/HorizontalSliding";
 import { useTheme } from "../../contexts/ThemeContext";
 
-export default function IndexHome() {
+export default function HomeScreen() {
   const { theme } = useTheme();
 
   const styles = StyleSheet.create({
