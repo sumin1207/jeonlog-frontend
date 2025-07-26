@@ -137,10 +137,10 @@ const HorizontalSliding = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 700, // 캐러셀 전체 높이
+    height: 500, // 캐러셀 전체 높이 조정 (700에서 500으로)
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 5, // 상하 여백 줄임 (10에서 5로)
   },
   flatListContent: {
     paddingHorizontal: width * 0.1, // 양쪽 여백

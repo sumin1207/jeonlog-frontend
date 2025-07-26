@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import TopBar from "@/components/TopBar";
 import { useTheme, ThemeType } from "../../contexts/ThemeContext";
 import { useAuth } from "../../components/AuthContext";
 import { deleteAccount, clearLocalUserData } from "../../services/userService";
@@ -151,105 +152,109 @@ export default function MyPageScreen() {
   const styles = getStyles(theme);
 
   return (
-    <ScrollView
-      style={styles.container}
-      pointerEvents='auto'>
-      {/* 사용자 정보 섹션 */}
-      {renderSection(
-        "사용자 정보",
-        <View style={styles.userSection}>
-          <View style={styles.userInfo}>
-            <View style={styles.avatar}>
-              <Ionicons
-                name='person'
-                size={40}
-                color='#fff'
-              />
-            </View>
-            <View style={styles.userDetails}>
-              <Text style={styles.userName}>{userData.name}</Text>
-              <Text style={styles.userEmail}>{userData.email}</Text>
-              <View style={styles.loginType}>
+    <View style={styles.container}>
+      <TopBar title='마이페이지' />
+      <ScrollView
+        style={styles.scrollView}
+        pointerEvents='auto'>
+        {/* 사용자 정보 섹션 */}
+        {renderSection(
+          "사용자 정보",
+          <View style={styles.userSection}>
+            <View style={styles.userInfo}>
+              <View style={styles.avatar}>
                 <Ionicons
-                  name={
-                    userData.loginType === "google"
-                      ? "logo-google"
-                      : "logo-github"
-                  }
-                  size={16}
+                  name='person'
+                  size={40}
+                  color='#fff'
+                />
+              </View>
+              <View style={styles.userDetails}>
+                <Text style={styles.userName}>{userData.name}</Text>
+                <Text style={styles.userEmail}>{userData.email}</Text>
+                <View style={styles.loginType}>
+                  <Ionicons
+                    name={
+                      userData.loginType === "google"
+                        ? "logo-google"
+                        : "logo-github"
+                    }
+                    size={16}
+                    color='#1c3519'
+                  />
+                  <Text style={styles.loginTypeText}>
+                    {userData.loginType === "google" ? "Google" : "Naver"}{" "}
+                    로그인
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* 전시 관련 기능 */}
+        {renderSection(
+          "전시 관리",
+          <View>
+            {renderMenuItem("heart", "찜한 전시", "0개", () => {
+              // 찜한 전시 목록으로 이동
+            })}
+            {renderMenuItem("thumbs-up", "좋아요 전시", "0개", () => {
+              // 좋아요 전시 목록으로 이동
+            })}
+            {renderMenuItem("location", "방문한 전시", "0개", () => {
+              // 방문한 전시 목록으로 이동
+            })}
+          </View>
+        )}
+
+        {/* 설정 */}
+        {renderSection(
+          "설정",
+          <View>
+            <View style={styles.menuItem}>
+              <View style={styles.menuItemLeft}>
+                <Ionicons
+                  name='moon'
+                  size={24}
                   color='#1c3519'
                 />
-                <Text style={styles.loginTypeText}>
-                  {userData.loginType === "google" ? "Google" : "Naver"} 로그인
-                </Text>
+                <View style={styles.menuItemText}>
+                  <Text style={styles.menuItemTitle}>다크모드</Text>
+                </View>
               </View>
-            </View>
-          </View>
-        </View>
-      )}
-
-      {/* 전시 관련 기능 */}
-      {renderSection(
-        "전시 관리",
-        <View>
-          {renderMenuItem("heart", "찜한 전시", "0개", () => {
-            // 찜한 전시 목록으로 이동
-          })}
-          {renderMenuItem("thumbs-up", "좋아요 전시", "0개", () => {
-            // 좋아요 전시 목록으로 이동
-          })}
-          {renderMenuItem("location", "방문한 전시", "0개", () => {
-            // 방문한 전시 목록으로 이동
-          })}
-        </View>
-      )}
-
-      {/* 설정 */}
-      {renderSection(
-        "설정",
-        <View>
-          <View style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons
-                name='moon'
-                size={24}
-                color='#1c3519'
+              <Switch
+                value={theme === "dark"}
+                onValueChange={(value) => setTheme(value ? "dark" : "light")}
+                trackColor={{ false: "#ccc", true: "#1c3519" }}
+                thumbColor={theme === "dark" ? "#fff" : "#f4f3f4"}
               />
-              <View style={styles.menuItemText}>
-                <Text style={styles.menuItemTitle}>다크모드</Text>
-              </View>
             </View>
-            <Switch
-              value={theme === "dark"}
-              onValueChange={(value) => setTheme(value ? "dark" : "light")}
-              trackColor={{ false: "#ccc", true: "#1c3519" }}
-              thumbColor={theme === "dark" ? "#fff" : "#f4f3f4"}
-            />
           </View>
-        </View>
-      )}
+        )}
 
-      {/* 계정 관리 */}
-      {renderSection(
-        "계정 관리",
-        <View>
-          {renderMenuItem(
-            "log-out",
-            "로그아웃",
-            undefined,
-            handleLogout,
-            false
-          )}
-          {renderMenuItem(
-            "trash",
-            "회원탈퇴",
-            undefined,
-            handleDeleteAccount,
-            false
-          )}
-        </View>
-      )}
-    </ScrollView>
+        {/* 계정 관리 */}
+        {renderSection(
+          "계정 관리",
+          <View>
+            {renderMenuItem(
+              "log-out",
+              "로그아웃",
+              undefined,
+              handleLogout,
+              false
+            )}
+            {renderMenuItem(
+              "trash",
+              "회원탈퇴",
+              undefined,
+              handleDeleteAccount,
+              false
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -258,6 +263,9 @@ const getStyles = (theme: ThemeType) =>
     container: {
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+    },
+    scrollView: {
+      flex: 1,
     },
     section: {
       marginBottom: 20,

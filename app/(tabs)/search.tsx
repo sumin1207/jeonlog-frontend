@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import TopBar from "@/components/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 
 export default function SearchScreen() {
@@ -8,9 +9,12 @@ export default function SearchScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+    },
+    content: {
+      flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
     },
     text: {
       color: theme === "dark" ? "#fff" : "#1c3519",
@@ -20,7 +24,10 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>검색 화면</Text>
+      <TopBar title='검색' />
+      <View style={styles.content}>
+        <Text style={styles.text}>검색 화면</Text>
+      </View>
     </View>
   );
 }
