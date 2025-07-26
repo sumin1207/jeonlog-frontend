@@ -16,10 +16,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    marginTop: 200,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "condensed",
-    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: "normal",
+    marginBottom: 5,
   },
 });

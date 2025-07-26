@@ -45,7 +45,7 @@ export default function CategoryPage() {
       </View>
 
     <View style={{ alignSelf: "flex-start", marginBottom: 10 }}>
-      <Text style={{ color: "#7e7e7e", fontSize: 12, fontWeight: "normal", marginBottom: 10, textAlign: "left"  }}>
+      <Text style={{ color: "#7e7e7e", fontSize: 12, fontWeight: "normal", marginTop: 30, textAlign: "left"  }}>
         둘 다 선택 가능
       </Text>
       </View>
