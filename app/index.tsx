@@ -45,6 +45,12 @@ export default function LoginPage() {
           color='#841584'
           onPress={() => router.replace("/(tabs)/home")}
         />
+        {/* 개발용: 온보딩 카테고리로 바로 이동 버튼 */}
+        <Button
+          title='개발용: 온보딩 카테고리로 이동'
+          color='#FF6B35'
+          onPress={() => router.replace("/onboarding/category")}
+        />
       </View>
     </SafeAreaView>
   );
