@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
   Alert,
   Switch,
 } from "react-native";
@@ -123,7 +123,7 @@ export default function MyPageScreen() {
     onPress?: () => void,
     showArrow: boolean = true
   ) => (
-    <TouchableOpacity
+    <Pressable
       style={styles.menuItem}
       onPress={onPress}
       disabled={!onPress}>
@@ -145,13 +145,15 @@ export default function MyPageScreen() {
           color='#ccc'
         />
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const styles = getStyles(theme);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      pointerEvents='auto'>
       {/* 사용자 정보 섹션 */}
       {renderSection(
         "사용자 정보",
