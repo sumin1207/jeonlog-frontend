@@ -22,15 +22,38 @@ export default function CategoryPage() {
   const canProceed = selected.exhibition || selected.play;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme === "dark" ? "#1a1a1a" : "#fff",
+      }}>
       <TopBar />
-      <View style={styles.content}>
-        <Text style={styles.title}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-start",
+          paddingTop: 54,
+          paddingHorizontal: 32,
+        }}>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "bold",
+            alignItems: "flex-start",
+            marginBottom: 52,
+            textAlign: "left",
+            color: theme === "dark" ? "#fff" : "#1c3519",
+          }}>
           추천 받고 싶은 {"\n"}카테고리를 선택해주세요
         </Text>
-
-        {/* 카테고리 선택 UI는 추후 추가 */}
-        <View style={styles.categoryButtonContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 48,
+            marginBottom: 8,
+          }}>
           <TouchableOpacity
             style={[
               styles.categoryButtonBase,
@@ -47,7 +70,6 @@ export default function CategoryPage() {
               전시
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[
               styles.categoryButtonBase,
@@ -65,18 +87,23 @@ export default function CategoryPage() {
             </Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.hintContainer}>
-          <Text style={styles.hintText}>둘 다 선택 가능</Text>
+        <View style={{ alignSelf: "flex-start", marginBottom: 30 }}>
+          <Text
+            style={{
+              color: theme === "dark" ? "#ccc" : "#7e7e7e",
+              fontSize: 12,
+              fontWeight: "normal",
+              marginTop: 30,
+              textAlign: "left",
+            }}>
+            둘 다 선택 가능
+          </Text>
         </View>
-
         {/* 다음 버튼 */}
         <TouchableOpacity
           style={[
             styles.nextButtonBase,
-            selected.exhibition || selected.play
-              ? styles.nextButtonActive
-              : styles.nextButtonDisabled,
+            canProceed ? styles.nextButtonActive : styles.nextButtonDisabled,
             !canProceed && styles.nextButtonDisabled,
             styles.nextButtonFixed,
           ]}
@@ -90,42 +117,6 @@ export default function CategoryPage() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "flex-start",
-    paddingTop: 20,
-    paddingHorizontal: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    alignItems: "flex-start",
-    marginBottom: 52,
-    textAlign: "left",
-    color: "#1c3519",
-  },
-  categoryButtonContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 48,
-    marginBottom: 8,
-  },
-  hintContainer: {
-    alignSelf: "flex-start",
-    marginBottom: 10,
-  },
-  hintText: {
-    color: "#7e7e7e",
-    fontSize: 12,
-    fontWeight: "normal",
-    marginBottom: 10,
-    textAlign: "left",
-  },
   categoryButtonBase: {
     borderWidth: 2,
     borderColor: "#d2d2d2", // 항상 같은 테두리 색상
@@ -140,16 +131,7 @@ const styles = StyleSheet.create({
     borderColor: "#234024",
   },
   categoryButtonUnselected: {
-    backgroundColor: "#white",
-  },
-  categoryTextBase: {
-    fontSize: 18,
-  },
-  categoryTextSelected: {
-    color: "#1c3519",
-  },
-  categoryTextUnselected: {
-    color: "#d2d2d2",
+    backgroundColor: "#fff",
   },
   nextButtonBase: {
     borderRadius: 10,
