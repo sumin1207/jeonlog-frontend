@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -45,7 +46,8 @@ const originalExhibitions = [
 ];
 
 const HorizontalSliding = () => {
-  const flatListRef = useRef(null);
+  const { theme } = useTheme();
+  const flatListRef = useRef<FlatList>(null);
   const itemWidth = width * 0.8 + 20; // 아이템 너비 + 마진
 
   // 무한 스크롤을 위한 데이터 확장
@@ -66,7 +68,7 @@ const HorizontalSliding = () => {
     }
   }, []);
 
-  const handleScroll = (event) => {
+  const handleScroll = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / itemWidth);
 
@@ -74,14 +76,14 @@ const HorizontalSliding = () => {
     const extendedLength = extendedExhibitions.length;
 
     // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
-    if (currentIndex >= extendedLength - 2) {
+    if (currentIndex >= extendedLength - 2 && flatListRef.current) {
       flatListRef.current.scrollToIndex({
         index: 2, // 원본 데이터의 시작점으로 이동
         animated: false,
       });
     }
     // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
-    else if (currentIndex <= 1) {
+    else if (currentIndex <= 1 && flatListRef.current) {
       flatListRef.current.scrollToIndex({
         index: originalLength + 1, // 원본 데이터의 끝점으로 이동
         animated: false,
@@ -89,10 +91,23 @@ const HorizontalSliding = () => {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
-      <Text style={styles.title}>{item.title}</Text>
+  const renderItem = ({ item }: { item: any }) => (
+    <View
+      style={[
+        styles.itemContainer,
+        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
+      ]}>
+      <Image
+        source={{ uri: item.imageUrl }}
+        style={styles.image}
+      />
+      <Text
+        style={[
+          styles.title,
+          { color: theme === "dark" ? "#fff" : "#1c3519" },
+        ]}>
+        {item.title}
+      </Text>
     </View>
   );
 
@@ -107,7 +122,7 @@ const HorizontalSliding = () => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        decelerationRate="fast"
+        decelerationRate='fast'
         contentContainerStyle={styles.flatListContent}
         onMomentumScrollEnd={handleScroll} // 스크롤이 끝났을 때 이벤트 처리
         getItemLayout={(data, index) => ({

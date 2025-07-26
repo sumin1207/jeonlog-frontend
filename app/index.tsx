@@ -21,7 +21,7 @@ export default function LoginPage() {
               borderRadius: 0,
               backgroundColor: "transparent",
             }}
-            resizeMode="contain"
+            resizeMode='contain'
           />
         </View>
         <Text
@@ -30,8 +30,7 @@ export default function LoginPage() {
             marginBottom: 5,
             textAlign: "center",
             color: "#fff",
-          }}
-        >
+          }}>
           간편로그인
         </Text>
         <NaverLoginButton
@@ -40,11 +39,16 @@ export default function LoginPage() {
         <GoogleLoginButton
           onSuccess={() => router.replace("/onboarding/category")}
         />
-        {/* 개발용: 카테고리로 바로 이동 버튼 */}
-        │{" "}
+        {/* 개발용: 홈으로 바로 이동 버튼 */}
         <Button
-          title="개발용: 카테고리로 이동"
-          color="#841584"
+          title='개발용: 홈으로 이동'
+          color='#841584'
+          onPress={() => router.replace("/(tabs)/home")}
+        />
+        {/* 개발용: 온보딩 카테고리로 바로 이동 버튼 */}
+        <Button
+          title='개발용: 온보딩 카테고리로 이동'
+          color='#FF6B35'
           onPress={() => router.replace("/onboarding/category")}
         />
       </View>

@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -23,17 +24,24 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#1c3519",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: theme === "dark" ? "#666" : "gray",
         headerShown: false,
-      }}>
+        tabBarStyle: {
+          backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+          borderTopColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
+        },
+      }}
+      initialRouteName='home'>
       <Tabs.Screen
-        name='index'
+        name='home'
         options={{
-          headerTitle: "홈",
+          title: "홈",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='home-outline'
@@ -46,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='category'
         options={{
-          headerTitle: "카테고리",
+          title: "카테고리",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='grid-outline'
@@ -59,7 +67,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='search'
         options={{
-          headerTitle: "검색",
+          title: "검색",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='search-outline'
@@ -72,7 +80,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='mypage'
         options={{
-          headerTitle: "마이페이지",
+          title: "마이페이지",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='person-outline'
