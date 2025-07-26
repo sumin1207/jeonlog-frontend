@@ -12,11 +12,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme, ThemeType } from "../../contexts/ThemeContext";
 import { useAuth } from "../../components/AuthContext";
+import { deleteAccount, clearLocalUserData } from "../../services/userService";
 
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, logout, userInfo } = useAuth();
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
   const userData = {
@@ -32,14 +33,14 @@ export default function MyPageScreen() {
         text: "로그아웃",
         style: "destructive",
         onPress: () => {
-          setIsLoggedIn(false); // 로그아웃 처리
+          logout(); // 새로운 logout 함수 사용
           router.replace("/"); // 첫 페이지로 이동
         },
       },
     ]);
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     Alert.alert(
       "회원탈퇴",
       "정말 회원탈퇴를 하시겠습니까?\n이 작업은 되돌릴 수 없습니다.",
@@ -48,9 +49,60 @@ export default function MyPageScreen() {
         {
           text: "탈퇴",
           style: "destructive",
-          onPress: () => {
-            // 회원탈퇴 로직 구현
-            router.replace("/");
+          onPress: async () => {
+            try {
+              // 로딩 상태 표시 (선택사항)
+              // setIsLoading(true);
+
+              // 서버에 회원 탈퇴 요청
+              if (userInfo?.id) {
+                const response = await deleteAccount(
+                  userInfo.id,
+                  userInfo.accessToken
+                );
+
+                if (response.success) {
+                  // 로컬 데이터 삭제
+                  clearLocalUserData();
+
+                  // AuthContext에서 로그아웃
+                  logout();
+
+                  // 성공 메시지 표시
+                  Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
+                    {
+                      text: "확인",
+                      onPress: () => router.replace("/"),
+                    },
+                  ]);
+                } else {
+                  // 서버 에러 처리
+                  Alert.alert(
+                    "회원탈퇴 실패",
+                    response.message || "회원탈퇴 중 오류가 발생했습니다.",
+                    [{ text: "확인" }]
+                  );
+                }
+              } else {
+                // 사용자 정보가 없는 경우 (개발용)
+                clearLocalUserData();
+                logout();
+                Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
+                  {
+                    text: "확인",
+                    onPress: () => router.replace("/"),
+                  },
+                ]);
+              }
+            } catch (error) {
+              console.error("회원탈퇴 에러:", error);
+              Alert.alert("회원탈퇴 실패", "회원탈퇴 중 오류가 발생했습니다.", [
+                { text: "확인" },
+              ]);
+            } finally {
+              // 로딩 상태 해제 (선택사항)
+              // setIsLoading(false);
+            }
           },
         },
       ]
