@@ -24,7 +24,6 @@ export default function TopBar({ title }: TopBarProps) {
           />
         </Pressable>
       </View>
-      {title && <Text style={styles.title}>{title}</Text>}
     </View>
   );
 }
