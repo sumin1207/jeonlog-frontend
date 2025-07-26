@@ -85,13 +85,13 @@ export default function CategoryPage() {
         </TouchableOpacity>
       </View>
 
-      <View style={{ alignSelf: "flex-start", marginBottom: 10 }}>
+      <View style={{ alignSelf: "flex-start", marginBottom: 30 }}>
         <Text
           style={{
             color: theme === "dark" ? "#ccc" : "#7e7e7e",
             fontSize: 12,
             fontWeight: "normal",
-            marginBottom: 10,
+            marginTop: 30,
             textAlign: "left",
           }}>
           둘 다 선택 가능
