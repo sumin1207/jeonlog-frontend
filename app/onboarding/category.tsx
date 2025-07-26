@@ -44,6 +44,13 @@ export default function CategoryPage() {
         </TouchableOpacity>
       </View>
 
+    <View style={{ alignSelf: "flex-start", marginBottom: 10 }}>
+      <Text style={{ color: "#7e7e7e", fontSize: 12, fontWeight: "normal", marginBottom: 10, textAlign: "left"  }}>
+        둘 다 선택 가능
+      </Text>
+      </View>
+      
+      {/* 다음 버튼 */}
       <TouchableOpacity
   style={[
     styles.nextButtonBase,
@@ -57,6 +64,8 @@ export default function CategoryPage() {
   <Text style={styles.nextButtonText}>다음으로 넘어가기</Text>
 </TouchableOpacity>
     </View>
+
+
   );
 }
 
