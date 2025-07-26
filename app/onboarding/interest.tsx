@@ -86,7 +86,7 @@ export default function InterestPage() {
           !canProceed && styles.nextButtonDisabled,
           styles.nextButtonFixed,
         ]}
-        onPress={() => router.replace("/(tabs)")}
+        onPress={() => router.replace("/home")}
         disabled={!canProceed}
       >
         <Text style={styles.nextButtonText}>다음으로 넘어가기</Text>
