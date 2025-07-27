@@ -12,9 +12,8 @@ import {
 import { useTheme } from "../../contexts/ThemeContext";
 
 const { width } = Dimensions.get("window");
-{
-  // 임시 전시회 데이터
-}
+
+// 임시 전시회 데이터
 const originalExhibitions = [
   {
     id: "1",
@@ -52,79 +51,6 @@ const HorizontalSliding = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const itemWidth = width * 0.8 + 20; // 아이템 너비 + 마진
-  const [currentIndex, setCurrentIndex] = useState(2); //현재 슬라이드 인덱스값, 초기값 슬라이드 2개 설정
-  const timerRef = useRef<number | null>(null);
-  // 무한 스크롤을 위한 데이터 확장
-  // 원본 데이터의 앞뒤에 일부를 복사하여 붙임
-  const extendedExhibitions = [
-    ...originalExhibitions.slice(-2), // 뒤에서 3개 복사
-    ...originalExhibitions,
-    ...originalExhibitions.slice(0, 2), // 앞에서 3개 복사
-  ];
-  const startTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      setCurrentIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1;
-        if (flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index: nextIndex,
-            animated: true,
-          });
-        }
-        return nextIndex;
-      });
-    }, 3000);
-  };
-  // 초기 스크롤 위치를 원본 데이터의 시작점으로 설정
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index: 2, // 원본 데이터의 시작점 (복사된 2개 항목 뒤)
-        animated: false,
-      });
-      startTimer();
-    }
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  const handleScroll = (event: any) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    //const currentIndex = Math.round(contentOffsetX / itemWidth);
-    const newIndex = Math.round(contentOffsetX / itemWidth);
-    setCurrentIndex(newIndex);
-    const originalLength = originalExhibitions.length;
-    const extendedLength = extendedExhibitions.length;
-
-    // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
-    //if (currentIndex >= extendedLength - 2 && flatListRef.current) {
-    if (newIndex >= extendedLength - 2) {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          index: 2, // 원본 데이터의 시작점으로 이동
-          animated: false,
-        });
-        setCurrentIndex(2);
-      }
-    }
-    // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
-    else if (newIndex <= 1) {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          index: originalLength + 1, // 원본 데이터의 끝점으로 이동
-          animated: false,
-        });
-        setCurrentIndex(originalLength + 1);
-      }
-    }
-    startTimer();
-  };
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -152,7 +78,7 @@ const HorizontalSliding = () => {
     <View style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={extendedExhibitions}
+        data={originalExhibitions}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         horizontal
@@ -162,7 +88,7 @@ const HorizontalSliding = () => {
         snapToAlignment="center" //스크롤 멈출때 가운데 정렬
         decelerationRate="normal" //넘기는 속도 fast=>normal로 수정함
         contentContainerStyle={styles.flatListContent}
-        onMomentumScrollEnd={handleScroll} // 스크롤이 끝났을 때 이벤트 처리
+        // onMomentumScrollEnd={handleScroll} // Removed
         getItemLayout={(data, index) => ({
           length: itemWidth,
           offset: itemWidth * index,
@@ -183,7 +109,7 @@ const styles = StyleSheet.create({
     marginVertical: 5, // 상하 여백 줄임 (10에서 5로)
   },
   flatListContent: {
-    //paddingHorizontal: width * 0.1, // 양쪽 여백                                                                      │
+    //paddingHorizontal: width * 0.1, // 양쪽 여백
     paddingHorizontal: (width - width * 0.8) / 2 - 10, //디바이스마다 화면 크기가 달라 아이템이 중앙에 오도록 동적 여백 계산
   },
   itemContainer: {
