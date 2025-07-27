@@ -196,14 +196,15 @@ export default function MyPageScreen() {
         {renderSection(
           "전시 관리",
           <View>
-            {renderMenuItem("heart", "찜한 전시", "0개", () => {
-              // 찜한 전시 목록으로 이동
+            {renderMenuItem("heart", "찜한 전시", "3개", () => {
+              // 개수는 임시
+              router.push("/exhibition/liked");
             })}
-            {renderMenuItem("thumbs-up", "좋아요 전시", "0개", () => {
-              // 좋아요 전시 목록으로 이동
+            {renderMenuItem("thumbs-up", "좋아요 전시", "3개", () => {
+              router.push("/exhibition/thumbs-up");
             })}
-            {renderMenuItem("location", "방문한 전시", "0개", () => {
-              // 방문한 전시 목록으로 이동
+            {renderMenuItem("location", "방문한 전시", "3개", () => {
+              router.push("/exhibition/visited");
             })}
           </View>
         )}
