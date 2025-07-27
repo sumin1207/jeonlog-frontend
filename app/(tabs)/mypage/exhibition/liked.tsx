@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { Stack } from "expo-router";
-import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../../contexts/ThemeContext";
+import TopBar from "../../../../components/ui/TopBar";
+import { useTheme } from "../../../../contexts/ThemeContext";
 
 // 임시 데이터
 const mockLikedExhibitions = [
@@ -72,51 +71,48 @@ export default function LikedExhibitionsPage() {
   );
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-        ]}>
-        <TopBar title='찜한 전시' />
-        <View style={styles.content}>
-          <Text
-            style={[
-              styles.title,
-              { color: theme === "dark" ? "#fff" : "#1c3519" },
-            ]}>
-            찜한 전시 ({mockLikedExhibitions.length}개)
-          </Text>
-          {mockLikedExhibitions.length > 0 ? (
-            <FlatList
-              data={mockLikedExhibitions}
-              renderItem={renderExhibitionItem}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
-            />
-          ) : (
-            <View style={styles.emptyContainer}>
-              <Text
-                style={[
-                  styles.emptyText,
-                  { color: theme === "dark" ? "#ccc" : "#666" },
-                ]}>
-                아직 찜한 전시가 없습니다.
-              </Text>
-              <Text
-                style={[
-                  styles.emptySubText,
-                  { color: theme === "dark" ? "#999" : "#999" },
-                ]}>
-                관심 있는 전시를 찜해보세요!
-              </Text>
-            </View>
-          )}
-        </View>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
+      ]}>
+      <TopBar title='찜한 전시' />
+      <View style={styles.content}>
+        <Text
+          style={[
+            styles.title,
+            { color: theme === "dark" ? "#fff" : "#1c3519" },
+          ]}>
+          찜한 전시 ({mockLikedExhibitions.length}개)
+        </Text>
+        {mockLikedExhibitions.length > 0 ? (
+          <FlatList
+            data={mockLikedExhibitions}
+            renderItem={renderExhibitionItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text
+              style={[
+                styles.emptyText,
+                { color: theme === "dark" ? "#ccc" : "#666" },
+              ]}>
+              아직 찜한 전시가 없습니다.
+            </Text>
+            <Text
+              style={[
+                styles.emptySubText,
+                { color: theme === "dark" ? "#999" : "#999" },
+              ]}>
+              관심 있는 전시를 찜해보세요!
+            </Text>
+          </View>
+        )}
       </View>
-    </>
+    </View>
   );
 }
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { Stack } from "expo-router";
-import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../../contexts/ThemeContext";
+
+import TopBar from "../../../../components/ui/TopBar";
+import { useTheme } from "../../../../contexts/ThemeContext";
 
 // 임시 데이터
 const mockThumbsUpExhibitions = [
@@ -84,51 +84,48 @@ export default function ThumbsUpExhibitionsPage() {
   );
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-        ]}>
-        <TopBar title='좋아요 전시' />
-        <View style={styles.content}>
-          <Text
-            style={[
-              styles.title,
-              { color: theme === "dark" ? "#fff" : "#1c3519" },
-            ]}>
-            좋아요 전시 ({mockThumbsUpExhibitions.length}개)
-          </Text>
-          {mockThumbsUpExhibitions.length > 0 ? (
-            <FlatList
-              data={mockThumbsUpExhibitions}
-              renderItem={renderExhibitionItem}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContainer}
-            />
-          ) : (
-            <View style={styles.emptyContainer}>
-              <Text
-                style={[
-                  styles.emptyText,
-                  { color: theme === "dark" ? "#ccc" : "#666" },
-                ]}>
-                아직 좋아요한 전시가 없습니다.
-              </Text>
-              <Text
-                style={[
-                  styles.emptySubText,
-                  { color: theme === "dark" ? "#999" : "#999" },
-                ]}>
-                마음에 드는 전시에 좋아요를 눌러보세요!
-              </Text>
-            </View>
-          )}
-        </View>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
+      ]}>
+      <TopBar title='좋아요 전시' />
+      <View style={styles.content}>
+        <Text
+          style={[
+            styles.title,
+            { color: theme === "dark" ? "#fff" : "#1c3519" },
+          ]}>
+          좋아요 전시 ({mockThumbsUpExhibitions.length}개)
+        </Text>
+        {mockThumbsUpExhibitions.length > 0 ? (
+          <FlatList
+            data={mockThumbsUpExhibitions}
+            renderItem={renderExhibitionItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text
+              style={[
+                styles.emptyText,
+                { color: theme === "dark" ? "#ccc" : "#666" },
+              ]}>
+              아직 좋아요한 전시가 없습니다.
+            </Text>
+            <Text
+              style={[
+                styles.emptySubText,
+                { color: theme === "dark" ? "#999" : "#999" },
+              ]}>
+              마음에 드는 전시에 좋아요를 눌러보세요!
+            </Text>
+          </View>
+        )}
       </View>
-    </>
+    </View>
   );
 }
 

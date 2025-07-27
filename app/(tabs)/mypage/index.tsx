@@ -10,10 +10,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import TopBar from "../../components/ui/TopBar";
-import { useTheme, ThemeType } from "../../contexts/ThemeContext";
-import { useAuth } from "../../components/context/AuthContext";
-import { deleteAccount, clearLocalUserData } from "../../services/userService";
+import TopBar from "../../../components/ui/TopBar";
+import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
+import { useAuth } from "../../../components/context/AuthContext";
+import {
+  deleteAccount,
+  clearLocalUserData,
+} from "../../../services/userService";
 
 export default function MyPageScreen() {
   const router = useRouter();
@@ -198,13 +201,13 @@ export default function MyPageScreen() {
           <View>
             {renderMenuItem("heart", "찜한 전시", "3개", () => {
               // 개수는 임시
-              router.push("/exhibition/liked");
+              router.push("/(tabs)/mypage/exhibition/liked");
             })}
             {renderMenuItem("thumbs-up", "좋아요 전시", "3개", () => {
-              router.push("/exhibition/thumbs-up");
+              router.push("/(tabs)/mypage/exhibition/thumbs-up");
             })}
             {renderMenuItem("location", "방문한 전시", "3개", () => {
-              router.push("/exhibition/visited");
+              router.push("/(tabs)/mypage/exhibition/visited");
             })}
           </View>
         )}
