@@ -12,8 +12,9 @@ import {
 import { useTheme } from "../../contexts/ThemeContext";
 
 const { width } = Dimensions.get("window");
-
-// 임시 전시회 데이터
+{
+  // 임시 전시회 데이터
+}
 const originalExhibitions = [
   {
     id: "1",

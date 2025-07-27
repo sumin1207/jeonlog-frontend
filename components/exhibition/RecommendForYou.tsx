@@ -9,8 +9,9 @@ import {
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 const { width } = Dimensions.get("window");
-
-//임시 추천 전시
+{
+  //임시 추천 전시
+}
 const originalRecommendations = [
   {
     id: "rec-1",
