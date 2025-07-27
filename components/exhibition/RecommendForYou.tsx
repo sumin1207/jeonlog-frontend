@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 const { width } = Dimensions.get("window");
-{
-  //임시 추천 전시
-}
+
+//임시 추천 전시
 const originalRecommendations = [
   {
     id: "rec-1",
@@ -45,43 +44,6 @@ const RecommendForYou = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const itemWidth = width * 0.8 + 20; //아이템 너비 + 마진
-  const extendedRecommendations = [
-    ...originalRecommendations.slice(-2),
-    ...originalRecommendations,
-    ...originalRecommendations.slice(0, 2),
-  ];
-  //초기 슬라이드 위치 설정
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index: 2,
-        animated: false,
-      });
-    }
-  }, []);
-  const handleScroll = (event: any) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const currentIndex = Math.round(contentOffsetX / itemWidth);
-
-    const originalLength = originalRecommendations.length;
-    const extendedLength = extendedRecommendations.length;
-
-    if (currentIndex >= extendedLength - 2) {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          index: 2,
-          animated: false,
-        });
-      }
-    } else if (currentIndex <= 1) {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          index: originalLength + 1,
-          animated: false,
-        });
-      }
-    }
-  };
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -104,7 +66,7 @@ const RecommendForYou = () => {
     <View style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={extendedRecommendations}
+        data={originalRecommendations}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         horizontal
@@ -113,7 +75,7 @@ const RecommendForYou = () => {
         snapToAlignment="center"
         decelerationRate="normal"
         contentContainerStyle={styles.flatListContent}
-        onMomentumScrollEnd={handleScroll}
+        // onMomentumScrollEnd={handleScroll} // Removed
         getItemLayout={(data, index) => ({
           length: itemWidth,
           offset: itemWidth * index,
