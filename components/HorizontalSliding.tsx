@@ -103,30 +103,28 @@ const HorizontalSliding = () => {
 
     // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
     //if (currentIndex >= extendedLength - 2 && flatListRef.current) {
-    if (newIndex >= extendedLength - 2) {
+    if (newIndex >= extendedLength - 3) {
       setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
-            index: 2, // 원본 데이터의 시작점으로 이동
+            index: 3, // 원본 데이터의 시작점으로 이동
             animated: false,
           });
-          setCurrentIndex(2);
+          setCurrentIndex(3);
         }
-      }, 150);
+      }, 0);
     }
     // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
-    // else if (currentIndex <= 1 && flatListRef.current) {
-    //   flatListRef.current.scrollToIndex({
-    else if (newIndex <= 1) {
+    else if (newIndex <= 2) {
       setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
-            index: originalLength + 1, // 원본 데이터의 끝점으로 이동
+            index: originalLength + 2, // 원본 데이터의 끝점으로 이동
             animated: false,
           });
-          setCurrentIndex(originalLength + 1);
+          setCurrentIndex(originalLength + 2);
         }
-      });
+      }, 0);
     }
     startTimer();
   };
@@ -137,11 +135,9 @@ const HorizontalSliding = () => {
         style={[
           styles.itemContainer,
           { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
-        ]}>
-        <Image
-          source={{ uri: item.imageUrl }}
-          style={styles.image}
-        />
+        ]}
+      >
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
         {/* <Text
         style={[styles.title, { color: theme === "dark" ? "#fff" : "#1c3519" }]}
       >
@@ -166,8 +162,8 @@ const HorizontalSliding = () => {
         //pagingEnabled =>아이템 단위로 제어할려고 일단 비활성화함
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment='center' //스크롤 멈출때 가운데 정렬
-        decelerationRate='normal' //넘기는 속도 fast=>normal로 수정함
+        snapToAlignment="center" //스크롤 멈출때 가운데 정렬
+        decelerationRate="normal" //넘기는 속도 fast=>normal로 수정함
         contentContainerStyle={styles.flatListContent}
         onMomentumScrollEnd={handleScroll} // 스크롤이 끝났을 때 이벤트 처리
         getItemLayout={(data, index) => ({

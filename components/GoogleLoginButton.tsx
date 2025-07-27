@@ -19,9 +19,7 @@ const GoogleLoginButton = ({ onSuccess }: GoogleLoginButtonProps) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handlePress}>
+      <TouchableOpacity style={styles.button} onPress={handlePress}>
         <Text style={styles.text}>구글로 로그인</Text>
       </TouchableOpacity>
     </View>

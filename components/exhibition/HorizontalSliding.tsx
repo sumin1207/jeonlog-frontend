@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -104,7 +104,6 @@ const HorizontalSliding = () => {
     // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
     //if (currentIndex >= extendedLength - 2 && flatListRef.current) {
     if (newIndex >= extendedLength - 2) {
-      setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
             index: 2, // 원본 데이터의 시작점으로 이동
@@ -112,13 +111,9 @@ const HorizontalSliding = () => {
           });
           setCurrentIndex(2);
         }
-      }, 150);
     }
     // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
-    // else if (currentIndex <= 1 && flatListRef.current) {
-    //   flatListRef.current.scrollToIndex({
     else if (newIndex <= 1) {
-      setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
             index: originalLength + 1, // 원본 데이터의 끝점으로 이동
@@ -126,7 +121,6 @@ const HorizontalSliding = () => {
           });
           setCurrentIndex(originalLength + 1);
         }
-      });
     }
     startTimer();
   };
