@@ -104,23 +104,23 @@ const HorizontalSliding = () => {
     // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
     //if (currentIndex >= extendedLength - 2 && flatListRef.current) {
     if (newIndex >= extendedLength - 2) {
-        if (flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index: 2, // 원본 데이터의 시작점으로 이동
-            animated: false,
-          });
-          setCurrentIndex(2);
-        }
+      if (flatListRef.current) {
+        flatListRef.current.scrollToIndex({
+          index: 2, // 원본 데이터의 시작점으로 이동
+          animated: false,
+        });
+        setCurrentIndex(2);
+      }
     }
     // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
     else if (newIndex <= 1) {
-        if (flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index: originalLength + 1, // 원본 데이터의 끝점으로 이동
-            animated: false,
-          });
-          setCurrentIndex(originalLength + 1);
-        }
+      if (flatListRef.current) {
+        flatListRef.current.scrollToIndex({
+          index: originalLength + 1, // 원본 데이터의 끝점으로 이동
+          animated: false,
+        });
+        setCurrentIndex(originalLength + 1);
+      }
     }
     startTimer();
   };
