@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 const { width } = Dimensions.get("window");
 
 //임시 추천 전시
@@ -66,23 +66,19 @@ const RecommendForYou = () => {
     const extendedLength = extendedRecommendations.length;
 
     if (currentIndex >= extendedLength - 2) {
-      setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
             index: 2,
             animated: false,
           });
         }
-      }, 150);
     } else if (currentIndex <= 1) {
-      setTimeout(() => {
         if (flatListRef.current) {
           flatListRef.current.scrollToIndex({
             index: originalLength + 1,
             animated: false,
           });
         }
-      });
     }
   };
 

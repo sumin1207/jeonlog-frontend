@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-import useNaverLogin from "../hooks/useNaverLogin";
+import useNaverLogin from "../../hooks/useNaverLogin";
 
 interface NaverLoginButtonProps {
   onSuccess?: () => void;
