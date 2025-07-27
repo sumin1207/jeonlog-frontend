@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+//요즘 뜨고 있는 전시
+//좌우 슬라이딩 구현
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -49,15 +51,32 @@ const HorizontalSliding = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const itemWidth = width * 0.8 + 20; // 아이템 너비 + 마진
-
+  const [currentIndex, setCurrentIndex] = useState(2); //현재 슬라이드 인덱스값, 초기값 슬라이드 2개 설정
+  const timerRef = useRef<number | null>(null);
   // 무한 스크롤을 위한 데이터 확장
   // 원본 데이터의 앞뒤에 일부를 복사하여 붙임
   const extendedExhibitions = [
-    ...originalExhibitions.slice(-2), // 뒤에서 2개 복사
+    ...originalExhibitions.slice(-2), // 뒤에서 3개 복사
     ...originalExhibitions,
-    ...originalExhibitions.slice(0, 2), // 앞에서 2개 복사
+    ...originalExhibitions.slice(0, 2), // 앞에서 3개 복사
   ];
-
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1;
+        if (flatListRef.current) {
+          flatListRef.current.scrollToIndex({
+            index: nextIndex,
+            animated: true,
+          });
+        }
+        return nextIndex;
+      });
+    }, 3000);
+  };
   // 초기 스크롤 위치를 원본 데이터의 시작점으로 설정
   useEffect(() => {
     if (flatListRef.current) {
@@ -65,50 +84,73 @@ const HorizontalSliding = () => {
         index: 2, // 원본 데이터의 시작점 (복사된 2개 항목 뒤)
         animated: false,
       });
+      startTimer();
     }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
   }, []);
 
   const handleScroll = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const currentIndex = Math.round(contentOffsetX / itemWidth);
-
+    //const currentIndex = Math.round(contentOffsetX / itemWidth);
+    const newIndex = Math.round(contentOffsetX / itemWidth);
+    setCurrentIndex(newIndex);
     const originalLength = originalExhibitions.length;
     const extendedLength = extendedExhibitions.length;
 
     // 끝까지 스크롤했을 때 (복사된 마지막 항목에 도달)
-    if (currentIndex >= extendedLength - 2 && flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index: 2, // 원본 데이터의 시작점으로 이동
-        animated: false,
-      });
+    //if (currentIndex >= extendedLength - 2 && flatListRef.current) {
+    if (newIndex >= extendedLength - 2) {
+      setTimeout(() => {
+        if (flatListRef.current) {
+          flatListRef.current.scrollToIndex({
+            index: 2, // 원본 데이터의 시작점으로 이동
+            animated: false,
+          });
+          setCurrentIndex(2);
+        }
+      }, 150);
     }
     // 처음까지 스크롤했을 때 (복사된 첫 항목에 도달)
-    else if (currentIndex <= 1 && flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index: originalLength + 1, // 원본 데이터의 끝점으로 이동
-        animated: false,
+    // else if (currentIndex <= 1 && flatListRef.current) {
+    //   flatListRef.current.scrollToIndex({
+    else if (newIndex <= 1) {
+      setTimeout(() => {
+        if (flatListRef.current) {
+          flatListRef.current.scrollToIndex({
+            index: originalLength + 1, // 원본 데이터의 끝점으로 이동
+            animated: false,
+          });
+          setCurrentIndex(originalLength + 1);
+        }
       });
     }
+    startTimer();
   };
 
-  const renderItem = ({ item }: { item: any }) => (
-    <View
-      style={[
-        styles.itemContainer,
-        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
-      ]}>
-      <Image
-        source={{ uri: item.imageUrl }}
-        style={styles.image}
-      />
-      <Text
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <View
         style={[
-          styles.title,
-          { color: theme === "dark" ? "#fff" : "#1c3519" },
-        ]}>
+          styles.itemContainer,
+          { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
+        ]}
+      >
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        {/* <Text
+        style={[styles.title, { color: theme === "dark" ? "#fff" : "#1c3519" }]}
+      >
         {item.title}
-      </Text>
-    </View>
+      </Text> */}
+        <View style={styles.titleContainter}>
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+      </View>
+    ),
+    [theme]
   );
 
   return (
@@ -119,10 +161,11 @@ const HorizontalSliding = () => {
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         horizontal
-        pagingEnabled
+        //pagingEnabled =>아이템 단위로 제어할려고 일단 비활성화함
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        decelerationRate='fast'
+        snapToAlignment="center" //스크롤 멈출때 가운데 정렬
+        decelerationRate="normal" //넘기는 속도 fast=>normal로 수정함
         contentContainerStyle={styles.flatListContent}
         onMomentumScrollEnd={handleScroll} // 스크롤이 끝났을 때 이벤트 처리
         getItemLayout={(data, index) => ({
@@ -130,6 +173,8 @@ const HorizontalSliding = () => {
           offset: itemWidth * index,
           index,
         })}
+        initialNumToRender={3}
+        windowSize={5}
       />
     </View>
   );
@@ -137,13 +182,14 @@ const HorizontalSliding = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 500, // 캐러셀 전체 높이 조정 (700에서 500으로)
+    height: 200, // 캐러셀 전체 높이 조정 (700에서 500에서 200으로)
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5, // 상하 여백 줄임 (10에서 5로)
   },
   flatListContent: {
-    paddingHorizontal: width * 0.1, // 양쪽 여백
+    //paddingHorizontal: width * 0.1, // 양쪽 여백                                                                      │
+    paddingHorizontal: (width - width * 0.8) / 2 - 10, //디바이스마다 화면 크기가 달라 아이템이 중앙에 오도록 동적 여백 계산
   },
   itemContainer: {
     width: width * 0.8, // 화면 너비의 80%
@@ -167,9 +213,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 10,
-    marginBottom: 10,
     textAlign: "center",
+    color: "black",
+  },
+  titleContainter: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

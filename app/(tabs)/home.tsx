@@ -1,5 +1,6 @@
 import { StyleSheet, View, Text } from "react-native";
 import HorizontalSliding from "@/components/HorizontalSliding";
+import RecommendForYou from "@/components/RecommendForYou";
 import TopBar from "@/components/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -32,6 +33,10 @@ export default function HomeScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>요즘 뜨고 있는 전시</Text>
         <HorizontalSliding />
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.title}>당신을 위한 추천</Text>
+        <RecommendForYou />
       </View>
     </View>
   );
