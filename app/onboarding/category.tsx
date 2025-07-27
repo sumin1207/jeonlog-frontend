@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Button, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import TopBar from "@/components/TopBar";
+import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Stack } from "expo-router";
 

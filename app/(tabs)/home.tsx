@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
-import HorizontalSliding from "@/components/HorizontalSliding";
-import RecommendForYou from "@/components/RecommendForYou";
-import TopBar from "@/components/TopBar";
+import HorizontalSliding from "@/components/exhibition/HorizontalSliding";
+import RecommendForYou from "@/components/exhibition/RecommendForYou";
+import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 
 export default function HomeScreen() {

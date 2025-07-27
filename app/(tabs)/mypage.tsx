@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import TopBar from "@/components/TopBar";
+import TopBar from "../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../contexts/ThemeContext";
-import { useAuth } from "../../components/AuthContext";
+import { useAuth } from "../../components/context/AuthContext";
 import { deleteAccount, clearLocalUserData } from "../../services/userService";
 
 export default function MyPageScreen() {

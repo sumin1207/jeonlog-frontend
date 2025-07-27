@@ -1,7 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-
-import useGoogleLogin from "../hooks/useGoogleLogin";
+import useGoogleLogin from "@/hooks/useGoogleLogin";
 
 interface GoogleLoginButtonProps {
   onSuccess?: () => void;
