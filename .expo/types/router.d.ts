@@ -1,14 +1,489 @@
 /* eslint-disable */
-import * as Router from 'expo-router';
+import * as Router from "expo-router";
 
-export * from 'expo-router';
+export * from "expo-router";
 
-declare module 'expo-router' {
+declare module "expo-router" {
   export namespace ExpoRouter {
     export interface __routes<T extends string | object = string> {
-      hrefInputParams: { pathname: Router.RelativePathString, params?: Router.UnknownInputParams } | { pathname: Router.ExternalPathString, params?: Router.UnknownInputParams } | { pathname: `/`; params?: Router.UnknownInputParams; } | { pathname: `/modal`; params?: Router.UnknownInputParams; } | { pathname: `/../contexts/ThemeContext`; params?: Router.UnknownInputParams; } | { pathname: `/../services/userService`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/liked`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/thumbs-up`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/visited`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/mypage` | `/mypage`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/home` | `/home`; params?: Router.UnknownInputParams; } | { pathname: `/../components/context/AuthContext`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/GoogleLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/NaverLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/TopBar`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/StyledText`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/Themed`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/EditScreenInfo`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/ExternalLink`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/HorizontalSliding`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/RecommendForYou`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useClientOnlyValue`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useClientOnlyValue.web`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useColorScheme`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useColorScheme.web`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/context/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/GoogleLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/_sitemap`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/category` | `/category`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}` | `/`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/search` | `/search`; params?: Router.UnknownInputParams; } | { pathname: `/onboarding/category`; params?: Router.UnknownInputParams; } | { pathname: `/onboarding/interest`; params?: Router.UnknownInputParams; } | { pathname: `/+not-found`, params: Router.UnknownInputParams & {  } };
-      hrefOutputParams: { pathname: Router.RelativePathString, params?: Router.UnknownOutputParams } | { pathname: Router.ExternalPathString, params?: Router.UnknownOutputParams } | { pathname: `/`; params?: Router.UnknownOutputParams; } | { pathname: `/modal`; params?: Router.UnknownOutputParams; } | { pathname: `/../contexts/ThemeContext`; params?: Router.UnknownOutputParams; } | { pathname: `/../services/userService`; params?: Router.UnknownOutputParams; } | { pathname: `/exhibition/liked`; params?: Router.UnknownOutputParams; } | { pathname: `/exhibition/thumbs-up`; params?: Router.UnknownOutputParams; } | { pathname: `/exhibition/visited`; params?: Router.UnknownOutputParams; } | { pathname: `${'/(tabs)'}/mypage` | `/mypage`; params?: Router.UnknownOutputParams; } | { pathname: `${'/(tabs)'}/home` | `/home`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/context/AuthContext`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/auth/GoogleLoginButton`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/auth/NaverLoginButton`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/TopBar`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/StyledText`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/Themed`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/EditScreenInfo`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/ExternalLink`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/exhibition/HorizontalSliding`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/exhibition/RecommendForYou`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/hooks/useClientOnlyValue`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/hooks/useClientOnlyValue.web`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/hooks/useColorScheme`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/hooks/useColorScheme.web`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/ui/index`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/auth/index`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/exhibition/index`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/hooks/index`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/context/index`; params?: Router.UnknownOutputParams; } | { pathname: `/../components/GoogleLoginButton`; params?: Router.UnknownOutputParams; } | { pathname: `/_sitemap`; params?: Router.UnknownOutputParams; } | { pathname: `${'/(tabs)'}/category` | `/category`; params?: Router.UnknownOutputParams; } | { pathname: `${'/(tabs)'}` | `/`; params?: Router.UnknownOutputParams; } | { pathname: `${'/(tabs)'}/search` | `/search`; params?: Router.UnknownOutputParams; } | { pathname: `/onboarding/category`; params?: Router.UnknownOutputParams; } | { pathname: `/onboarding/interest`; params?: Router.UnknownOutputParams; } | { pathname: `/+not-found`, params: Router.UnknownOutputParams & {  } };
-      href: Router.RelativePathString | Router.ExternalPathString | `/${`?${string}` | `#${string}` | ''}` | `/modal${`?${string}` | `#${string}` | ''}` | `/../contexts/ThemeContext${`?${string}` | `#${string}` | ''}` | `/../services/userService${`?${string}` | `#${string}` | ''}` | `/exhibition/liked${`?${string}` | `#${string}` | ''}` | `/exhibition/thumbs-up${`?${string}` | `#${string}` | ''}` | `/exhibition/visited${`?${string}` | `#${string}` | ''}` | `${'/(tabs)'}/mypage${`?${string}` | `#${string}` | ''}` | `/mypage${`?${string}` | `#${string}` | ''}` | `${'/(tabs)'}/home${`?${string}` | `#${string}` | ''}` | `/home${`?${string}` | `#${string}` | ''}` | `/../components/context/AuthContext${`?${string}` | `#${string}` | ''}` | `/../components/auth/GoogleLoginButton${`?${string}` | `#${string}` | ''}` | `/../components/auth/NaverLoginButton${`?${string}` | `#${string}` | ''}` | `/../components/ui/TopBar${`?${string}` | `#${string}` | ''}` | `/../components/ui/StyledText${`?${string}` | `#${string}` | ''}` | `/../components/ui/Themed${`?${string}` | `#${string}` | ''}` | `/../components/ui/EditScreenInfo${`?${string}` | `#${string}` | ''}` | `/../components/ui/ExternalLink${`?${string}` | `#${string}` | ''}` | `/../components/exhibition/HorizontalSliding${`?${string}` | `#${string}` | ''}` | `/../components/exhibition/RecommendForYou${`?${string}` | `#${string}` | ''}` | `/../components/hooks/useClientOnlyValue${`?${string}` | `#${string}` | ''}` | `/../components/hooks/useClientOnlyValue.web${`?${string}` | `#${string}` | ''}` | `/../components/hooks/useColorScheme${`?${string}` | `#${string}` | ''}` | `/../components/hooks/useColorScheme.web${`?${string}` | `#${string}` | ''}` | `/../components/ui/index${`?${string}` | `#${string}` | ''}` | `/../components/auth/index${`?${string}` | `#${string}` | ''}` | `/../components/exhibition/index${`?${string}` | `#${string}` | ''}` | `/../components/hooks/index${`?${string}` | `#${string}` | ''}` | `/../components/context/index${`?${string}` | `#${string}` | ''}` | `/../components/GoogleLoginButton${`?${string}` | `#${string}` | ''}` | `/_sitemap${`?${string}` | `#${string}` | ''}` | `${'/(tabs)'}/category${`?${string}` | `#${string}` | ''}` | `/category${`?${string}` | `#${string}` | ''}` | `${'/(tabs)'}${`?${string}` | `#${string}` | ''}` | `/${`?${string}` | `#${string}` | ''}` | `${'/(tabs)'}/search${`?${string}` | `#${string}` | ''}` | `/search${`?${string}` | `#${string}` | ''}` | `/onboarding/category${`?${string}` | `#${string}` | ''}` | `/onboarding/interest${`?${string}` | `#${string}` | ''}` | { pathname: Router.RelativePathString, params?: Router.UnknownInputParams } | { pathname: Router.ExternalPathString, params?: Router.UnknownInputParams } | { pathname: `/`; params?: Router.UnknownInputParams; } | { pathname: `/modal`; params?: Router.UnknownInputParams; } | { pathname: `/../contexts/ThemeContext`; params?: Router.UnknownInputParams; } | { pathname: `/../services/userService`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/liked`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/thumbs-up`; params?: Router.UnknownInputParams; } | { pathname: `/exhibition/visited`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/mypage` | `/mypage`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/home` | `/home`; params?: Router.UnknownInputParams; } | { pathname: `/../components/context/AuthContext`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/GoogleLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/NaverLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/TopBar`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/StyledText`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/Themed`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/EditScreenInfo`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/ExternalLink`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/HorizontalSliding`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/RecommendForYou`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useClientOnlyValue`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useClientOnlyValue.web`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useColorScheme`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/useColorScheme.web`; params?: Router.UnknownInputParams; } | { pathname: `/../components/ui/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/auth/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/exhibition/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/hooks/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/context/index`; params?: Router.UnknownInputParams; } | { pathname: `/../components/GoogleLoginButton`; params?: Router.UnknownInputParams; } | { pathname: `/_sitemap`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/category` | `/category`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}` | `/`; params?: Router.UnknownInputParams; } | { pathname: `${'/(tabs)'}/search` | `/search`; params?: Router.UnknownInputParams; } | { pathname: `/onboarding/category`; params?: Router.UnknownInputParams; } | { pathname: `/onboarding/interest`; params?: Router.UnknownInputParams; } | `/+not-found${`?${string}` | `#${string}` | ''}` | { pathname: `/+not-found`, params: Router.UnknownInputParams & {  } };
+      hrefInputParams:
+        | {
+            pathname: Router.RelativePathString;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: Router.ExternalPathString;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/`; params?: Router.UnknownInputParams }
+        | { pathname: `/modal`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `/../contexts/ThemeContext`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../services/userService`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/exhibition/liked`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `/exhibition/thumbs-up`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/exhibition/visited`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/mypage` | `/mypage`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/home` | `/home`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/context/AuthContext`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/GoogleLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/NaverLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/TopBar`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/StyledText`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/Themed`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/EditScreenInfo`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/ExternalLink`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/HorizontalSliding`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/RecommendForYou`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue.web`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme.web`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/context/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/GoogleLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/_sitemap`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `${"/(tabs)"}/category` | `/category`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `${"/(tabs)"}` | `/`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `${"/(tabs)"}/search` | `/search`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/onboarding/category`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/onboarding/interest`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/+not-found`; params: Router.UnknownInputParams & {} };
+      hrefOutputParams:
+        | {
+            pathname: Router.RelativePathString;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: Router.ExternalPathString;
+            params?: Router.UnknownOutputParams;
+          }
+        | { pathname: `/`; params?: Router.UnknownOutputParams }
+        | { pathname: `/modal`; params?: Router.UnknownOutputParams }
+        | {
+            pathname: `/../contexts/ThemeContext`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../services/userService`;
+            params?: Router.UnknownOutputParams;
+          }
+        | { pathname: `/exhibition/liked`; params?: Router.UnknownOutputParams }
+        | {
+            pathname: `/exhibition/thumbs-up`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/exhibition/visited`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/mypage` | `/mypage`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/home` | `/home`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/context/AuthContext`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/auth/GoogleLoginButton`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/auth/NaverLoginButton`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/TopBar`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/StyledText`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/Themed`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/EditScreenInfo`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/ExternalLink`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/HorizontalSliding`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/RecommendForYou`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue.web`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme.web`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/ui/index`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/auth/index`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/index`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/hooks/index`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/context/index`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/../components/GoogleLoginButton`;
+            params?: Router.UnknownOutputParams;
+          }
+        | { pathname: `/_sitemap`; params?: Router.UnknownOutputParams }
+        | {
+            pathname: `${"/(tabs)"}/category` | `/category`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}` | `/`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/search` | `/search`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/onboarding/category`;
+            params?: Router.UnknownOutputParams;
+          }
+        | {
+            pathname: `/onboarding/interest`;
+            params?: Router.UnknownOutputParams;
+          }
+        | { pathname: `/+not-found`; params: Router.UnknownOutputParams & {} };
+      href:
+        | Router.RelativePathString
+        | Router.ExternalPathString
+        | `/${`?${string}` | `#${string}` | ""}`
+        | `/modal${`?${string}` | `#${string}` | ""}`
+        | `/../contexts/ThemeContext${`?${string}` | `#${string}` | ""}`
+        | `/../services/userService${`?${string}` | `#${string}` | ""}`
+        | `/exhibition/liked${`?${string}` | `#${string}` | ""}`
+        | `/exhibition/thumbs-up${`?${string}` | `#${string}` | ""}`
+        | `/exhibition/visited${`?${string}` | `#${string}` | ""}`
+        | `${"/(tabs)"}/mypage${`?${string}` | `#${string}` | ""}`
+        | `/mypage${`?${string}` | `#${string}` | ""}`
+        | `${"/(tabs)"}/home${`?${string}` | `#${string}` | ""}`
+        | `/home${`?${string}` | `#${string}` | ""}`
+        | `/../components/context/AuthContext${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/auth/GoogleLoginButton${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/auth/NaverLoginButton${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/ui/TopBar${`?${string}` | `#${string}` | ""}`
+        | `/../components/ui/StyledText${`?${string}` | `#${string}` | ""}`
+        | `/../components/ui/Themed${`?${string}` | `#${string}` | ""}`
+        | `/../components/ui/EditScreenInfo${`?${string}` | `#${string}` | ""}`
+        | `/../components/ui/ExternalLink${`?${string}` | `#${string}` | ""}`
+        | `/../components/exhibition/HorizontalSliding${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/exhibition/RecommendForYou${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/hooks/useClientOnlyValue${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/hooks/useClientOnlyValue.web${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/hooks/useColorScheme${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/hooks/useColorScheme.web${
+            | `?${string}`
+            | `#${string}`
+            | ""}`
+        | `/../components/ui/index${`?${string}` | `#${string}` | ""}`
+        | `/../components/auth/index${`?${string}` | `#${string}` | ""}`
+        | `/../components/exhibition/index${`?${string}` | `#${string}` | ""}`
+        | `/../components/hooks/index${`?${string}` | `#${string}` | ""}`
+        | `/../components/context/index${`?${string}` | `#${string}` | ""}`
+        | `/../components/GoogleLoginButton${`?${string}` | `#${string}` | ""}`
+        | `/_sitemap${`?${string}` | `#${string}` | ""}`
+        | `${"/(tabs)"}/category${`?${string}` | `#${string}` | ""}`
+        | `/category${`?${string}` | `#${string}` | ""}`
+        | `${"/(tabs)"}${`?${string}` | `#${string}` | ""}`
+        | `/${`?${string}` | `#${string}` | ""}`
+        | `${"/(tabs)"}/search${`?${string}` | `#${string}` | ""}`
+        | `/search${`?${string}` | `#${string}` | ""}`
+        | `/onboarding/category${`?${string}` | `#${string}` | ""}`
+        | `/onboarding/interest${`?${string}` | `#${string}` | ""}`
+        | {
+            pathname: Router.RelativePathString;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: Router.ExternalPathString;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/`; params?: Router.UnknownInputParams }
+        | { pathname: `/modal`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `/../contexts/ThemeContext`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../services/userService`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/exhibition/liked`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `/exhibition/thumbs-up`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/exhibition/visited`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/mypage` | `/mypage`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `${"/(tabs)"}/home` | `/home`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/context/AuthContext`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/GoogleLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/NaverLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/TopBar`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/StyledText`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/Themed`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/EditScreenInfo`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/ExternalLink`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/HorizontalSliding`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/RecommendForYou`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useClientOnlyValue.web`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/useColorScheme.web`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/ui/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/auth/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/exhibition/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/hooks/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/context/index`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/../components/GoogleLoginButton`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `/_sitemap`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `${"/(tabs)"}/category` | `/category`;
+            params?: Router.UnknownInputParams;
+          }
+        | { pathname: `${"/(tabs)"}` | `/`; params?: Router.UnknownInputParams }
+        | {
+            pathname: `${"/(tabs)"}/search` | `/search`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/onboarding/category`;
+            params?: Router.UnknownInputParams;
+          }
+        | {
+            pathname: `/onboarding/interest`;
+            params?: Router.UnknownInputParams;
+          }
+        | `/+not-found${`?${string}` | `#${string}` | ""}`
+        | { pathname: `/+not-found`; params: Router.UnknownInputParams & {} };
     }
   }
 }
