@@ -66,19 +66,19 @@ const RecommendForYou = () => {
     const extendedLength = extendedRecommendations.length;
 
     if (currentIndex >= extendedLength - 2) {
-        if (flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index: 2,
-            animated: false,
-          });
-        }
+      if (flatListRef.current) {
+        flatListRef.current.scrollToIndex({
+          index: 2,
+          animated: false,
+        });
+      }
     } else if (currentIndex <= 1) {
-        if (flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index: originalLength + 1,
-            animated: false,
-          });
-        }
+      if (flatListRef.current) {
+        flatListRef.current.scrollToIndex({
+          index: originalLength + 1,
+          animated: false,
+        });
+      }
     }
   };
 
@@ -127,7 +127,7 @@ const RecommendForYou = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
+    height: 170,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: (width - width * 0.8) / 2 - 10,
   },
   itemContainer: {
-    width: width * 0.8,
+    width: width * 0.5,
     marginHorizontal: 10,
     backgroundColor: "#e0e0e0ff",
     borderRadius: 10,
