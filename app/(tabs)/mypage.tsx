@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import TopBar from "@/components/TopBar";
+import TopBar from "../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../contexts/ThemeContext";
-import { useAuth } from "../../components/AuthContext";
+import { useAuth } from "../../components/context/AuthContext";
 import { deleteAccount, clearLocalUserData } from "../../services/userService";
 
 export default function MyPageScreen() {
@@ -196,14 +196,15 @@ export default function MyPageScreen() {
         {renderSection(
           "전시 관리",
           <View>
-            {renderMenuItem("heart", "찜한 전시", "0개", () => {
-              // 찜한 전시 목록으로 이동
+            {renderMenuItem("heart", "찜한 전시", "3개", () => {
+              // 개수는 임시
+              router.push("/exhibition/liked");
             })}
-            {renderMenuItem("thumbs-up", "좋아요 전시", "0개", () => {
-              // 좋아요 전시 목록으로 이동
+            {renderMenuItem("thumbs-up", "좋아요 전시", "3개", () => {
+              router.push("/exhibition/thumbs-up");
             })}
-            {renderMenuItem("location", "방문한 전시", "0개", () => {
-              // 방문한 전시 목록으로 이동
+            {renderMenuItem("location", "방문한 전시", "3개", () => {
+              router.push("/exhibition/visited");
             })}
           </View>
         )}

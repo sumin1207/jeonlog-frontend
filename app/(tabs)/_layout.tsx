@@ -5,8 +5,8 @@ import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useColorScheme } from "@/components/hooks/useColorScheme";
+import { useClientOnlyValue } from "@/components/hooks/useClientOnlyValue";
 import { useTheme } from "../../contexts/ThemeContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/

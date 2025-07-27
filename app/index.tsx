@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { View, Text, SafeAreaView, Image, Button } from "react-native";
-import NaverLoginButton from "../components/NaverLoginButton";
-import GoogleLoginButton from "../components/GoogleLoginButton";
+import NaverLoginButton from "../components/auth/NaverLoginButton";
+import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 
 export default function LoginPage() {
   const router = useRouter();

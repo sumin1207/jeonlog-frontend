@@ -18,7 +18,7 @@ export default function TopBar({ title }: TopBarProps) {
       <View style={styles.logoContainer}>
         <Pressable onPress={handleLogoPress}>
           <Image
-            source={require("../assets/images/tobBar.png")}
+            source={require("../../assets/images/topBar.png")}
             style={styles.logoImage}
             resizeMode='contain'
           />
