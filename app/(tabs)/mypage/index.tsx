@@ -12,11 +12,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
-import { useAuth } from "../../../components/context/AuthContext";
-import {
-  deleteAccount,
-  clearLocalUserData,
-} from "../../../services/userService";
+import { clearLocalUserData } from "../../../services/userService";
+
+// 임시 인증 훅 (나중에 실제 구현으로 교체)
+const useAuth = () => ({
+  isLoggedIn: true,
+  setIsLoggedIn: () => {},
+  logout: () => {},
+  userInfo: { id: "1", accessToken: "temp" },
+});
+
+// 임시 회원탈퇴 함수 (나중에 실제 구현으로 교체)
+const deleteAccount = async (userId: string, accessToken?: string) => {
+  return { success: true, message: "회원탈퇴 완료" };
+};
 
 export default function MyPageScreen() {
   const router = useRouter();
