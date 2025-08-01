@@ -331,36 +331,6 @@ export default function SearchScreen() {
           />
         </View>
 
-        {/* 카테고리 필터 */}
-        <View style={styles.categoryContainer}>
-          <Text style={styles.categoryTitle}>카테고리</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}>
-            <View style={styles.categoryList}>
-              {categories.map((category) => (
-                <TouchableOpacity
-                  key={category}
-                  style={[
-                    styles.categoryButton,
-                    selectedCategory === category &&
-                      styles.categoryButtonActive,
-                  ]}
-                  onPress={() => handleCategoryChange(category)}>
-                  <Text
-                    style={[
-                      styles.categoryButtonText,
-                      selectedCategory === category &&
-                        styles.categoryButtonTextActive,
-                    ]}>
-                    {category}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-
         {/* 검색 결과 */}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>

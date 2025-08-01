@@ -26,7 +26,9 @@ export default function CategoryScreen() {
     <View style={styles.container}>
       <TopBar title='카테고리' />
       <View style={styles.content}>
-        <Text style={styles.text}>카테고리 화면</Text>
+        <Text style={styles.text}>
+          카테고리 화면 태그로 나누기 (ex: 조용한, 안정적인)
+        </Text>
       </View>
     </View>
   );

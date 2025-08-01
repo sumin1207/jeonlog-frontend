@@ -11,7 +11,6 @@ const extra = Constants.expoConfig?.extra as {
 
 const NAVER_CLIENT_ID = extra?.EXPO_NAVER_CLIENT_ID;
 const NAVER_CLIENT_SECRET = extra?.EXPO_NAVER_CLIENT_SECRET;
-console.log(NAVER_CLIENT_ID);
 
 WebBrowser.maybeCompleteAuthSession();
 
