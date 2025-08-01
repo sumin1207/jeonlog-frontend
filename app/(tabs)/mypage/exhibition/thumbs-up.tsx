@@ -1,53 +1,78 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-
-import TopBar from "../../../../components/ui/TopBar";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { useTheme } from "../../../../contexts/ThemeContext";
+import { useExhibition } from "../../../../contexts/ExhibitionContext";
+import TopBar from "../../../../components/ui/TopBar";
 
-// 임시 데이터
-const mockThumbsUpExhibitions = [
-  {
+// 전시 데이터 (나중에 API로 대체)
+const exhibitionData = {
+  "1": {
     id: "1",
-    title: "피카소 특별전",
-    location: "국립현대미술관",
-    date: "2024.02.10 - 2024.05.10",
-    likes: 1250,
-    image: "https://via.placeholder.com/100x100?text=피카소전",
+    title: "일본미술, 네 가지 시선",
+    location: "국립중앙박물관 상설전시관 3층 306호",
+    date: "2025.06.17 - 2025.08.10",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
-  {
+  "2": {
     id: "2",
-    title: "르네상스 미술전",
-    location: "국립중앙박물관",
-    date: "2024.01.25 - 2024.04.25",
-    likes: 890,
-    image: "https://via.placeholder.com/100x100?text=르네상스전",
-  },
-  {
-    id: "3",
-    title: "한국 현대미술전",
+    title: "모네 특별전",
     location: "서울시립미술관",
-    date: "2024.03.01 - 2024.06.01",
-    likes: 567,
-    image: "https://via.placeholder.com/100x100?text=한국현대전",
+    date: "2024.02.01 - 2024.04.30",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
-];
+  "3": {
+    id: "3",
+    title: "반 고흐 생애전",
+    location: "서울시립미술관",
+    date: "2024.03.01 - 2024.05.15",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+  },
+  "4": {
+    id: "4",
+    title: "현대미술 특별전",
+    location: "MMCA",
+    date: "2024.01.20 - 2024.05.20",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+  },
+  "5": {
+    id: "5",
+    title: "한국미술 100년",
+    location: "국립중앙박물관",
+    date: "2024.04.01 - 2024.06.30",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+  },
+};
 
-export default function ThumbsUpExhibitionsPage() {
+export default function ThumbsUpExhibitionsScreen() {
   const { theme } = useTheme();
+  const { thumbsUpExhibitions } = useExhibition();
+
+  // 좋아요한 전시회만 필터링
+  const thumbsUpExhibitionsData = thumbsUpExhibitions
+    .map((id) => exhibitionData[id as keyof typeof exhibitionData])
+    .filter(Boolean);
 
   const renderExhibitionItem = ({
     item,
   }: {
-    item: (typeof mockThumbsUpExhibitions)[0];
+    item: (typeof exhibitionData)[keyof typeof exhibitionData];
   }) => (
-    <View
+    <TouchableOpacity
       style={[
         styles.exhibitionItem,
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
       ]}>
-      <View style={styles.exhibitionImage}>
-        <Text style={styles.imagePlaceholder}>🖼️</Text>
-      </View>
+      <Image
+        source={item.image}
+        style={styles.exhibitionImage}
+      />
       <View style={styles.exhibitionInfo}>
         <Text
           style={[
@@ -70,17 +95,8 @@ export default function ThumbsUpExhibitionsPage() {
           ]}>
           📅 {item.date}
         </Text>
-        <View style={styles.likesContainer}>
-          <Text
-            style={[
-              styles.likesText,
-              { color: theme === "dark" ? "#ff6b6b" : "#ff6b6b" },
-            ]}>
-            👍 {item.likes.toLocaleString()}명이 좋아합니다
-          </Text>
-        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -96,15 +112,15 @@ export default function ThumbsUpExhibitionsPage() {
             styles.title,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
           ]}>
-          좋아요 전시 ({mockThumbsUpExhibitions.length}개)
+          좋아요 전시 ({thumbsUpExhibitionsData.length}개)
         </Text>
-        {mockThumbsUpExhibitions.length > 0 ? (
+        {thumbsUpExhibitionsData.length > 0 ? (
           <FlatList
-            data={mockThumbsUpExhibitions}
+            data={thumbsUpExhibitionsData}
             renderItem={renderExhibitionItem}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={{ paddingBottom: 20 }}
           />
         ) : (
           <View style={styles.emptyContainer}>
@@ -113,14 +129,7 @@ export default function ThumbsUpExhibitionsPage() {
                 styles.emptyText,
                 { color: theme === "dark" ? "#ccc" : "#666" },
               ]}>
-              아직 좋아요한 전시가 없습니다.
-            </Text>
-            <Text
-              style={[
-                styles.emptySubText,
-                { color: theme === "dark" ? "#999" : "#999" },
-              ]}>
-              마음에 드는 전시에 좋아요를 눌러보세요!
+              좋아요한 전시가 없습니다.
             </Text>
           </View>
         )}
@@ -139,12 +148,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 20,
-  },
-  listContainer: {
-    paddingBottom: 20,
+    marginBottom: 15,
   },
   exhibitionItem: {
     flexDirection: "row",
@@ -164,20 +170,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
     marginRight: 16,
-  },
-  imagePlaceholder: {
-    fontSize: 32,
   },
   exhibitionInfo: {
     flex: 1,
     justifyContent: "center",
   },
   exhibitionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -187,14 +187,6 @@ const styles = StyleSheet.create({
   },
   exhibitionDate: {
     fontSize: 14,
-    marginBottom: 4,
-  },
-  likesContainer: {
-    marginTop: 4,
-  },
-  likesText: {
-    fontSize: 12,
-    fontWeight: "500",
   },
   emptyContainer: {
     flex: 1,
@@ -202,11 +194,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  emptySubText: {
-    fontSize: 14,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

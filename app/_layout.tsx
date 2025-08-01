@@ -7,8 +7,9 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/hooks/useColorScheme";
-import { ThemeProvider } from "../contexts/ThemeContext";
-import { AuthProvider } from "../components/context/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ExhibitionProvider } from "@/contexts/ExhibitionContext";
+import { AuthProvider } from "@/components/context/AuthContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -47,7 +48,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <RootLayoutNav />
+        <ExhibitionProvider>
+          <RootLayoutNav />
+        </ExhibitionProvider>
       </ThemeProvider>
     </AuthProvider>
   );
@@ -73,6 +76,10 @@ function RootLayoutNav() {
       <Stack.Screen
         name='modal'
         options={{ presentation: "modal" }}
+      />
+      <Stack.Screen
+        name='exhibition/[id]'
+        options={{ headerShown: false }}
       />
     </Stack>
   );

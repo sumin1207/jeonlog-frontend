@@ -1,49 +1,78 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import TopBar from "../../../../components/ui/TopBar";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { useTheme } from "../../../../contexts/ThemeContext";
+import { useExhibition } from "../../../../contexts/ExhibitionContext";
+import TopBar from "../../../../components/ui/TopBar";
 
-// 임시 데이터
-const mockLikedExhibitions = [
-  {
+// 전시 데이터 (나중에 API로 대체)
+const exhibitionData = {
+  "1": {
     id: "1",
-    title: "모네 특별전",
-    location: "국립중앙박물관",
-    date: "2024.01.15 - 2024.03.15",
-    image: "https://via.placeholder.com/100x100?text=모네전",
+    title: "일본미술, 네 가지 시선",
+    location: "국립중앙박물관 상설전시관 3층 306호",
+    date: "2025.06.17 - 2025.08.10",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
-  {
+  "2": {
     id: "2",
-    title: "반 고흐 생애전",
+    title: "모네 특별전",
     location: "서울시립미술관",
     date: "2024.02.01 - 2024.04.30",
-    image: "https://via.placeholder.com/100x100?text=반고흐전",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
-  {
+  "3": {
     id: "3",
+    title: "반 고흐 생애전",
+    location: "서울시립미술관",
+    date: "2024.03.01 - 2024.05.15",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+  },
+  "4": {
+    id: "4",
     title: "현대미술 특별전",
     location: "MMCA",
     date: "2024.01.20 - 2024.05.20",
-    image: "https://via.placeholder.com/100x100?text=현대미술전",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
-];
+  "5": {
+    id: "5",
+    title: "한국미술 100년",
+    location: "국립중앙박물관",
+    date: "2024.04.01 - 2024.06.30",
+    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+  },
+};
 
-export default function LikedExhibitionsPage() {
+export default function LikedExhibitionsScreen() {
   const { theme } = useTheme();
+  const { likedExhibitions } = useExhibition();
+
+  // 찜한 전시회만 필터링
+  const likedExhibitionsData = likedExhibitions
+    .map((id) => exhibitionData[id as keyof typeof exhibitionData])
+    .filter(Boolean);
 
   const renderExhibitionItem = ({
     item,
   }: {
-    item: (typeof mockLikedExhibitions)[0];
+    item: (typeof exhibitionData)[keyof typeof exhibitionData];
   }) => (
-    <View
+    <TouchableOpacity
       style={[
         styles.exhibitionItem,
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
       ]}>
-      <View style={styles.exhibitionImage}>
-        <Text style={styles.imagePlaceholder}>🖼️</Text>
-      </View>
+      <Image
+        source={item.image}
+        style={styles.exhibitionImage}
+      />
       <View style={styles.exhibitionInfo}>
         <Text
           style={[
@@ -67,7 +96,7 @@ export default function LikedExhibitionsPage() {
           📅 {item.date}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -83,15 +112,15 @@ export default function LikedExhibitionsPage() {
             styles.title,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
           ]}>
-          찜한 전시 ({mockLikedExhibitions.length}개)
+          찜한 전시 ({likedExhibitionsData.length}개)
         </Text>
-        {mockLikedExhibitions.length > 0 ? (
+        {likedExhibitionsData.length > 0 ? (
           <FlatList
-            data={mockLikedExhibitions}
+            data={likedExhibitionsData}
             renderItem={renderExhibitionItem}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={{ paddingBottom: 20 }}
           />
         ) : (
           <View style={styles.emptyContainer}>
@@ -100,14 +129,7 @@ export default function LikedExhibitionsPage() {
                 styles.emptyText,
                 { color: theme === "dark" ? "#ccc" : "#666" },
               ]}>
-              아직 찜한 전시가 없습니다.
-            </Text>
-            <Text
-              style={[
-                styles.emptySubText,
-                { color: theme === "dark" ? "#999" : "#999" },
-              ]}>
-              관심 있는 전시를 찜해보세요!
+              찜한 전시가 없습니다.
             </Text>
           </View>
         )}
@@ -126,12 +148,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 20,
-  },
-  listContainer: {
-    paddingBottom: 20,
+    marginBottom: 15,
   },
   exhibitionItem: {
     flexDirection: "row",
@@ -151,20 +170,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
     marginRight: 16,
-  },
-  imagePlaceholder: {
-    fontSize: 32,
   },
   exhibitionInfo: {
     flex: 1,
     justifyContent: "center",
   },
   exhibitionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -181,11 +194,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  emptySubText: {
-    fontSize: 14,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

@@ -8,7 +8,9 @@ import {
   Dimensions,
   StyleSheet,
   Image,
+  TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 
 const { width } = Dimensions.get("window");
@@ -17,32 +19,28 @@ const { width } = Dimensions.get("window");
 const originalExhibitions = [
   {
     id: "1",
-    title: "전시회 1",
+    title: "일본미술, 네 가지 시선",
     image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "2",
-    title: "전시회 2",
-    imageUrl:
-      "https://via.placeholder.com/300x200/33FF57/FFFFFF?text=Exhibition+2",
+    title: "모네 특별전",
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "3",
-    title: "전시회 3",
-    imageUrl:
-      "https://via.placeholder.com/300x200/3357FF/FFFFFF?text=Exhibition+3",
+    title: "반 고흐 생애전",
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "4",
-    title: "전시회 4",
-    imageUrl:
-      "https://via.placeholder.com/300x200/F0FF33/FFFFFF?text=Exhibition+4",
+    title: "현대미술 특별전",
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "5",
-    title: "전시회 5",
-    imageUrl:
-      "https://via.placeholder.com/300x200/FF33F0/FFFFFF?text=Exhibition+5",
+    title: "한국미술 100년",
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
 ];
 
@@ -50,29 +48,32 @@ const HorizontalSliding = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const itemWidth = width * 0.8 + 20; // 아이템 너비 + 마진
+  const router = useRouter();
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      <View
+      <TouchableOpacity
+        onPress={() => router.push(`/exhibition/${item.id}` as any)}
         style={[
           styles.itemContainer,
           { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
         ]}>
         <Image
-          source={{ uri: item.imageUrl }}
+          source={item.image}
           style={styles.image}
         />
-        {/* <Text
-        style={[styles.title, { color: theme === "dark" ? "#fff" : "#1c3519" }]}
-      >
-        {item.title}
-      </Text> */}
-        <View style={styles.titleContainter}>
-          <Text style={styles.title}>{item.title}</Text>
+        <View style={styles.titleContainer}>
+          <Text
+            style={[
+              styles.title,
+              { color: theme === "dark" ? "#fff" : "#1c3519" },
+            ]}>
+            {item.title}
+          </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     ),
-    [theme]
+    [theme, router]
   );
 
   return (
@@ -104,10 +105,10 @@ const HorizontalSliding = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 200, // 캐러셀 전체 높이 조정 (700에서 500에서 200으로)
+    height: 250, // 포스터(200) + 제목 영역(50) = 250
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 5, // 상하 여백 줄임 (10에서 5로)
+    marginVertical: 5,
   },
   flatListContent: {
     //paddingHorizontal: width * 0.1, // 양쪽 여백
@@ -138,10 +139,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "black",
   },
-  titleContainter: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
+  titleContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     alignItems: "center",
+    justifyContent: "center",
   },
 });
 

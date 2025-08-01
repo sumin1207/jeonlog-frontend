@@ -7,36 +7,30 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../contexts/ThemeContext";
+import { useRouter } from "expo-router";
 
 // 임시 검색 데이터
 const mockExhibitions = [
   {
     id: "1",
-    title: "모네 특별전",
+    title: "일본미술, 네 가지 시선",
     location: "국립중앙박물관",
     date: "2024.01.15 - 2024.03.15",
     category: "전시",
-    image: "https://via.placeholder.com/100x100?text=모네전",
+    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "2",
-    title: "반 고흐 생애전",
+    title: "모네 특별전",
     location: "서울시립미술관",
     date: "2024.02.01 - 2024.04.30",
     category: "전시",
-    image: "https://via.placeholder.com/100x100?text=반고흐전",
-  },
-  {
-    id: "3",
-    title: "햄릿",
-    location: "예술의전당",
-    date: "2024.03.01 - 2024.05.15",
-    category: "연극",
-    image: "https://via.placeholder.com/100x100?text=햄릿",
+    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "4",
@@ -44,15 +38,7 @@ const mockExhibitions = [
     location: "MMCA",
     date: "2024.01.20 - 2024.05.20",
     category: "전시",
-    image: "https://via.placeholder.com/100x100?text=현대미술전",
-  },
-  {
-    id: "5",
-    title: "오페라 카르멘",
-    location: "세종문화회관",
-    date: "2024.04.01 - 2024.06.30",
-    category: "연극",
-    image: "https://via.placeholder.com/100x100?text=카르멘",
+    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
   },
 ];
 
@@ -60,6 +46,7 @@ export default function SearchScreen() {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState(mockExhibitions);
+  const router = useRouter();
 
   // 검색 및 필터링 함수
   const handleSearch = useCallback((query: string) => {
@@ -91,11 +78,14 @@ export default function SearchScreen() {
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
       ]}
       onPress={() => {
-        // 전시/연극 상세 페이지로 이동 (나중에 구현)
-        console.log("선택된 아이템:", item.title);
+        router.push(`/exhibition/${item.id}` as any);
       }}>
       <View style={styles.resultImage}>
-        <Text style={styles.imagePlaceholder}>🖼️</Text>
+        <Image
+          source={item.image}
+          style={styles.imagePlaceholder}
+          resizeMode='cover'
+        />
       </View>
       <View style={styles.resultInfo}>
         <View style={styles.resultHeader}>
@@ -110,8 +100,7 @@ export default function SearchScreen() {
             style={[
               styles.categoryTag,
               {
-                backgroundColor:
-                  item.category === "전시" ? "#4CAF50" : "#2196F3",
+                backgroundColor: "#4CAF50",
               },
             ]}>
             <Text style={styles.categoryText}>{item.category}</Text>
@@ -197,7 +186,9 @@ export default function SearchScreen() {
       marginRight: 16,
     },
     imagePlaceholder: {
-      fontSize: 32,
+      width: "100%",
+      height: "100%",
+      borderRadius: 8,
     },
     resultInfo: {
       flex: 1,
@@ -252,7 +243,7 @@ export default function SearchScreen() {
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
-            placeholder='전시나 연극을 검색해보세요'
+            placeholder='전시를 검색해보세요'
             placeholderTextColor={theme === "dark" ? "#999" : "#999"}
             value={searchQuery}
             onChangeText={handleSearch}

@@ -38,10 +38,6 @@ const mockVisitedExhibitions = [
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
 
-  const renderStars = (rating: number) => {
-    return "⭐".repeat(rating) + "☆".repeat(5 - rating);
-  };
-
   const renderExhibitionItem = ({
     item,
   }: {
@@ -77,15 +73,7 @@ export default function VisitedExhibitionsPage() {
           ]}>
           🗓️ 방문일: {item.visitDate}
         </Text>
-        <View style={styles.ratingContainer}>
-          <Text
-            style={[
-              styles.ratingText,
-              { color: theme === "dark" ? "#ffd700" : "#ffd700" },
-            ]}>
-            {renderStars(item.rating)}
-          </Text>
-        </View>
+
         {item.review && (
           <Text
             style={[

@@ -3,15 +3,17 @@ import {
   View,
   Text,
   StyleSheet,
+  TouchableOpacity,
+  Switch,
   ScrollView,
   Pressable,
   Alert,
-  Switch,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
+import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { clearLocalUserData } from "../../../services/userService";
 
 // 임시 인증 훅 (나중에 실제 구현으로 교체)
@@ -31,6 +33,8 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo } = useAuth();
+  const { likedExhibitions, thumbsUpExhibitions, visitedExhibitions } =
+    useExhibition();
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
   const userData = {
@@ -208,16 +212,30 @@ export default function MyPageScreen() {
         {renderSection(
           "전시 관리",
           <View>
-            {renderMenuItem("heart", "찜한 전시", "3개", () => {
-              // 개수는 임시
-              router.push("/(tabs)/mypage/exhibition/liked");
-            })}
-            {renderMenuItem("thumbs-up", "좋아요 전시", "3개", () => {
-              router.push("/(tabs)/mypage/exhibition/thumbs-up");
-            })}
-            {renderMenuItem("location", "방문한 전시", "3개", () => {
-              router.push("/(tabs)/mypage/exhibition/visited");
-            })}
+            {renderMenuItem(
+              "heart",
+              "찜한 전시",
+              `${likedExhibitions.length}개`,
+              () => {
+                router.push("/(tabs)/mypage/exhibition/liked");
+              }
+            )}
+            {renderMenuItem(
+              "thumbs-up",
+              "좋아요 전시",
+              `${thumbsUpExhibitions.length}개`,
+              () => {
+                router.push("/(tabs)/mypage/exhibition/thumbs-up");
+              }
+            )}
+            {renderMenuItem(
+              "location",
+              "방문한 전시",
+              `${visitedExhibitions.length}개`,
+              () => {
+                router.push("/(tabs)/mypage/exhibition/visited");
+              }
+            )}
           </View>
         )}
 
