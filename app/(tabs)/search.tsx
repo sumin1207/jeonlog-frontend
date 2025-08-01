@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 
 // 임시 검색 데이터
@@ -22,7 +22,7 @@ const mockExhibitions = [
     location: "국립중앙박물관",
     date: "2024.01.15 - 2024.03.15",
     category: "전시",
-    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "2",
@@ -30,7 +30,7 @@ const mockExhibitions = [
     location: "서울시립미술관",
     date: "2024.02.01 - 2024.04.30",
     category: "전시",
-    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "4",
@@ -38,7 +38,7 @@ const mockExhibitions = [
     location: "MMCA",
     date: "2024.01.20 - 2024.05.20",
     category: "전시",
-    image: require("../assets/images/exhibitionPoster/exhibition1.png"),
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
 ];
 
