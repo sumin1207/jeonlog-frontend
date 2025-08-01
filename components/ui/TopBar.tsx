@@ -15,7 +15,7 @@ export default function TopBar({ title }: TopBarProps) {
   };
 
   const handleSearchPress = () => {
-    router.push("/(tabs)/search");
+    router.replace("/search");
   };
 
   return (

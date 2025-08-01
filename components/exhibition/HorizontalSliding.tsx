@@ -18,8 +18,7 @@ const originalExhibitions = [
   {
     id: "1",
     title: "전시회 1",
-    imageUrl:
-      "https://via.placeholder.com/300x200/FF5733/FFFFFF?text=Exhibition+1",
+    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   {
     id: "2",
@@ -58,9 +57,11 @@ const HorizontalSliding = () => {
         style={[
           styles.itemContainer,
           { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
-        ]}
-      >
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        ]}>
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={styles.image}
+        />
         {/* <Text
         style={[styles.title, { color: theme === "dark" ? "#fff" : "#1c3519" }]}
       >
@@ -85,8 +86,8 @@ const HorizontalSliding = () => {
         //pagingEnabled =>아이템 단위로 제어할려고 일단 비활성화함
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment="center" //스크롤 멈출때 가운데 정렬
-        decelerationRate="normal" //넘기는 속도 fast=>normal로 수정함
+        snapToAlignment='center' //스크롤 멈출때 가운데 정렬
+        decelerationRate='normal' //넘기는 속도 fast=>normal로 수정함
         contentContainerStyle={styles.flatListContent}
         // onMomentumScrollEnd={handleScroll} // Removed
         getItemLayout={(data, index) => ({

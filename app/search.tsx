@@ -56,67 +56,28 @@ const mockExhibitions = [
   },
 ];
 
-const categories = ["전체", "전시", "연극", "뮤지컬", "무용"];
-
 export default function SearchScreen() {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("전체");
   const [searchResults, setSearchResults] = useState(mockExhibitions);
 
   // 검색 및 필터링 함수
-  const handleSearch = useCallback(
-    (query: string) => {
-      setSearchQuery(query);
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
 
-      let filtered = mockExhibitions;
+    let filtered = mockExhibitions;
 
-      // 카테고리 필터링
-      if (selectedCategory !== "전체") {
-        filtered = filtered.filter(
-          (item) => item.category === selectedCategory
-        );
-      }
+    // 검색어 필터링
+    if (query.trim()) {
+      filtered = filtered.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.location.toLowerCase().includes(query.toLowerCase())
+      );
+    }
 
-      // 검색어 필터링
-      if (query.trim()) {
-        filtered = filtered.filter(
-          (item) =>
-            item.title.toLowerCase().includes(query.toLowerCase()) ||
-            item.location.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-
-      setSearchResults(filtered);
-    },
-    [selectedCategory]
-  );
-
-  // 카테고리 변경 함수
-  const handleCategoryChange = useCallback(
-    (category: string) => {
-      setSelectedCategory(category);
-
-      let filtered = mockExhibitions;
-
-      // 카테고리 필터링
-      if (category !== "전체") {
-        filtered = filtered.filter((item) => item.category === category);
-      }
-
-      // 검색어 필터링
-      if (searchQuery.trim()) {
-        filtered = filtered.filter(
-          (item) =>
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.location.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
-
-      setSearchResults(filtered);
-    },
-    [searchQuery]
-  );
+    setSearchResults(filtered);
+  }, []);
 
   // 검색 결과 아이템 렌더링
   const renderSearchResult = ({
@@ -203,39 +164,6 @@ export default function SearchScreen() {
       shadowRadius: 3.84,
       elevation: 5,
     },
-    categoryContainer: {
-      marginBottom: 20,
-    },
-    categoryTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 10,
-    },
-    categoryList: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 10,
-    },
-    categoryButton: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: theme === "dark" ? "#444" : "#ddd",
-    },
-    categoryButtonActive: {
-      backgroundColor: "#1c3519",
-      borderColor: "#1c3519",
-    },
-    categoryButtonText: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-    categoryButtonTextActive: {
-      color: "#fff",
-      fontWeight: "600",
-    },
     resultsContainer: {
       flex: 1,
     },
@@ -318,7 +246,7 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title='검색' />
+      <TopBar />
       <View style={styles.content}>
         {/* 검색바 */}
         <View style={styles.searchContainer}>
@@ -347,9 +275,9 @@ export default function SearchScreen() {
           ) : (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>
-                {searchQuery.trim() || selectedCategory !== "전체"
+                {searchQuery.trim()
                   ? "검색 결과가 없습니다."
-                  : "검색어를 입력하거나 카테고리를 선택해보세요."}
+                  : "검색어를 입력해보세요."}
               </Text>
             </View>
           )}
