@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 interface TopBarProps {
   title?: string;
@@ -11,6 +12,10 @@ export default function TopBar({ title }: TopBarProps) {
 
   const handleLogoPress = () => {
     router.replace("/(tabs)/home");
+  };
+
+  const handleSearchPress = () => {
+    router.push("/(tabs)/search");
   };
 
   return (
@@ -24,13 +29,24 @@ export default function TopBar({ title }: TopBarProps) {
           />
         </Pressable>
       </View>
+      <View style={styles.rightContainer}>
+        <Pressable
+          style={styles.searchButton}
+          onPress={handleSearchPress}>
+          <Ionicons
+            name='search-outline'
+            size={24}
+            color='white'
+          />
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 100,
+    height: 80,
     backgroundColor: "#1c3519",
     flexDirection: "row",
     alignItems: "center",
@@ -40,11 +56,21 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: -50,
+    marginLeft: -30,
   },
   logoImage: {
-    width: 240,
-    height: 60,
+    width: 200,
+    height: 50,
+  },
+  rightContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginRight: 20,
   },
   title: {
     color: "white",
