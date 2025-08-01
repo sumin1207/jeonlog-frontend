@@ -64,13 +64,26 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name='search'
         options={{
           title: "검색",
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='search-outline'
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      /> */}
+      <Tabs.Screen
+        name='exhibitionLog'
+        options={{
+          title: "전시 기록",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name='images-outline'
               size={size}
               color={color}
             />
