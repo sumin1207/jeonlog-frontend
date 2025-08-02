@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-
 import TopBar from "../../../../components/ui/TopBar";
 import { useTheme } from "../../../../contexts/ThemeContext";
-
+import { useRouter } from "expo-router";
+import WriteRecordButton from "./WriteRecordButton";
 // 임시 데이터
 const mockVisitedExhibitions = [
   {
@@ -37,6 +37,7 @@ const mockVisitedExhibitions = [
 
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
+  const router = useRouter();
 
   const renderExhibitionItem = ({
     item,
@@ -84,6 +85,22 @@ export default function VisitedExhibitionsPage() {
           </Text>
         )}
       </View>
+      <WriteRecordButton 
+          title="기록하기" 
+          onPress={() =>
+            router.push({
+              pathname: "/exhibition/write-record",
+              params: { exhibitionId: item.id },
+            })
+          } 
+          buttonStyle={{ 
+            paddingVertical: 4, 
+            paddingHorizontal: 8, 
+            marginTop: 8,
+            alignSelf: 'flex-start'
+          }}
+          textStyle={{ fontSize: 12 }}
+        />
     </View>
   );
 
