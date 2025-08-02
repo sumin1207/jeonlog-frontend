@@ -46,16 +46,22 @@ export default function VisitedExhibitionsPage() {
     React.useCallback(() => {
       const loadAndUpdateReviews = async () => {
         try {
-          const savedRecordsJSON = await AsyncStorage.getItem('exhibition_records');
-          const savedRecords = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
+          const savedRecordsJSON = await AsyncStorage.getItem(
+            "exhibition_records"
+          );
+          const savedRecords = savedRecordsJSON
+            ? JSON.parse(savedRecordsJSON)
+            : {};
 
-          const updatedExhibitions = mockVisitedExhibitions.map(exhibition => {
-            const record = savedRecords[exhibition.id];
-            return {
-              ...exhibition,
-              review: record ? record.title : "아직 기록하지 않은 전시",
-            };
-          });
+          const updatedExhibitions = mockVisitedExhibitions.map(
+            (exhibition) => {
+              const record = savedRecords[exhibition.id];
+              return {
+                ...exhibition,
+                review: record ? record.title : "아직 기록하지 않은 전시",
+              };
+            }
+          );
 
           setExhibitions(updatedExhibitions);
         } catch (error) {
@@ -109,22 +115,22 @@ export default function VisitedExhibitionsPage() {
           </Text>
         )}
       </View>
-      <WriteRecordButton 
-          title="기록하기" 
-          onPress={() =>
-            router.push({
-              pathname: "/exhibition/write-record",
-              params: { exhibitionId: item.id },
-            })
-          } 
-          buttonStyle={{ 
-            paddingVertical: 6, 
-            paddingHorizontal: 6, 
-            marginTop: 8,
-            alignSelf: 'flex-start'
-          }}
-          textStyle={{ fontSize: 14 }}
-        />
+      <WriteRecordButton
+        title='기록하기'
+        onPress={() =>
+          router.push({
+            pathname: "/exhibition/write-record",
+            params: { exhibitionId: item.id },
+          })
+        }
+        buttonStyle={{
+          paddingVertical: 6,
+          paddingHorizontal: 6,
+          marginTop: 8,
+          alignSelf: "flex-start",
+        }}
+        textStyle={{ fontSize: 14 }}
+      />
     </View>
   );
 
