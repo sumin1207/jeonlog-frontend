@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
+import WriteRecordButton from "../../components/ui/WriteRecordButton";
 
 // 전시 데이터 (나중에 API로 대체)
 const exhibitionData = {
@@ -251,7 +252,24 @@ export default function ExhibitionDetailScreen() {
                     }
                   />
                 </TouchableOpacity>
-              </View>
+                </View>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>                                                       
+            <WriteRecordButton 
+              title="기록하기" 
+                onPress={() =>
+                router.push({
+                  pathname: "/exhibition/write-record",
+                  params: { exhibitionId: id },
+                })
+              } 
+              buttonStyle={{ 
+                paddingVertical: 8, 
+                paddingHorizontal: 16, 
+                marginTop: 10
+              }}
+              textStyle={{ fontSize: 14 }}
+            />
             </View>
             <View
               style={[
