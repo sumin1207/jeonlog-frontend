@@ -81,6 +81,7 @@ export default function TabLayout() {
         name='search'
         options={{
           title: "검색",
+          href: null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons
               name='search-outline'

@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
   searchButton: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
     marginRight: 20,
   },
   title: {
