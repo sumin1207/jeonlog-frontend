@@ -1,9 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import TopBar from "../../../../components/ui/TopBar";
 import { useTheme } from "../../../../contexts/ThemeContext";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import WriteRecordButton from "./WriteRecordButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 // 임시 데이터
 const mockVisitedExhibitions = [
   {
@@ -38,12 +40,34 @@ const mockVisitedExhibitions = [
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
   const router = useRouter();
+  const [exhibitions, setExhibitions] = useState(mockVisitedExhibitions);
 
-  const renderExhibitionItem = ({
-    item,
-  }: {
-    item: (typeof mockVisitedExhibitions)[0];
-  }) => (
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadAndUpdateReviews = async () => {
+        try {
+          const savedRecordsJSON = await AsyncStorage.getItem('exhibition_records');
+          const savedRecords = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
+
+          const updatedExhibitions = mockVisitedExhibitions.map(exhibition => {
+            const record = savedRecords[exhibition.id];
+            return {
+              ...exhibition,
+              review: record ? record.title : "아직 기록하지 않은 전시",
+            };
+          });
+
+          setExhibitions(updatedExhibitions);
+        } catch (error) {
+          Alert.alert("오류", "기록을 불러오는 중 문제가 발생했습니다.");
+        }
+      };
+
+      loadAndUpdateReviews();
+    }, [])
+  );
+
+  const renderExhibitionItem = ({ item }: { item: any }) => (
     <View
       style={[
         styles.exhibitionItem,
@@ -94,12 +118,12 @@ export default function VisitedExhibitionsPage() {
             })
           } 
           buttonStyle={{ 
-            paddingVertical: 4, 
-            paddingHorizontal: 8, 
+            paddingVertical: 6, 
+            paddingHorizontal: 6, 
             marginTop: 8,
             alignSelf: 'flex-start'
           }}
-          textStyle={{ fontSize: 12 }}
+          textStyle={{ fontSize: 14 }}
         />
     </View>
   );
@@ -111,17 +135,17 @@ export default function VisitedExhibitionsPage() {
         { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
       ]}>
       <TopBar title='방문한 전시' />
-      <View style={styles.content}>
+      <View style={styles.title}>
         <Text
           style={[
             styles.title,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
           ]}>
-          방문한 전시 ({mockVisitedExhibitions.length}개)
+          방문한 전시 ({exhibitions.length}개)
         </Text>
-        {mockVisitedExhibitions.length > 0 ? (
+        {exhibitions.length > 0 ? (
           <FlatList
-            data={mockVisitedExhibitions}
+            data={exhibitions}
             renderItem={renderExhibitionItem}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
