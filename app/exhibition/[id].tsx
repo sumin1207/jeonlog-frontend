@@ -13,7 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
-import WriteRecordButton from "../../components/ui/WriteRecordButton";
+import WriteRecordButton from "../mypage/exhibition/WriteRecordButton";
 
 // 전시 데이터 (나중에 API로 대체)
 const exhibitionData = {
