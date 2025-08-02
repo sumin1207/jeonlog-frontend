@@ -53,7 +53,7 @@ export default function InterestPage() {
             textAlign: "left",
             color: theme === "dark" ? "#fff" : "#1c3519",
           }}>
-          관심 있는 전시/연극을 선택해주세요
+          관심 있는 전시를 선택해주세요
         </Text>
         {/* 위쪽 두 개 */}
         <View
