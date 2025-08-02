@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
-
+import WriteRecordButton from "./mypage/exhibition/WriteRecordButton";
 // 임시 검색 데이터
 const mockExhibitions = [
   {
@@ -120,6 +120,22 @@ export default function SearchScreen() {
           ]}>
           📅 {item.date}
         </Text>
+        <WriteRecordButton 
+          title="기록하기" 
+          onPress={() =>
+            router.push({
+              pathname: "/exhibition/write-record",
+              params: { exhibitionId: item.id },
+            })
+          } 
+          buttonStyle={{ 
+            paddingVertical: 4, 
+            paddingHorizontal: 8, 
+            marginTop: 8,
+            alignSelf: 'flex-start'
+          }}
+          textStyle={{ fontSize: 12 }}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -197,7 +213,7 @@ export default function SearchScreen() {
     resultHeader: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
       marginBottom: 4,
     },
     resultTitle: {
