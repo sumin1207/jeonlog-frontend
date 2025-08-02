@@ -81,6 +81,10 @@ function RootLayoutNav() {
         name='exhibition/[id]'
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name='exhibition/write-record'
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

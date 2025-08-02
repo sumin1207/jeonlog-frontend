@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,10 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function WriteRecordScreen() {
+  
   const { theme } = useTheme();
   const router = useRouter();
   const { exhibitionId } = useLocalSearchParams();
@@ -20,18 +22,51 @@ export default function WriteRecordScreen() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const handleSave = () => {
+  useEffect(() => {
+    const loadRecord = async () => {
+      if (typeof exhibitionId === 'string') {
+        try {
+          const savedRecords = await AsyncStorage.getItem('exhibition_records');
+          if (savedRecords) {
+            const records = JSON.parse(savedRecords);
+            const record = records[exhibitionId];
+            if (record) {
+              setTitle(record.title);
+              setContent(record.content);
+            }
+          }
+        } catch (e) {
+          Alert.alert("오류", "기록을 불러오는 데 실패했습니다.");
+        }
+      }
+    };
+    loadRecord();
+  }, [exhibitionId]);
+
+  const handleSave = async () => {
     if (!title || !content) {
       Alert.alert("오류", "제목과 내용을 모두 입력해주세요.");
       return;
     }
-    // In a real app, you would save the data to a server or local storage.
-    console.log("Saving record for exhibition:", exhibitionId);
-    console.log("Title:", title);
-    console.log("Content:", content);
-    Alert.alert("저장 완료", "기록이 성공적으로 저장되었습니다.", [
-      { text: "OK", onPress: () => router.back() },
-    ]);
+
+    if (typeof exhibitionId !== 'string') {
+      Alert.alert("오류", "유효하지 않은 전시 ID입니다.");
+      return;
+    }
+
+    try {
+      const newRecord = { title, content };
+      const savedRecords = await AsyncStorage.getItem('exhibition_records');
+      const records = savedRecords ? JSON.parse(savedRecords) : {};
+      records[exhibitionId] = newRecord;
+      await AsyncStorage.setItem('exhibition_records', JSON.stringify(records));
+      
+      Alert.alert("저장 완료", "기록이 성공적으로 저장되었습니다.", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    } catch (e) {
+      Alert.alert("오류", "기록을 저장하는 데 실패했습니다.");
+    }
   };
 
   const isDark = theme === "dark";
