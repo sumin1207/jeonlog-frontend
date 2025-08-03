@@ -24,8 +24,8 @@ const originalExhibitions = [
   },
   {
     id: "2",
-    title: "모네 특별전",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+    title: "둠 삭스 전",
+    image: require("../../assets/images/exhibitionPoster/exhibition2.png"),
   },
   {
     id: "3",
