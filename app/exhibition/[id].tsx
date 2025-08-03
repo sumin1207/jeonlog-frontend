@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
+  Image,
   Linking,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
+import { ExhibitionDetailSkeleton } from "@/components/ui/Skeleton";
 import WriteRecordButton from "../(tabs)/mypage/exhibition/WriteRecordButton";
 
 // 전시 데이터 (나중에 API로 대체)
@@ -115,12 +115,25 @@ export default function ExhibitionDetailScreen() {
   const { theme } = useTheme();
   const router = useRouter();
   const { isLiked, isThumbsUp, toggleLiked, toggleThumbsUp } = useExhibition();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadExhibition = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      setLoading(false);
+    };
+    loadExhibition();
+  }, []);
 
   const exhibition = exhibitionData[id as keyof typeof exhibitionData];
 
+  if (loading) {
+    return <ExhibitionDetailSkeleton />;
+  }
+
   if (!exhibition) {
     return (
-      <SafeAreaView
+      <View
         style={[
           styles.container,
           { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
@@ -153,12 +166,12 @@ export default function ExhibitionDetailScreen() {
             전시 정보를 찾을 수 없습니다.
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
         { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
@@ -569,7 +582,7 @@ export default function ExhibitionDetailScreen() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

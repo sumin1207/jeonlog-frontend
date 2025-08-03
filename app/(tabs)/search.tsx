@@ -18,6 +18,7 @@ import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SearchResultSkeleton } from "@/components/ui/Skeleton";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -601,26 +602,7 @@ export default function SearchScreen() {
                 검색 결과 ({searchResults.length}개)
               </Text>
               {isLoading ? (
-                <View style={styles.loadingContainer}>
-                  <Animated.View
-                    style={{
-                      transform: [
-                        {
-                          rotate: searchIconRotation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ["0deg", "360deg"],
-                          }),
-                        },
-                      ],
-                    }}>
-                    <Ionicons
-                      name='search'
-                      size={40}
-                      color={theme === "dark" ? "#ccc" : "#666"}
-                    />
-                  </Animated.View>
-                  <Text style={styles.loadingText}>검색 중...</Text>
-                </View>
+                <SearchResultSkeleton />
               ) : searchResults.length > 0 ? (
                 <FlatList
                   data={searchResults}
