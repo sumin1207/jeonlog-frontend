@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -26,7 +27,7 @@ const mockExhibitions = [
     id: "1",
     title: "일본미술, 네 가지 시선",
     location: "국립중앙박물관",
-    date: "2024.01.15 - 2024.03.15",
+    date: "2025.06.17 - 2025.08.10",
     category: "전시",
     image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
   },
@@ -54,6 +55,8 @@ export default function SearchScreen() {
   const [searchResults, setSearchResults] = useState(mockExhibitions);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const router = useRouter();
 
   // 애니메이션 값들
@@ -61,6 +64,11 @@ export default function SearchScreen() {
   const searchContainerOpacity = useRef(new Animated.Value(0)).current;
   const resultsOpacity = useRef(new Animated.Value(0)).current;
   const searchIconRotation = useRef(new Animated.Value(0)).current;
+
+  // 검색 기록 로드
+  useEffect(() => {
+    loadSearchHistory();
+  }, []);
 
   // 컴포넌트 마운트 시 애니메이션
   useEffect(() => {
@@ -78,9 +86,64 @@ export default function SearchScreen() {
     ]).start();
   }, []);
 
+  // 검색 기록 로드 함수
+  const loadSearchHistory = async () => {
+    try {
+      const history = await AsyncStorage.getItem("search_history");
+      if (history) {
+        setSearchHistory(JSON.parse(history));
+      }
+    } catch (error) {
+      console.log("검색 기록 로드 실패:", error);
+    }
+  };
+
+  // 검색 기록 저장 함수
+  const saveSearchHistory = async (query: string) => {
+    try {
+      const trimmedQuery = query.trim();
+      if (!trimmedQuery) return;
+
+      const currentHistory = [...searchHistory];
+      // 중복 제거
+      const filteredHistory = currentHistory.filter(
+        (item) => item !== trimmedQuery
+      );
+      // 최신 검색어를 맨 앞에 추가
+      const newHistory = [trimmedQuery, ...filteredHistory].slice(0, 10); // 최대 10개만 저장
+
+      await AsyncStorage.setItem("search_history", JSON.stringify(newHistory));
+      setSearchHistory(newHistory);
+    } catch (error) {
+      console.log("검색 기록 저장 실패:", error);
+    }
+  };
+
+  // 검색 기록 삭제 함수
+  const deleteSearchHistory = async (queryToDelete: string) => {
+    try {
+      const newHistory = searchHistory.filter((item) => item !== queryToDelete);
+      await AsyncStorage.setItem("search_history", JSON.stringify(newHistory));
+      setSearchHistory(newHistory);
+    } catch (error) {
+      console.log("검색 기록 삭제 실패:", error);
+    }
+  };
+
+  // 검색 기록 전체 삭제 함수
+  const clearAllSearchHistory = async () => {
+    try {
+      await AsyncStorage.removeItem("search_history");
+      setSearchHistory([]);
+    } catch (error) {
+      console.log("검색 기록 전체 삭제 실패:", error);
+    }
+  };
+
   // 검색 입력 포커스 애니메이션
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
+    setShowHistory(true);
     Animated.parallel([
       Animated.timing(searchInputScale, {
         toValue: 1.02,
@@ -93,6 +156,8 @@ export default function SearchScreen() {
   // 검색 입력 블러 애니메이션
   const handleSearchBlur = () => {
     setIsSearchFocused(false);
+    // 약간의 지연 후 히스토리 숨기기
+    setTimeout(() => setShowHistory(false), 200);
     Animated.parallel([
       Animated.timing(searchInputScale, {
         toValue: 1,
@@ -111,6 +176,7 @@ export default function SearchScreen() {
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     setIsLoading(true);
+    setShowHistory(false);
 
     // 로딩 시뮬레이션
     setTimeout(() => {
@@ -129,6 +195,13 @@ export default function SearchScreen() {
       setIsLoading(false);
     }, 300);
   }, []);
+
+  // 검색 실행 함수
+  const executeSearch = (query: string) => {
+    setSearchQuery(query);
+    saveSearchHistory(query);
+    handleSearch(query);
+  };
 
   // 검색 결과 아이템 렌더링
   const renderSearchResult = ({
@@ -205,6 +278,41 @@ export default function SearchScreen() {
       </Animated.View>
     );
   };
+
+  // 검색 기록 아이템 렌더링
+  const renderHistoryItem = ({ item }: { item: string }) => (
+    <TouchableOpacity
+      style={[
+        styles.historyItem,
+        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
+      ]}
+      onPress={() => executeSearch(item)}
+      activeOpacity={0.7}>
+      <View style={styles.historyContent}>
+        <Ionicons
+          name='time-outline'
+          size={16}
+          color={theme === "dark" ? "#ccc" : "#666"}
+        />
+        <Text
+          style={[
+            styles.historyText,
+            { color: theme === "dark" ? "#fff" : "#1c3519" },
+          ]}>
+          {item}
+        </Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => deleteSearchHistory(item)}
+        activeOpacity={0.7}>
+        <Ionicons
+          name='close'
+          size={16}
+          color={theme === "dark" ? "#ccc" : "#666"}
+        />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -345,11 +453,44 @@ export default function SearchScreen() {
       color: theme === "dark" ? "#ccc" : "#666",
       marginTop: 10,
     },
+    historyItem: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 8,
+      marginBottom: 5,
+    },
+    historyContent: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    historyText: {
+      marginLeft: 8,
+      fontSize: 14,
+    },
+    historyContainer: {
+      marginTop: 20,
+      paddingHorizontal: 10,
+      paddingBottom: 10,
+    },
+    historyHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    historyTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+    },
   });
 
   const clearSearch = () => {
     setSearchQuery("");
     setSearchResults(mockExhibitions);
+    setShowHistory(true);
     Keyboard.dismiss();
   };
 
@@ -377,6 +518,11 @@ export default function SearchScreen() {
                 returnKeyType='search'
                 autoCapitalize='none'
                 autoCorrect={false}
+                onSubmitEditing={() => {
+                  if (searchQuery.trim()) {
+                    executeSearch(searchQuery);
+                  }
+                }}
               />
               {searchQuery.length > 0 ? (
                 <TouchableOpacity
@@ -414,57 +560,92 @@ export default function SearchScreen() {
             </Animated.View>
           </View>
 
+          {/* 검색 기록 */}
+          {showHistory && searchHistory.length > 0 && (
+            <View style={styles.historyContainer}>
+              <View style={styles.historyHeader}>
+                <Text
+                  style={[
+                    styles.historyTitle,
+                    { color: theme === "dark" ? "#fff" : "#1c3519" },
+                  ]}>
+                  최근 검색어
+                </Text>
+                <TouchableOpacity
+                  onPress={clearAllSearchHistory}
+                  activeOpacity={0.7}>
+                  <Text
+                    style={{
+                      color: theme === "dark" ? "#ccc" : "#666",
+                      fontSize: 12,
+                    }}>
+                    전체 삭제
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                data={searchHistory}
+                renderItem={renderHistoryItem}
+                keyExtractor={(item) => item}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 10 }}
+              />
+            </View>
+          )}
+
           {/* 검색 결과 */}
-          <Animated.View
-            style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-            <Text style={styles.resultsTitle}>
-              검색 결과 ({searchResults.length}개)
-            </Text>
-            {isLoading ? (
-              <View style={styles.loadingContainer}>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate: searchIconRotation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ["0deg", "360deg"],
-                        }),
-                      },
-                    ],
-                  }}>
+          {!showHistory && (
+            <Animated.View
+              style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
+              <Text style={styles.resultsTitle}>
+                검색 결과 ({searchResults.length}개)
+              </Text>
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <Animated.View
+                    style={{
+                      transform: [
+                        {
+                          rotate: searchIconRotation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ["0deg", "360deg"],
+                          }),
+                        },
+                      ],
+                    }}>
+                    <Ionicons
+                      name='search'
+                      size={40}
+                      color={theme === "dark" ? "#ccc" : "#666"}
+                    />
+                  </Animated.View>
+                  <Text style={styles.loadingText}>검색 중...</Text>
+                </View>
+              ) : searchResults.length > 0 ? (
+                <FlatList
+                  data={searchResults}
+                  renderItem={renderSearchResult}
+                  keyExtractor={(item) => item.id}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingBottom: 20 }}
+                  keyboardShouldPersistTaps='handled'
+                />
+              ) : (
+                <View style={styles.emptyContainer}>
                   <Ionicons
-                    name='search'
-                    size={40}
+                    name='search-outline'
+                    size={60}
                     color={theme === "dark" ? "#ccc" : "#666"}
                   />
-                </Animated.View>
-                <Text style={styles.loadingText}>검색 중...</Text>
-              </View>
-            ) : searchResults.length > 0 ? (
-              <FlatList
-                data={searchResults}
-                renderItem={renderSearchResult}
-                keyExtractor={(item) => item.id}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 20 }}
-                keyboardShouldPersistTaps='handled'
-              />
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Ionicons
-                  name='search-outline'
-                  size={60}
-                  color={theme === "dark" ? "#ccc" : "#666"}
-                />
-                <Text style={styles.emptyText}>
-                  {searchQuery.trim()
-                    ? "검색 결과가 없습니다."
-                    : "검색어를 입력해보세요."}
-                </Text>
-              </View>
-            )}
-          </Animated.View>
+                  <Text style={styles.emptyText}>
+                    {searchQuery.trim()
+                      ? "검색 결과가 없습니다."
+                      : "검색어를 입력해보세요."}
+                  </Text>
+                </View>
+              )}
+            </Animated.View>
+          )}
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
