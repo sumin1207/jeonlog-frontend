@@ -8,17 +8,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 임시 데이터
 const mockVisitedExhibitions = [
+  
   {
-    id: "1",
-    title: "클림트 특별전",
-    location: "국립중앙박물관",
-    visitDate: "2024.01.15",
-    rating: 5,
-    review: "정말 아름다운 작품들이었어요!",
-    image: "https://via.placeholder.com/100x100?text=클림트전",
-  },
-  {
-    id: "2",
+    id: "4",
     title: "현대미술 특별전",
     location: "MMCA",
     visitDate: "2024.02.20",
@@ -27,13 +19,22 @@ const mockVisitedExhibitions = [
     image: "https://via.placeholder.com/100x100?text=현대미술전",
   },
   {
-    id: "3",
-    title: "한국 전통미술전",
+    id: "5",
+    title: "한국미술 100년",
     location: "국립민속박물관",
     visitDate: "2024.03.05",
     rating: 5,
-    review: "우리 전통의 아름다움을 다시 한번 느꼈어요.",
-    image: "https://via.placeholder.com/100x100?text=전통미술전",
+    review: "한국 미술의 아름다움을 다시 한번 느꼈어요.",
+    image: "../../assets/images/exhibitionPoster/exhibition1.png",
+  },
+  {
+    id: "6",
+    title: "클림트 특별전",
+    location: "국립중앙박물관",
+    visitDate: "2024.01.15",
+    rating: 5,
+    review: "정말 아름다운 작품들이었어요!",
+    image: "https://via.placeholder.com/100x100?text=클림트전",
   },
 ];
 
