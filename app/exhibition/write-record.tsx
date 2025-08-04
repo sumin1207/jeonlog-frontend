@@ -108,8 +108,13 @@ export default function WriteRecordScreen() {
         await AsyncStorage.setItem("visited_exhibition_ids", JSON.stringify(visitedIds));
       }
 
-      Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
-        { text: "OK", onPress: () => router.push("/(tabs)/mypage/exhibition/visited") },
+                  Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
+        {
+          text: "OK",
+          onPress: () => {
+            router.replace("/(tabs)/mypage/exhibition/visited");
+          },
+        },
       ]);
     } catch (e) {
       Alert.alert("오류", "기록을 저장하는 데 실패했습니다.");
