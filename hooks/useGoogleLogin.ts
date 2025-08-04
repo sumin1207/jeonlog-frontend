@@ -35,8 +35,6 @@ const useGoogleLogin = () => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      const { code } = response.params;
-      console.log("✅ 구글 인증 코드:", code);
     }
   }, [response]);
 

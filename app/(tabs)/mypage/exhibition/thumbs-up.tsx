@@ -22,9 +22,9 @@ const exhibitionData = {
   },
   "2": {
     id: "2",
-    title: "모네 특별전",
-    location: "서울시립미술관",
-    date: "2024.02.01 - 2024.04.30",
+    title: "톰 삭스 전",
+    location: "DDP 뮤지엄 전시 1관",
+    date: "2025.04.25 - 2025.09.07",
     image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
   },
   "3": {

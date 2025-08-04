@@ -35,10 +35,6 @@ const useNaverLogin = () => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      const { code, state } = response.params;
-      console.log("✅ 네이버 인증 코드:", code);
-      console.log("✅ 네이버 state:", state);
-
       // 이후 처리:
       // 1. code 를 백엔드로 전송하여 access_token 및 사용자 정보 가져오기
       // 2. Firebase Custom Token으로 로그인 연동
