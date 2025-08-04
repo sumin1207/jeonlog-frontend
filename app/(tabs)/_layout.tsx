@@ -1,6 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
+import { Link, Tabs, useRouter } from "expo-router";
+import { CommonActions } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -25,6 +26,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const { theme } = useTheme();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -50,6 +52,17 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'home' }],
+              })
+            );
+          },
+        })}
       />
       <Tabs.Screen
         name='category'
@@ -63,6 +76,17 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'category' }],
+              })
+            );
+          },
+        })}
       />
       <Tabs.Screen
         name='exhibitionLog'
@@ -76,6 +100,17 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'exhibitionLog' }],
+              })
+            );
+          },
+        })}
       />
       <Tabs.Screen
         name='search'
@@ -90,6 +125,17 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'search' }],
+              })
+            );
+          },
+        })}
       />
       <Tabs.Screen
         name='mypage'
@@ -103,6 +149,17 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'mypage' }],
+              })
+            );
+          },
+        })}
       />
     </Tabs>
   );
