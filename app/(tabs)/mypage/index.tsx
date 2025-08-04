@@ -204,7 +204,7 @@ export default function MyPageScreen() {
                     color='#1c3519'
                   />
                   <Text style={styles.loginTypeText}>
-                    {userData.loginType === "google" ? "Google" : "Naver"} " "
+                    {userData.loginType === "google" ? "Google" : "Naver"}
                     로그인
                   </Text>
                 </View>
