@@ -17,38 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// --- Mock Data ---
-const mockExhibitionData: {
-  [key: string]: { title: string; date: string; image: any };
-} = {
-  "1": {
-    title: "일본미술, 네 가지 시선",
-    date: "2025.06.17 - 2025.08.10",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "2": {
-    title: "톰 삭스 전",
-    date: "2025.04.25 - 2025.09.07",
-    image: require("../../assets/images/exhibitionPoster/exhibition2.png"),
-  },
-  "3": {
-    title: "반 고흐 생애전",
-    date: "2024.03.01 - 2024.05.15",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "4": {
-    title: "현대미술 특별전",
-    date: "2024.01.20 - 2024.05.20",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "5": {
-    title: "한국미술 100년",
-    date: "2024.04.01 - 2024.06.30",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-};
-// --- End Mock Data ---
+import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 
 type Visibility = "공개" | "팔로워만 공개" | "비공개";
 
@@ -67,6 +36,7 @@ export default function WriteRecordScreen() {
   const params = useLocalSearchParams();
   const exhibitionId = getExhibitionId(params.exhibitionId);
 
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [exhibition, setExhibition] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -84,15 +54,14 @@ export default function WriteRecordScreen() {
 
       setLoading(true);
       setError(null);
-      setTimeout(() => {
-        const data = mockExhibitionData[exhibitionId];
-        if (data) {
-          setExhibition(data);
-        } else {
-          setError("전시 정보를 찾을 수 없습니다.");
-        }
-        setLoading(false);
-      }, 500);
+      
+      const data = exhibitionData[exhibitionId as keyof typeof exhibitionData];
+      if (data) {
+        setExhibition(data);
+      } else {
+        setError("전시 정보를 찾을 수 없습니다.");
+      }
+      setLoading(false);
 
       try {
         const savedRecords = await AsyncStorage.getItem("exhibition_records");
@@ -100,7 +69,8 @@ export default function WriteRecordScreen() {
           const records = JSON.parse(savedRecords);
           const record = records[exhibitionId];
           if (record) {
-            setContent(record.content);
+            setTitle(record.title || "");
+            setContent(record.content || "");
             setVisibility(record.visibility || "공개");
           }
         }
@@ -113,8 +83,10 @@ export default function WriteRecordScreen() {
   }, [exhibitionId]);
 
   const handleSave = async () => {
-    if (!content) {
-      Alert.alert("오류", "내용을 입력해주세요.");
+    setMenuVisible(false); // Close menu before showing alert
+
+    if (!title || !content) {
+      Alert.alert("오류", "제목과 내용을 모두 입력해주세요.");
       return;
     }
     if (!exhibitionId) {
@@ -123,17 +95,21 @@ export default function WriteRecordScreen() {
     }
 
     try {
-      const newRecord = { content, visibility };
-      const savedRecords = await AsyncStorage.getItem("exhibition_records");
-      const records = savedRecords ? JSON.parse(savedRecords) : {};
+      const newRecord = { title, content, visibility };
+      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
+      const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
       records[exhibitionId] = newRecord;
-      await AsyncStorage.setItem(
-        "exhibition_records",
-        JSON.stringify(records)
-      );
+      await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
 
-      Alert.alert("저장 완료", "기록이 성공적으로 저장되었습니다.", [
-        { text: "OK", onPress: () => router.back() },
+      const visitedIdsJSON = await AsyncStorage.getItem("visited_exhibition_ids");
+      const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
+      if (!visitedIds.includes(exhibitionId)) {
+        visitedIds.push(exhibitionId);
+        await AsyncStorage.setItem("visited_exhibition_ids", JSON.stringify(visitedIds));
+      }
+
+      Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
+        { text: "OK", onPress: () => router.push("/(tabs)/mypage/exhibition/visited") },
       ]);
     } catch (e) {
       Alert.alert("오류", "기록을 저장하는 데 실패했습니다.");
@@ -184,111 +160,122 @@ export default function WriteRecordScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-        >
-          <View style={[styles.header, { borderBottomColor: borderColor }]}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={[styles.headerButton, { color: textColor }]}>취소</Text>
-            </TouchableOpacity>
-            <View style={styles.headerCenter}>
-              <TouchableOpacity
-                style={styles.visibilityButton}
-                onPress={() => setMenuVisible((prev) => !prev)}
-              >
-                <Text style={[styles.visibilityText, { color: textColor }]}>
-                  {visibility}
-                </Text>
-                <Ionicons
-                  name={isMenuVisible ? "chevron-up" : "chevron-down"}
-                  size={16}
-                  color={textColor}
-                />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+          <View style={{ flex: 1 }}>
+            <View style={[styles.header, { borderBottomColor: borderColor }]}>
+              <TouchableOpacity onPress={() => router.back()}>
+                <Text style={[styles.headerButton, { color: textColor }]}>취소</Text>
+              </TouchableOpacity>
+              <View style={styles.headerCenter}>
+                <TouchableOpacity
+                  style={styles.visibilityButton}
+                  onPress={() => setMenuVisible((prev) => !prev)}
+                >
+                  <Text style={[styles.visibilityText, { color: textColor }]}>
+                    {visibility}
+                  </Text>
+                  <Ionicons
+                    name={isMenuVisible ? "chevron-up" : "chevron-down"}
+                    size={16}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={handleSave}>
+                <Text style={[styles.headerButton, styles.registerButton]}>등록</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleSave}>
-              <Text style={[styles.headerButton, styles.registerButton]}>등록</Text>
-            </TouchableOpacity>
-          </View>
 
-          {isMenuVisible && (
-            <View style={[styles.menuContainer, { backgroundColor: menuBackgroundColor, borderColor: menuBorderColor }]}>
-              {(["공개", "팔로워만 공개", "비공개"] as Visibility[]).map((option, index) => (
-                <React.Fragment key={option}>
-                  <TouchableOpacity
-                    style={[
-                      styles.menuItem,
-                      visibility === option && { backgroundColor: selectedItemColor }
-                    ]}
-                    onPress={() => handleVisibilityChange(option)}
-                  >
-                    <Text style={[
-                      styles.menuItemText,
-                      { color: visibility === option ? '#FFFFFF' : textColor }
-                    ]}
+            {isMenuVisible && (
+              <View style={[styles.menuContainer, { backgroundColor: menuBackgroundColor, borderColor: menuBorderColor }]}>
+                {(["공개", "팔로워만 공개", "비공개"] as Visibility[]).map((option, index) => (
+                  <React.Fragment key={option}>
+                    <TouchableOpacity
+                      style={[
+                        styles.menuItem,
+                        visibility === option && { backgroundColor: selectedItemColor },
+                      ]}
+                      onPress={() => handleVisibilityChange(option)}
                     >
-                      {option}
-                    </Text>
-                  </TouchableOpacity>
-                  {index < 2 && (
-                    <View style={[styles.separator, { backgroundColor: menuBorderColor }]} />
-                  )}
-                </React.Fragment>
-              ))}
+                      <Text style={[
+                        styles.menuItemText,
+                        { color: visibility === option ? '#FFFFFF' : textColor },
+                      ]}>
+                        {option}
+                      </Text>
+                    </TouchableOpacity>
+                    {index < 2 && (
+                      <View style={[styles.separator, { backgroundColor: menuBorderColor }]} />
+                    )}
+                  </React.Fragment>
+                ))}
+              </View>
+            )}
+
+            <View
+              style={[styles.exhibitionContainer, { borderBottomColor: borderColor }]}
+            >
+              {renderExhibitionInfo()}
             </View>
-          )}
 
-          <View
-            style={[ styles.exhibitionContainer, { borderBottomColor: borderColor }, ]}
-          >
-            {renderExhibitionInfo()}
-          </View>
+            <View style={[styles.titleInputContainer, { borderBottomColor: borderColor }]}>
+              <TextInput
+                style={[styles.titleInput, { color: textColor }]}
+                placeholder="제목을 입력하세요"
+                placeholderTextColor={placeholderTextColor}
+                value={title}
+                onChangeText={setTitle}
+              />
+            </View>
 
-          <View style={styles.contentContainer}>
-            <TextInput
-              style={[styles.contentInput, { color: textColor }]}
-              placeholder="전시는 어땠나요?"
-              placeholderTextColor={placeholderTextColor}
-              value={content}
-              onChangeText={setContent}
-              multiline
-            />
-          </View>
+            <View style={styles.contentContainer}>
+              <TextInput
+                style={[styles.contentInput, { color: textColor }]}
+                placeholder="전시는 어땠나요?"
+                placeholderTextColor={placeholderTextColor}
+                value={content}
+                onChangeText={setContent}
+                multiline
+              />
+            </View>
 
-          <View style={[styles.toolbar, { borderTopColor: borderColor }]}>
-            <View style={styles.toolbarActions}>
-              <TouchableOpacity style={styles.toolbarIcon}>
-                <Ionicons name="camera-outline" size={28} color={textColor} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.toolbarIcon}>
-                <Ionicons name="text" size={28} color={textColor} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.toolbarIcon}>
-                <MaterialCommunityIcons
-                  name="format-align-left"
-                  size={28}
-                  color={textColor}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.toolbarIcon}>
-                <Ionicons name="happy-outline" size={28} color={textColor} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.toolbarIcon}>
-                <Ionicons
-                  name="ellipsis-horizontal-circle-outline"
-                  size={28}
-                  color={textColor}
-                />
+            <View style={[styles.toolbar, { borderTopColor: borderColor }]}>
+              <View style={styles.toolbarActions}>
+                <TouchableOpacity style={styles.toolbarIcon}>
+                  <Ionicons name="camera-outline" size={28} color={textColor} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarIcon}>
+                  <Ionicons name="text" size={28} color={textColor} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarIcon}>
+                  <MaterialCommunityIcons
+                    name="format-align-left"
+                    size={28}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarIcon}>
+                  <Ionicons name="happy-outline" size={28} color={textColor} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.toolbarIcon}>
+                  <Ionicons
+                    name="ellipsis-horizontal-circle-outline"
+                    size={28}
+                    color={textColor}
+                  />
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity>
+                <Text style={[styles.saveText, { color: textColor }]}>저장</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text style={[styles.saveText, { color: textColor }]}>저장</Text>
-            </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -332,7 +319,7 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     position: 'absolute',
-    top: 55, // Adjust this value to position the menu correctly below the header
+    top: 55, 
     alignSelf: 'center',
     width: 150,
     borderRadius: 8,
@@ -390,6 +377,16 @@ const styles = StyleSheet.create({
   exhibitionDate: {
     fontSize: 12,
     color: "gray",
+  },
+  titleInputContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    borderBottomWidth: 1,
+  },
+  titleInput: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingVertical: 12,
   },
   contentContainer: {
     flex: 1,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { clearLocalUserData } from "../../../services/userService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 임시 인증 훅 (나중에 실제 구현으로 교체)
 const useAuth = () => ({
@@ -33,8 +34,8 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo } = useAuth();
-  const { likedExhibitions, thumbsUpExhibitions, visitedExhibitions } =
-    useExhibition();
+  const { likedExhibitions, thumbsUpExhibitions } = useExhibition();
+  const [visitedCount, setVisitedCount] = useState(0);
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
   const userData = {
@@ -42,6 +43,24 @@ export default function MyPageScreen() {
     loginType: "google", // "google" 또는 "naver"
     email: "hong@example.com",
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadVisitedCount = async () => {
+        try {
+          const visitedIdsJSON = await AsyncStorage.getItem(
+            "visited_exhibition_ids"
+          );
+          const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
+          setVisitedCount(visitedIds.length);
+        } catch (error) {
+          console.error("Failed to load visited exhibitions count:", error);
+        }
+      };
+
+      loadVisitedCount();
+    }, [])
+  );
 
   const handleLogout = () => {
     Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
@@ -68,10 +87,6 @@ export default function MyPageScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              // 로딩 상태 표시 (선택사항)
-              // setIsLoading(true);
-
-              // 서버에 회원 탈퇴 요청
               if (userInfo?.id) {
                 const response = await deleteAccount(
                   userInfo.id,
@@ -79,13 +94,8 @@ export default function MyPageScreen() {
                 );
 
                 if (response.success) {
-                  // 로컬 데이터 삭제
                   clearLocalUserData();
-
-                  // AuthContext에서 로그아웃
                   logout();
-
-                  // 성공 메시지 표시
                   Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
                     {
                       text: "확인",
@@ -93,7 +103,6 @@ export default function MyPageScreen() {
                     },
                   ]);
                 } else {
-                  // 서버 에러 처리
                   Alert.alert(
                     "회원탈퇴 실패",
                     response.message || "회원탈퇴 중 오류가 발생했습니다.",
@@ -101,7 +110,6 @@ export default function MyPageScreen() {
                   );
                 }
               } else {
-                // 사용자 정보가 없는 경우 (개발용)
                 clearLocalUserData();
                 logout();
                 Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
@@ -116,9 +124,6 @@ export default function MyPageScreen() {
               Alert.alert("회원탈퇴 실패", "회원탈퇴 중 오류가 발생했습니다.", [
                 { text: "확인" },
               ]);
-            } finally {
-              // 로딩 상태 해제 (선택사항)
-              // setIsLoading(false);
             }
           },
         },
@@ -199,7 +204,7 @@ export default function MyPageScreen() {
                     color='#1c3519'
                   />
                   <Text style={styles.loginTypeText}>
-                    {userData.loginType === "google" ? "Google" : "Naver"}{" "}
+                    {userData.loginType === "google" ? "Google" : "Naver"} " "
                     로그인
                   </Text>
                 </View>
@@ -231,7 +236,7 @@ export default function MyPageScreen() {
             {renderMenuItem(
               "location",
               "방문한 전시",
-              `${visitedExhibitions.length}개`,
+              `${visitedCount}개`,
               () => {
                 router.push("/(tabs)/mypage/exhibition/visited");
               }

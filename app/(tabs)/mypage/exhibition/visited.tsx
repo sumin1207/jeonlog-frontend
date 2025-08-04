@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Alert,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import TopBar from "../../../../components/ui/TopBar";
 import { useTheme } from "../../../../contexts/ThemeContext";
 import { useRouter, useFocusEffect } from "expo-router";
-import WriteRecordButton from "./WriteRecordButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// 임시 데이터
-const mockVisitedExhibitions = [
-  
-  {
-    id: "4",
-    title: "현대미술 특별전",
-    location: "MMCA",
-    visitDate: "2024.02.20",
-    rating: 4,
-    review: "흥미로운 작품들이 많았습니다.",
-    image: "https://via.placeholder.com/100x100?text=현대미술전",
-  },
-  {
-    id: "5",
-    title: "한국미술 100년",
-    location: "국립민속박물관",
-    visitDate: "2024.03.05",
-    rating: 5,
-    review: "한국 미술의 아름다움을 다시 한번 느꼈어요.",
-    image: "../../assets/images/exhibitionPoster/exhibition1.png",
-  },
-  {
-    id: "6",
-    title: "클림트 특별전",
-    location: "국립중앙박물관",
-    visitDate: "2024.01.15",
-    rating: 5,
-    review: "정말 아름다운 작품들이었어요!",
-    image: "https://via.placeholder.com/100x100?text=클림트전",
-  },
-];
+import { exhibitionData } from "../../../../data/exhibitionsDataStorage";
+import WriteRecordButton from "./WriteRecordButton";
 
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
   const router = useRouter();
-  const [exhibitions, setExhibitions] = useState(mockVisitedExhibitions);
+  const [visitedExhibitions, setVisitedExhibitions] = useState<any[]>([]);
 
   useFocusEffect(
     React.useCallback(() => {
-      const loadAndUpdateReviews = async () => {
+      const loadVisitedExhibitions = async () => {
         try {
+          const visitedIdsJSON = await AsyncStorage.getItem(
+            "visited_exhibition_ids"
+          );
+          const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
+
           const savedRecordsJSON = await AsyncStorage.getItem(
             "exhibition_records"
           );
@@ -54,70 +36,66 @@ export default function VisitedExhibitionsPage() {
             ? JSON.parse(savedRecordsJSON)
             : {};
 
-          const updatedExhibitions = mockVisitedExhibitions.map(
-            (exhibition) => {
-              const record = savedRecords[exhibition.id];
+          const exhibitions = visitedIds
+            .map((id: string) => {
+              const exhibition = exhibitionData[id as keyof typeof exhibitionData];
+              if (!exhibition) return null;
+
+              const record = savedRecords[id];
               return {
                 ...exhibition,
                 review: record ? record.title : "아직 기록하지 않은 전시",
               };
-            }
-          );
+            })
+            .filter(Boolean);
 
-          setExhibitions(updatedExhibitions);
+          setVisitedExhibitions(exhibitions.reverse()); // Show most recent first
         } catch (error) {
-          Alert.alert("오류", "기록을 불러오는 중 문제가 발생했습니다.");
+          Alert.alert("오류", "방문 기록을 불러오는 중 문제가 발생했습니다.");
         }
       };
 
-      loadAndUpdateReviews();
+      loadVisitedExhibitions();
     }, [])
   );
 
   const renderExhibitionItem = ({ item }: { item: any }) => (
-    <View
+    <TouchableOpacity
       style={[
         styles.exhibitionItem,
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
-      ]}>
-      <View style={styles.exhibitionImage}>
-        <Text style={styles.imagePlaceholder}>🖼️</Text>
-      </View>
+      ]}
+      onPress={() => router.push(`/exhibition/${item.id}`)}
+    >
+      <Image source={item.image} style={styles.exhibitionImage} />
       <View style={styles.exhibitionInfo}>
         <Text
           style={[
             styles.exhibitionTitle,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
+          ]}
+        >
           {item.title}
         </Text>
         <Text
           style={[
             styles.exhibitionLocation,
             { color: theme === "dark" ? "#ccc" : "#666" },
-          ]}>
+          ]}
+        >
           📍 {item.location}
         </Text>
         <Text
           style={[
-            styles.visitDate,
+            styles.reviewText,
             { color: theme === "dark" ? "#ccc" : "#666" },
-          ]}>
-          🗓️ 방문일: {item.visitDate}
+          ]}
+        >
+          💬 "{item.review}"
         </Text>
-
-        {item.review && (
-          <Text
-            style={[
-              styles.reviewText,
-              { color: theme === "dark" ? "#ccc" : "#666" },
-            ]}>
-            💬 "{item.review}"
-          </Text>
-        )}
       </View>
       <WriteRecordButton
-        title='기록하기'
+        title="기록 수정"
         onPress={() =>
           router.push({
             pathname: "/exhibition/write-record",
@@ -132,7 +110,7 @@ export default function VisitedExhibitionsPage() {
         }}
         textStyle={{ fontSize: 14 }}
       />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -140,19 +118,21 @@ export default function VisitedExhibitionsPage() {
       style={[
         styles.container,
         { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-      ]}>
-      <TopBar title='방문한 전시' />
-      <View style={styles.title}>
+      ]}
+    >
+      <TopBar title="방문한 전시" />
+      <View style={styles.content}>
         <Text
           style={[
             styles.title,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
-          방문한 전시 ({exhibitions.length}개)
+          ]}
+        >
+          방문한 전시 ({visitedExhibitions.length}개)
         </Text>
-        {exhibitions.length > 0 ? (
+        {visitedExhibitions.length > 0 ? (
           <FlatList
-            data={exhibitions}
+            data={visitedExhibitions}
             renderItem={renderExhibitionItem}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
@@ -164,14 +144,16 @@ export default function VisitedExhibitionsPage() {
               style={[
                 styles.emptyText,
                 { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}>
+              ]}
+            >
               아직 방문한 전시가 없습니다.
             </Text>
             <Text
               style={[
                 styles.emptySubText,
                 { color: theme === "dark" ? "#999" : "#999" },
-              ]}>
+              ]}
+            >
               전시를 관람하고 방문 기록을 남겨보세요!
             </Text>
           </View>
@@ -211,18 +193,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    alignItems: 'center',
   },
   exhibitionImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
     marginRight: 16,
-  },
-  imagePlaceholder: {
-    fontSize: 32,
   },
   exhibitionInfo: {
     flex: 1,
@@ -235,27 +212,17 @@ const styles = StyleSheet.create({
   },
   exhibitionLocation: {
     fontSize: 14,
-    marginBottom: 2,
-  },
-  visitDate: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  ratingContainer: {
-    marginBottom: 4,
-  },
-  ratingText: {
-    fontSize: 14,
+    marginBottom: 8,
   },
   reviewText: {
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: "italic",
-    marginTop: 4,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingBottom: 50, 
   },
   emptyText: {
     fontSize: 18,
