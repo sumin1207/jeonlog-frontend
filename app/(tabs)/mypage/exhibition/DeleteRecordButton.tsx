@@ -54,7 +54,7 @@ export default function DeleteRecordButton({ exhibitionId, onRecordDeleted, titl
       onPress={handleDelete}
       style={[
         styles.button,
-        { backgroundColor: theme === 'dark' ? '#a13d3d' : '#ff4d4d' },
+        { backgroundColor: theme === 'dark' ? '#7A8A7A' : '#7A8A7A' },
         buttonStyle,
       ]}
     >
