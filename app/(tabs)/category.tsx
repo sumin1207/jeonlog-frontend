@@ -8,10 +8,12 @@ import {
 } from "react-native";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useRouter } from "expo-router";
 
 export default function CategoryScreen() {
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState("지역별");
+  const router = useRouter();
 
   const tabs = ["지역별", "성격별"];
 
@@ -75,26 +77,44 @@ export default function CategoryScreen() {
       height: 2,
       backgroundColor: "#1c3519",
     },
-    // 카테고리 항목 스타일
-    categoryItem: {
-      paddingVertical: 18,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#f0f0f0",
+    // 카테고리 버튼 스타일
+    categoryButton: {
+      paddingVertical: 20,
+      paddingHorizontal: 20,
+      marginBottom: 12,
+      borderRadius: 12,
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#f8f8f8",
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#333" : "#e0e0e0",
+      minHeight: 60,
+      justifyContent: "center",
     },
     categoryText: {
       fontSize: 16,
+      fontWeight: "500",
       color: theme === "dark" ? "#fff" : "#1c3519",
+      textAlign: "center",
     },
   });
 
-  const renderCategoryItem = (item: string, index: number) => (
+  const handleCategoryPress = (categoryName: string) => {
+    const type = activeTab === "지역별" ? "region" : "personality";
+    router.push(
+      `/category/${type}?category=${encodeURIComponent(categoryName)}` as any
+    );
+  };
+
+  const renderCategoryButton = (categoryName: string) => (
     <TouchableOpacity
-      key={index}
-      style={styles.categoryItem}
+      key={categoryName}
+      style={styles.categoryButton}
+      onPress={() => handleCategoryPress(categoryName)}
       activeOpacity={0.7}>
-      <Text style={styles.categoryText}>{item}</Text>
+      <Text style={styles.categoryText}>{categoryName}</Text>
     </TouchableOpacity>
   );
+
+  const currentData = activeTab === "지역별" ? regionData : personalityData;
 
   return (
     <View style={styles.container}>
@@ -124,12 +144,8 @@ export default function CategoryScreen() {
           ))}
         </View>
 
-        {/* 카테고리 목록 */}
-        {activeTab === "지역별"
-          ? regionData.map((item, index) => renderCategoryItem(item, index))
-          : personalityData.map((item, index) =>
-              renderCategoryItem(item, index)
-            )}
+        {/* 카테고리 버튼들 */}
+        {currentData.map(renderCategoryButton)}
       </ScrollView>
     </View>
   );
