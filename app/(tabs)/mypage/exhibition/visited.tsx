@@ -14,47 +14,48 @@ import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../../../data/exhibitionsDataStorage";
 import WriteRecordButton from "./WriteRecordButton";
+import DeleteRecordButton from "./DeleteRecordButton";
 
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
   const router = useRouter();
   const [visitedExhibitions, setVisitedExhibitions] = useState<any[]>([]);
 
+  const loadVisitedExhibitions = async () => {
+    try {
+      const visitedIdsJSON = await AsyncStorage.getItem(
+        "visited_exhibition_ids"
+      );
+      const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
+
+      const savedRecordsJSON = await AsyncStorage.getItem(
+        "exhibition_records"
+      );
+      const savedRecords = savedRecordsJSON
+        ? JSON.parse(savedRecordsJSON)
+        : {};
+
+      const exhibitions = visitedIds
+        .map((id: string) => {
+          const exhibition = exhibitionData[id as keyof typeof exhibitionData];
+          if (!exhibition) return null;
+
+          const record = savedRecords[id];
+          return {
+            ...exhibition,
+            review: record ? record.title : "아직 기록하지 않은 전시",
+          };
+        })
+        .filter(Boolean);
+
+      setVisitedExhibitions(exhibitions.reverse()); // Show most recent first
+    } catch (error) {
+      Alert.alert("오류", "방문 기록을 불러오는 중 문제가 발생했습니다.");
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
-      const loadVisitedExhibitions = async () => {
-        try {
-          const visitedIdsJSON = await AsyncStorage.getItem(
-            "visited_exhibition_ids"
-          );
-          const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
-
-          const savedRecordsJSON = await AsyncStorage.getItem(
-            "exhibition_records"
-          );
-          const savedRecords = savedRecordsJSON
-            ? JSON.parse(savedRecordsJSON)
-            : {};
-
-          const exhibitions = visitedIds
-            .map((id: string) => {
-              const exhibition = exhibitionData[id as keyof typeof exhibitionData];
-              if (!exhibition) return null;
-
-              const record = savedRecords[id];
-              return {
-                ...exhibition,
-                review: record ? record.title : "아직 기록하지 않은 전시",
-              };
-            })
-            .filter(Boolean);
-
-          setVisitedExhibitions(exhibitions.reverse()); // Show most recent first
-        } catch (error) {
-          Alert.alert("오류", "방문 기록을 불러오는 중 문제가 발생했습니다.");
-        }
-      };
-
       loadVisitedExhibitions();
     }, [])
   );
@@ -94,22 +95,35 @@ export default function VisitedExhibitionsPage() {
           💬 "{item.review}"
         </Text>
       </View>
-      <WriteRecordButton
-        title="기록 수정"
-        onPress={() =>
-          router.push({
-            pathname: "/exhibition/write-record",
-            params: { exhibitionId: item.id },
-          })
-        }
-        buttonStyle={{
-          paddingVertical: 6,
-          paddingHorizontal: 6,
-          marginTop: 8,
-          alignSelf: "flex-start",
-        }}
-        textStyle={{ fontSize: 14 }}
-      />
+      <View>
+        <WriteRecordButton
+          title="기록 수정"
+          onPress={() =>
+            router.push({
+              pathname: "/exhibition/write-record",
+              params: { exhibitionId: item.id },
+            })
+          }
+          buttonStyle={{
+            paddingVertical: 6,
+            paddingHorizontal: 6,
+            alignSelf: "flex-start",
+          }}
+          textStyle={{ fontSize: 14 }}
+        />
+        <DeleteRecordButton
+          exhibitionId={item.id}
+          onRecordDeleted={loadVisitedExhibitions}
+          title="기록 삭제"
+          buttonStyle={{
+            paddingVertical: 6,
+            paddingHorizontal: 6,
+            marginTop: 8,
+            alignSelf: "flex-start",
+          }}
+          textStyle={{ fontSize: 14 }}
+        />
+      </View>
     </TouchableOpacity>
   );
 
