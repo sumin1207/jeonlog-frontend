@@ -48,7 +48,7 @@ export default function VisitedExhibitionsPage() {
         })
         .filter(Boolean);
 
-      setVisitedExhibitions(exhibitions.reverse()); // Show most recent first
+      setVisitedExhibitions(exhibitions.reverse()); 
     } catch (error) {
       Alert.alert("오류", "방문 기록을 불러오는 중 문제가 발생했습니다.");
     }
