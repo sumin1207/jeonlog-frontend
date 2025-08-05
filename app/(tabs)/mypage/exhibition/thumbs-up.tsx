@@ -25,7 +25,7 @@ const exhibitionData = {
     title: "톰 삭스 전",
     location: "DDP 뮤지엄 전시 1관",
     date: "2025.04.25 - 2025.09.07",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
+    image: require("../../../../assets/images/exhibitionPoster/exhibition2.png"),
   },
   "3": {
     id: "3",
