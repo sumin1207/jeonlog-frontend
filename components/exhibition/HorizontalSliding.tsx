@@ -20,8 +20,12 @@ const exhibitionsArray = Object.values(exhibitionData);
 const HorizontalSliding = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
-  const itemWidth = width * 0.8 + 20; // item width + margin
   const router = useRouter();
+
+  // Calculate dynamic dimensions
+  const itemContentWidth = width * 0.5;
+  const imageHeight = itemContentWidth * 1.336;
+  const itemWidth = itemContentWidth + 20; // item width + margin
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -29,10 +33,16 @@ const HorizontalSliding = () => {
         onPress={() => router.push(`/exhibition/${item.id}` as any)}
         style={[
           styles.itemContainer,
-          { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
+          {
+            width: itemContentWidth,
+            backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0",
+          },
         ]}
       >
-        <Image source={item.image} style={styles.image} />
+        <Image
+          source={item.image}
+          style={[styles.image, { height: imageHeight }]}
+        />
         <View style={styles.titleContainer}>
           <Text
             style={[
@@ -45,11 +55,11 @@ const HorizontalSliding = () => {
         </View>
       </TouchableOpacity>
     ),
-    [theme, router]
+    [theme, router, itemContentWidth, imageHeight]
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: imageHeight + 50 }]}>
       <FlatList
         ref={flatListRef}
         data={exhibitionsArray} // Use the array from the central data source
@@ -60,7 +70,10 @@ const HorizontalSliding = () => {
         snapToInterval={itemWidth}
         snapToAlignment="center"
         decelerationRate="normal"
-        contentContainerStyle={styles.flatListContent}
+        contentContainerStyle={{
+          paddingLeft: (width - itemContentWidth) / 2 - 50,
+          paddingRight: 10,
+        }}
         getItemLayout={(data, index) => ({
           length: itemWidth,
           offset: itemWidth * index,
@@ -75,16 +88,12 @@ const HorizontalSliding = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 250, // Poster(200) + Title area(50) = 250
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
   },
-  flatListContent: {
-    paddingHorizontal: (width - width * 0.8) / 2 - 10,
-  },
+  
   itemContainer: {
-    width: width * 0.8, // 80% of screen width
     marginHorizontal: 10,
     backgroundColor: "#e0e0e0ff",
     borderRadius: 10,
@@ -99,8 +108,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
-    resizeMode: "cover",
+    resizeMode: "contain",
   },
   title: {
     fontSize: 18,
@@ -109,6 +117,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   titleContainer: {
+    height: 40,
     paddingVertical: 10,
     paddingHorizontal: 15,
     alignItems: "center",

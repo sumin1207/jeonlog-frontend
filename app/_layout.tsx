@@ -85,6 +85,10 @@ function RootLayoutNav() {
         name='exhibition/write-record'
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name='category/[type]'
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

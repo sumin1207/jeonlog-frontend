@@ -58,7 +58,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'home' }],
+                routes: [{ name: "home" }],
               })
             );
           },
@@ -82,7 +82,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'category' }],
+                routes: [{ name: "category" }],
               })
             );
           },
@@ -106,7 +106,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'exhibitionLog' }],
+                routes: [{ name: "exhibitionLog" }],
               })
             );
           },
@@ -131,7 +131,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'search' }],
+                routes: [{ name: "search" }],
               })
             );
           },
@@ -155,7 +155,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'mypage' }],
+                routes: [{ name: "mypage" }],
               })
             );
           },
