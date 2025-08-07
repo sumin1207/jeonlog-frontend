@@ -13,6 +13,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Pressable,
+  Alert,
+  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
@@ -20,6 +22,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SearchResultSkeleton } from "@/components/ui/Skeleton";
+import { exhibitionData } from "../../data/exhibitionsDataStorage";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -132,7 +135,7 @@ const museumData = {
 export default function SearchScreen() {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState(mockExhibitions);
+  const [searchResults, setSearchResults] = useState<Array<any>>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -150,6 +153,16 @@ export default function SearchScreen() {
   useEffect(() => {
     loadSearchHistory();
   }, []);
+
+  // 검색 기록 렌더링 디버깅
+  useEffect(() => {
+    if (showHistory && searchHistory.length > 0) {
+      console.log("🔄 검색 기록 렌더링 시작, 개수:", searchHistory.length);
+      searchHistory.forEach((item, index) => {
+        console.log(`📝 렌더링 중인 검색 기록 ${index}:`, item);
+      });
+    }
+  }, [showHistory, searchHistory]);
 
   // 컴포넌트 마운트 시 애니메이션
   useEffect(() => {
@@ -170,12 +183,21 @@ export default function SearchScreen() {
   // 검색 기록 로드 함수
   const loadSearchHistory = async () => {
     try {
+      console.log("📚 === 검색 기록 로드 시작 ===");
       const history = await AsyncStorage.getItem("search_history");
+      console.log("💾 AsyncStorage에서 가져온 데이터:", history);
+
       if (history) {
-        setSearchHistory(JSON.parse(history));
+        const parsedHistory = JSON.parse(history);
+        console.log("📋 파싱된 검색 기록:", parsedHistory);
+        console.log("📊 검색 기록 개수:", parsedHistory.length);
+        setSearchHistory(parsedHistory);
+      } else {
+        console.log("📭 저장된 검색 기록 없음");
+        setSearchHistory([]);
       }
     } catch (error) {
-      console.log("검색 기록 로드 실패:", error);
+      console.log("❌ 검색 기록 로드 실패:", error);
     }
   };
 
@@ -258,7 +280,7 @@ export default function SearchScreen() {
     if (!searchQuery.trim()) return;
 
     setIsLoading(true);
-    setShowHistory(false);
+    // setShowHistory(false) 제거 - 검색 기록창 유지
 
     // 박물관/미술관 검색
     const foundMuseum = Object.values(museumData).find(
@@ -273,8 +295,9 @@ export default function SearchScreen() {
     } else {
       // 일반 전시 검색
       setSelectedMuseum(null);
-      const filteredResults = mockExhibitions.filter(
-        (exhibition) =>
+      const allExhibitions = Object.values(exhibitionData);
+      const filteredResults = allExhibitions.filter(
+        (exhibition: any) =>
           exhibition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           exhibition.location.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -288,9 +311,65 @@ export default function SearchScreen() {
 
   // 검색 실행 함수
   const executeSearch = (query: string) => {
+    console.log("🚀 === executeSearch 함수 시작 ===");
+    console.log("📝 받은 검색어:", query);
+    console.log("📱 현재 searchQuery 상태:", searchQuery);
+    console.log("⏰ 함수 호출 시간:", new Date().toLocaleTimeString());
+
+    // 상태 업데이트
     setSearchQuery(query);
     saveSearchHistory(query);
-    handleSearch();
+
+    console.log("✅ 상태 업데이트 완료");
+
+    // 즉시 검색 실행
+    setIsLoading(true);
+    // setShowHistory(false) 제거 - 검색 기록창 유지
+
+    console.log("🔄 로딩 상태 설정 완료");
+
+    // 박물관/미술관 검색
+    console.log("🏛️ 박물관/미술관 검색 시작");
+    const foundMuseum = Object.values(museumData).find(
+      (museum) =>
+        museum.name.toLowerCase().includes(query.toLowerCase()) ||
+        museum.address.toLowerCase().includes(query.toLowerCase())
+    );
+
+    console.log("🏛️ 찾은 박물관:", foundMuseum ? foundMuseum.name : "없음");
+
+    if (foundMuseum) {
+      console.log("🏛️ 박물관 검색 결과 설정");
+      setSelectedMuseum(foundMuseum);
+      setSearchResults([]);
+    } else {
+      console.log("🎨 일반 전시 검색 시작");
+      // 일반 전시 검색
+      setSelectedMuseum(null);
+      const allExhibitions = Object.values(exhibitionData);
+      console.log("📊 전체 전시회 수:", allExhibitions.length);
+
+      const filteredResults = allExhibitions.filter(
+        (exhibition: any) =>
+          exhibition.title.toLowerCase().includes(query.toLowerCase()) ||
+          exhibition.location.toLowerCase().includes(query.toLowerCase())
+      );
+
+      console.log("🔍 필터링된 결과 수:", filteredResults.length);
+      console.log(
+        "📋 필터링된 결과 제목들:",
+        filteredResults.map((item: any) => item.title)
+      );
+
+      setSearchResults(filteredResults);
+      console.log("✅ 검색 결과 설정 완료");
+    }
+
+    setTimeout(() => {
+      console.log("⏰ 로딩 완료");
+      setIsLoading(false);
+      console.log("🎉 검색 프로세스 완료!");
+    }, 1000);
   };
 
   // 검색 결과 아이템 렌더링
@@ -298,7 +377,7 @@ export default function SearchScreen() {
     item,
     index,
   }: {
-    item: (typeof mockExhibitions)[0];
+    item: any;
     index: number;
   }) => {
     return (
@@ -319,7 +398,9 @@ export default function SearchScreen() {
             styles.resultItem,
             { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
           ]}
-          onPress={() => {
+          onPress={(e) => {
+            // 이벤트 전파 방지
+            e?.stopPropagation?.();
             router.push(`/exhibition/${item.id}` as any);
           }}
           activeOpacity={0.7}>
@@ -376,7 +457,9 @@ export default function SearchScreen() {
       <View style={styles.museumContainer}>
         <TouchableOpacity
           style={styles.museumButton}
-          onPress={() => {
+          onPress={(e) => {
+            // 이벤트 전파 방지
+            e?.stopPropagation?.();
             // 박물관 상세 페이지로 이동하거나 추가 정보 표시
             console.log("박물관 상세 정보:", selectedMuseum.name);
           }}
@@ -402,7 +485,11 @@ export default function SearchScreen() {
           <TouchableOpacity
             key={exhibition.id}
             style={styles.exhibitionItem}
-            onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
+            onPress={(e) => {
+              // 이벤트 전파 방지
+              e?.stopPropagation?.();
+              router.push(`/exhibition/${exhibition.id}` as any);
+            }}
             activeOpacity={0.7}>
             <Image
               source={exhibition.image}
@@ -565,10 +652,18 @@ export default function SearchScreen() {
       paddingHorizontal: 15,
       borderRadius: 8,
       marginBottom: 5,
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#444" : "#e0e0e0",
     },
     historyContent: {
       flexDirection: "row",
       alignItems: "center",
+      flex: 1,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 6,
+      backgroundColor: theme === "dark" ? "#333" : "#f8f8f8",
     },
     historyText: {
       marginLeft: 8,
@@ -671,13 +766,18 @@ export default function SearchScreen() {
 
   const clearSearch = () => {
     setSearchQuery("");
-    setSearchResults(mockExhibitions);
+    setSearchResults([]);
     setShowHistory(true);
     Keyboard.dismiss();
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        // 키보드만 내리고 검색 기록창은 유지
+        Keyboard.dismiss();
+        // showHistory는 그대로 유지 (setShowHistory(false) 제거)
+      }}>
       <View style={styles.container}>
         <TopBar />
         <Animated.View
@@ -742,6 +842,13 @@ export default function SearchScreen() {
             </Animated.View>
           </View>
 
+          {/* 로딩 상태 */}
+          {isLoading && (
+            <View style={styles.loadingContainer}>
+              <SearchResultSkeleton />
+            </View>
+          )}
+
           {/* 검색 기록 */}
           {showHistory && searchHistory.length > 0 && (
             <View style={styles.historyContainer}>
@@ -751,7 +858,7 @@ export default function SearchScreen() {
                     styles.historyTitle,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
                   ]}>
-                  최근 검색어
+                  최근 검색어 ({searchHistory.length}개)
                 </Text>
                 <TouchableOpacity
                   onPress={clearAllSearchHistory}
@@ -767,70 +874,54 @@ export default function SearchScreen() {
               </View>
               <ScrollView showsVerticalScrollIndicator={false}>
                 {searchHistory.map((item, index) => (
-                  <TouchableOpacity
+                  <View
                     key={index}
-                    style={[
-                      styles.historyItem,
-                      {
-                        backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-                      },
-                    ]}
-                    onPress={() => {
-                      console.log("검색 기록 클릭됨:", item);
-                      setSearchQuery(item);
-                      saveSearchHistory(item);
-                      setShowHistory(false);
-                      // 즉시 검색 실행
-                      setTimeout(() => {
-                        handleSearch();
-                      }, 100);
-                    }}
-                    onPressIn={() => {
-                      console.log("검색 기록 터치 시작:", item);
-                    }}
-                    activeOpacity={0.7}>
-                    <View style={styles.historyContent}>
-                      <Ionicons
-                        name='time-outline'
-                        size={16}
-                        color={theme === "dark" ? "#fff" : "#1c3519"}
-                      />
-                      <Text
-                        style={[
-                          styles.historyText,
-                          { color: theme === "dark" ? "#fff" : "#1c3519" },
-                        ]}>
-                        {item}
-                      </Text>
-                    </View>
-
-                    <TouchableOpacity
+                    style={styles.historyItem}>
+                    <Button
+                      title={`${item}`}
                       onPress={(e) => {
-                        e.stopPropagation();
-                        console.log("삭제 버튼 클릭:", item);
+                        // 이벤트 전파 방지
+                        e?.stopPropagation?.();
+
+                        Alert.alert("Button 터치 감지!", `검색어: ${item}`);
+                        console.log("🔍 === Button 검색 기록 클릭됨! ===");
+                        console.log("📝 클릭된 검색어:", item);
+
+                        // 검색어 설정만 하고 검색 기록창은 유지
+                        setSearchQuery(item);
+
+                        // 즉시 검색 실행
+                        executeSearch(item);
+                      }}
+                      color={theme === "dark" ? "#fff" : "#1c3519"}
+                    />
+
+                    <Button
+                      title='삭제'
+                      onPress={(e) => {
+                        // 이벤트 전파 방지
+                        e?.stopPropagation?.();
+
+                        Alert.alert(
+                          "삭제 Button 터치!",
+                          `삭제할 검색어: ${item}`
+                        );
+                        console.log("🗑️ === 삭제 Button 클릭 ===");
                         deleteSearchHistory(item);
                       }}
-                      style={{ padding: 4 }}
-                      activeOpacity={0.7}>
-                      <Ionicons
-                        name='close'
-                        size={16}
-                        color={theme === "dark" ? "#fff" : "#1c3519"}
-                      />
-                    </TouchableOpacity>
-                  </TouchableOpacity>
+                      color='red'
+                    />
+                  </View>
                 ))}
               </ScrollView>
             </View>
           )}
 
           {/* 검색 결과 */}
-          {!showHistory && (
+          {!isLoading && (selectedMuseum || searchResults.length > 0) && (
             <Animated.View
               style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-              {isLoading ? (
-                <SearchResultSkeleton />
-              ) : selectedMuseum ? (
+              {selectedMuseum ? (
                 renderMuseumInfo()
               ) : searchResults.length > 0 ? (
                 <FlatList
@@ -841,22 +932,24 @@ export default function SearchScreen() {
                   contentContainerStyle={{ paddingBottom: 20 }}
                   keyboardShouldPersistTaps='handled'
                 />
-              ) : (
-                <View style={styles.emptyContainer}>
-                  <Ionicons
-                    name='search-outline'
-                    size={60}
-                    color={theme === "dark" ? "#ccc" : "#666"}
-                  />
-                  <Text style={styles.emptyText}>
-                    {searchQuery.trim()
-                      ? "검색 결과가 없습니다."
-                      : "검색어를 입력해보세요."}
-                  </Text>
-                </View>
-              )}
+              ) : null}
             </Animated.View>
           )}
+
+          {/* 검색 결과가 없을 때만 빈 상태 표시 */}
+          {!isLoading &&
+            !selectedMuseum &&
+            searchResults.length === 0 &&
+            searchQuery.trim() && (
+              <View style={styles.emptyContainer}>
+                <Ionicons
+                  name='search-outline'
+                  size={60}
+                  color={theme === "dark" ? "#ccc" : "#666"}
+                />
+                <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+              </View>
+            )}
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
