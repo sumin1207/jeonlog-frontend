@@ -16,6 +16,7 @@ import { useExhibition } from "../../contexts/ExhibitionContext";
 import { ExhibitionDetailSkeleton } from "@/components/ui/Skeleton";
 import AutoHeightImage from '@/components/ui/AutoHeightImage';
 import WriteRecordButton from "../(tabs)/mypage/exhibition/WriteRecordButton";
+
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 
 export default function ExhibitionDetailScreen() {
@@ -24,7 +25,6 @@ export default function ExhibitionDetailScreen() {
   const router = useRouter();
   const { isLiked, isThumbsUp, toggleLiked, toggleThumbsUp } = useExhibition();
   const [loading, setLoading] = useState(true);
-  const [imageHeights, setImageHeights] = useState<{ [key: number]: number }>({});
 
   useEffect(() => {
     const loadExhibition = async () => {
