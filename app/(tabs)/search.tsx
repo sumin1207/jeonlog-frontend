@@ -12,6 +12,7 @@ import {
   Dimensions,
   Keyboard,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
@@ -367,41 +368,6 @@ export default function SearchScreen() {
       </Animated.View>
     );
   };
-
-  // 검색 기록 아이템 렌더링
-  const renderHistoryItem = ({ item }: { item: string }) => (
-    <TouchableOpacity
-      style={[
-        styles.historyItem,
-        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
-      ]}
-      onPress={() => executeSearch(item)}
-      activeOpacity={0.7}>
-      <View style={styles.historyContent}>
-        <Ionicons
-          name='time-outline'
-          size={16}
-          color={theme === "dark" ? "#ccc" : "#666"}
-        />
-        <Text
-          style={[
-            styles.historyText,
-            { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
-          {item}
-        </Text>
-      </View>
-      <TouchableOpacity
-        onPress={() => deleteSearchHistory(item)}
-        activeOpacity={0.7}>
-        <Ionicons
-          name='close'
-          size={16}
-          color={theme === "dark" ? "#ccc" : "#666"}
-        />
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
 
   const renderMuseumInfo = () => {
     if (!selectedMuseum) return null;
@@ -799,13 +765,62 @@ export default function SearchScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <FlatList
-                data={searchHistory}
-                renderItem={renderHistoryItem}
-                keyExtractor={(item) => item}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 10 }}
-              />
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {searchHistory.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.historyItem,
+                      {
+                        backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+                      },
+                    ]}
+                    onPress={() => {
+                      console.log("검색 기록 클릭됨:", item);
+                      setSearchQuery(item);
+                      saveSearchHistory(item);
+                      setShowHistory(false);
+                      // 즉시 검색 실행
+                      setTimeout(() => {
+                        handleSearch();
+                      }, 100);
+                    }}
+                    onPressIn={() => {
+                      console.log("검색 기록 터치 시작:", item);
+                    }}
+                    activeOpacity={0.7}>
+                    <View style={styles.historyContent}>
+                      <Ionicons
+                        name='time-outline'
+                        size={16}
+                        color={theme === "dark" ? "#fff" : "#1c3519"}
+                      />
+                      <Text
+                        style={[
+                          styles.historyText,
+                          { color: theme === "dark" ? "#fff" : "#1c3519" },
+                        ]}>
+                        {item}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        console.log("삭제 버튼 클릭:", item);
+                        deleteSearchHistory(item);
+                      }}
+                      style={{ padding: 4 }}
+                      activeOpacity={0.7}>
+                      <Ionicons
+                        name='close'
+                        size={16}
+                        color={theme === "dark" ? "#fff" : "#1c3519"}
+                      />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
           )}
 
