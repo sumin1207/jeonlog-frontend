@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Image,
   Linking,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
 import { ExhibitionDetailSkeleton } from "@/components/ui/Skeleton";
+import AutoHeightImage from '@/components/ui/AutoHeightImage';
 import WriteRecordButton from "../(tabs)/mypage/exhibition/WriteRecordButton";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 
@@ -22,6 +24,7 @@ export default function ExhibitionDetailScreen() {
   const router = useRouter();
   const { isLiked, isThumbsUp, toggleLiked, toggleThumbsUp } = useExhibition();
   const [loading, setLoading] = useState(true);
+  const [imageHeights, setImageHeights] = useState<{ [key: number]: number }>({});
 
   useEffect(() => {
     const loadExhibition = async () => {
@@ -382,6 +385,22 @@ export default function ExhibitionDetailScreen() {
             </View>
           )}
 
+          {/* 설명 포스터 이미지  출력 */}
+          {(exhibition as any).explanationImages &&
+            (exhibition as any).explanationImages.length > 0 && (
+              <View style={styles.explanationImageContainer}>
+                {(exhibition as any).explanationImages.map(
+                  (image: any, index: number) => (
+                    <AutoHeightImage
+                      key={index}
+                      source={image}
+                      imageWidth={Dimensions.get("window").width * 0.95}
+                    />
+                  )
+                )}
+              </View>
+            )}
+
           {/* 추가 정보 */}
           <View style={styles.additionalSection}>
             <Text
@@ -620,5 +639,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
+  }, 
+  explanationImageContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: 'center',
   },
 });
