@@ -161,6 +161,10 @@ export default function TabLayout() {
           },
         })}
       />
+      <Tabs.Screen
+        name='category/[type]'
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }

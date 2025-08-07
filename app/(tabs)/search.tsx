@@ -34,11 +34,11 @@ const mockExhibitions = [
   },
   {
     id: "2",
-    title: "모네 특별전",
-    location: "서울시립미술관",
-    date: "2024.02.01 - 2024.04.30",
+    title: "톰 삭스 전",
+    location: "DDP 뮤지엄",
+    date: "2025.08.01 - 2025.09.30",
     category: "전시",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+    image: require("../../assets/images/exhibitionPoster/exhibition2.png"),
   },
   {
     id: "4",
@@ -50,6 +50,84 @@ const mockExhibitions = [
   },
 ];
 
+// 박물관/미술관 데이터
+const museumData = {
+  국립중앙박물관: {
+    name: "국립중앙박물관",
+    address: "서울특별시 용산구 서빙고로 137",
+    phone: "02-2077-9000",
+    website: "www.museum.go.kr",
+    exhibitions: [
+      {
+        id: "1",
+        title: "일본미술, 네 가지 시선",
+        date: "2025.06.17 - 2025.08.10",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+      {
+        id: "5",
+        title: "한국미술 100년",
+        date: "2024.04.01 - 2024.06.30",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+    ],
+  },
+  "DDP 뮤지엄": {
+    name: "DDP 뮤지엄",
+    address: "서울 중구 을지로 281",
+    phone: "02-325-1077",
+    website: "www.ddpmuseum.com",
+    exhibitions: [
+      {
+        id: "2",
+        title: "톰 삭스 전",
+        date: "2025.08.01 - 2025.09.30",
+        image: require("../../assets/images/exhibitionPoster/exhibition2.png"),
+      },
+      {
+        id: "6",
+        title: "디자인 특별전",
+        date: "2025.10.01 - 2025.12.31",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+    ],
+  },
+  MMCA: {
+    name: "국립현대미술관",
+    address: "서울특별시 종로구 삼청로 30",
+    phone: "02-3456-7890",
+    website: "www.mmca.go.kr",
+    exhibitions: [
+      {
+        id: "4",
+        title: "현대미술 특별전",
+        date: "2024.01.20 - 2024.05.20",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+      {
+        id: "7",
+        title: "현대조각전",
+        date: "2025.03.01 - 2025.06.30",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+    ],
+  },
+  서울시립미술관: {
+    name: "서울시립미술관",
+    address: "서울특별시 중구 덕수궁길 61",
+    phone: "02-2345-6789",
+    website: "www.sema.seoul.go.kr",
+    exhibitions: [
+      {
+        id: "8",
+        title: "반 고흐 생애전",
+        date: "2024.03.01 - 2024.05.15",
+        image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
+      },
+    ],
+  },
+};
+
 export default function SearchScreen() {
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,6 +136,7 @@ export default function SearchScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [selectedMuseum, setSelectedMuseum] = useState<any>(null);
   const router = useRouter();
 
   // 애니메이션 값들
@@ -174,34 +253,43 @@ export default function SearchScreen() {
   };
 
   // 검색 및 필터링 함수
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
     setIsLoading(true);
     setShowHistory(false);
 
-    // 로딩 시뮬레이션
+    // 박물관/미술관 검색
+    const foundMuseum = Object.values(museumData).find(
+      (museum) =>
+        museum.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        museum.address.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (foundMuseum) {
+      setSelectedMuseum(foundMuseum);
+      setSearchResults([]);
+    } else {
+      // 일반 전시 검색
+      setSelectedMuseum(null);
+      const filteredResults = mockExhibitions.filter(
+        (exhibition) =>
+          exhibition.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          exhibition.location.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(filteredResults);
+    }
+
     setTimeout(() => {
-      let filtered = mockExhibitions;
-
-      // 검색어 필터링
-      if (query.trim()) {
-        filtered = filtered.filter(
-          (item) =>
-            item.title.toLowerCase().includes(query.toLowerCase()) ||
-            item.location.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-
-      setSearchResults(filtered);
       setIsLoading(false);
-    }, 300);
-  }, []);
+    }, 1000);
+  };
 
   // 검색 실행 함수
   const executeSearch = (query: string) => {
     setSearchQuery(query);
     saveSearchHistory(query);
-    handleSearch(query);
+    handleSearch();
   };
 
   // 검색 결과 아이템 렌더링
@@ -314,6 +402,55 @@ export default function SearchScreen() {
       </TouchableOpacity>
     </TouchableOpacity>
   );
+
+  const renderMuseumInfo = () => {
+    if (!selectedMuseum) return null;
+
+    return (
+      <View style={styles.museumContainer}>
+        <TouchableOpacity
+          style={styles.museumButton}
+          onPress={() => {
+            // 박물관 상세 페이지로 이동하거나 추가 정보 표시
+            console.log("박물관 상세 정보:", selectedMuseum.name);
+          }}
+          activeOpacity={0.7}>
+          <View style={styles.museumHeader}>
+            <Image
+              source={require("../../assets/images/exhibitionPoster/exhibition1.png")}
+              style={styles.museumImage}
+            />
+            <View style={styles.museumInfo}>
+              <Text style={styles.museumName}>{selectedMuseum.name}</Text>
+              <Text style={styles.museumAddress}>{selectedMuseum.address}</Text>
+              <Text style={styles.museumPhone}>{selectedMuseum.phone}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <Text style={styles.exhibitionSectionTitle}>
+          현재 전시 ({selectedMuseum.exhibitions.length}개)
+        </Text>
+
+        {selectedMuseum.exhibitions.map((exhibition: any) => (
+          <TouchableOpacity
+            key={exhibition.id}
+            style={styles.exhibitionItem}
+            onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
+            activeOpacity={0.7}>
+            <Image
+              source={exhibition.image}
+              style={styles.exhibitionImage}
+            />
+            <View style={styles.exhibitionInfo}>
+              <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
+              <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -486,6 +623,84 @@ export default function SearchScreen() {
       fontSize: 16,
       fontWeight: "bold",
     },
+    museumContainer: {
+      marginTop: 20,
+    },
+    museumButton: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 15,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    museumHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    museumImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginRight: 16,
+    },
+    museumInfo: {
+      flex: 1,
+      justifyContent: "center",
+    },
+    museumName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 4,
+    },
+    museumAddress: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginBottom: 2,
+    },
+    museumPhone: {
+      fontSize: 12,
+      color: theme === "dark" ? "#ccc" : "#666",
+    },
+    exhibitionSectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 10,
+    },
+    exhibitionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#333" : "#eee",
+    },
+    exhibitionImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginRight: 15,
+    },
+    exhibitionInfo: {
+      flex: 1,
+    },
+    exhibitionTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 2,
+    },
+    exhibitionDate: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+    },
   });
 
   const clearSearch = () => {
@@ -513,7 +728,7 @@ export default function SearchScreen() {
                 placeholder='전시를 검색해보세요'
                 placeholderTextColor={theme === "dark" ? "#999" : "#999"}
                 value={searchQuery}
-                onChangeText={handleSearch}
+                onChangeText={setSearchQuery}
                 onFocus={handleSearchFocus}
                 onBlur={handleSearchBlur}
                 returnKeyType='search'
@@ -598,11 +813,10 @@ export default function SearchScreen() {
           {!showHistory && (
             <Animated.View
               style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-              <Text style={styles.resultsTitle}>
-                검색 결과 ({searchResults.length}개)
-              </Text>
               {isLoading ? (
                 <SearchResultSkeleton />
+              ) : selectedMuseum ? (
+                renderMuseumInfo()
               ) : searchResults.length > 0 ? (
                 <FlatList
                   data={searchResults}

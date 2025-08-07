@@ -7,7 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 

@@ -100,7 +100,9 @@ export default function CategoryScreen() {
   const handleCategoryPress = (categoryName: string) => {
     const type = activeTab === "지역별" ? "region" : "personality";
     router.push(
-      `/category/${type}?category=${encodeURIComponent(categoryName)}` as any
+      `/(tabs)/category/${type}?category=${encodeURIComponent(
+        categoryName
+      )}` as any
     );
   };
 
