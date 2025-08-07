@@ -7,9 +7,21 @@ import { exhibitionData } from "../../data/exhibitionsDataStorage";
 import ExhibitionLogCard from "@/components/exhibition/ExhibitionLogCard";
 import { useFocusEffect } from "expo-router";
 
+interface Record {
+  exhibitionId: string;
+  record: {
+    content: string;
+  };
+  exhibition: {
+    id: string;
+    title: string;
+    image: any;
+  };
+}
+
 export default function ExhibitionLogScreen() {
   const { theme } = useTheme();
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState<Record[]>([]);
 
   const loadRecords = async () => {
     try {
@@ -22,18 +34,28 @@ export default function ExhibitionLogScreen() {
       const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
 
       const loadedRecords = visitedIds
-        .map((exhibitionId) => {
+        .map((exhibitionId: string) => {
           const exhibition =
             exhibitionData[exhibitionId as keyof typeof exhibitionData];
+          if (!exhibition) {
+            console.warn(`Exhibition with id ${exhibitionId} not found`);
+            return null;
+          }
           return {
             exhibitionId,
             record: savedRecords[exhibitionId],
-            exhibition,
+            exhibition: {
+              id: exhibition.id,
+              title: exhibition.title,
+              image: exhibition.image,
+            },
           };
         })
-        .filter((item) => item.record);
+        .filter((item: any): item is Record => item !== null && item.record);
+
       setRecords(loadedRecords.reverse());
     } catch (error) {
+      console.error("Error loading records:", error);
       Alert.alert("오류", "전시 기록을 불러오는 중 문제가 발생했습니다.");
     }
   };
@@ -88,6 +110,7 @@ export default function ExhibitionLogScreen() {
                 exhibition={item.exhibition}
               />
             )}
+            showsVerticalScrollIndicator={false}
           />
         ) : (
           <View style={styles.emptyContainer}>
