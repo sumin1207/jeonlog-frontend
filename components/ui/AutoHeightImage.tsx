@@ -48,6 +48,7 @@ const AutoHeightImage: React.FC<AutoHeightImageProps> = ({ source, imageWidth })
       source={source} 
       style={{ width, height, marginBottom: 10 }} 
       resizeMode="contain" 
+      resizeMethod="resize"
     />
   );
 };
