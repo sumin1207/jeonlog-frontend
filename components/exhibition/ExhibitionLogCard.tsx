@@ -120,11 +120,7 @@ const ExhibitionLogCard = ({ record, exhibition }: ExhibitionLogCardProps) => {
       <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
       <Text style={styles.content}>{record.content}</Text>
       {exhibition.image && (
-        <Image
-          source={exhibition.image}
-          style={styles.mainImage}
-          resizeMode='contain'
-        />
+        <Image source={exhibition.image} style={styles.mainImage} />
       )}
       <View style={styles.footer}>
         <Text style={styles.commentCount}>댓글 (999)</Text>
