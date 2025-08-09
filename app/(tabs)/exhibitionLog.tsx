@@ -1,5 +1,12 @@
-import React, { useState, useCallback } from "react";
-import { StyleSheet, View, Text, FlatList, Alert } from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,6 +29,7 @@ interface Record {
 export default function ExhibitionLogScreen() {
   const { theme } = useTheme();
   const [records, setRecords] = useState<Record[]>([]);
+  const [isLatest, setIsLatest] = useState(true);
 
   const loadRecords = async () => {
     try {
@@ -66,23 +74,66 @@ export default function ExhibitionLogScreen() {
     }, [])
   );
 
+  const { leftColumn, rightColumn } = useMemo(() => {
+    const left: Record[] = [];
+    const right: Record[] = [];
+    records.forEach((record, index) => {
+      if (index % 2 === 0) {
+        left.push(record);
+      } else {
+        right.push(record);
+      }
+    });
+    return { leftColumn: left, rightColumn: right };
+  }, [records]);
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
     },
     content: {
       flex: 1,
-      paddingTop: 20,
       paddingHorizontal: 20,
     },
-    title: {
-      fontSize: 22,
-      fontWeight: "bold",
+    headerContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingTop: 20,
       marginBottom: 20,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: "bold",
       color: theme === "dark" ? "#fff" : "#1c3519",
-      textAlign: "left",
-      alignSelf: "flex-start",
+    },
+    toggleContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    toggleText: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#888",
+      marginHorizontal: 5,
+    },
+    activeToggle: {
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#000",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    columnContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    column: {
+      width: "48%",
+      alignItems: "center",
+    },
+    rightColumn: {
+      marginTop: 18,
     },
     emptyContainer: {
       flex: 1,
@@ -98,26 +149,65 @@ export default function ExhibitionLogScreen() {
   return (
     <View style={styles.container}>
       <TopBar />
-      <View style={styles.content}>
-        <Text style={styles.title}>다른 사람들 전시 기록</Text>
-        {records.length > 0 ? (
-          <FlatList
-            data={records}
-            keyExtractor={(item) => item.exhibitionId}
-            renderItem={({ item }) => (
-              <ExhibitionLogCard
-                record={item.record}
-                exhibition={item.exhibition}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>아직 기록된 전시가 없습니다.</Text>
-          </View>
-        )}
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}> 다른 시선으로 본 전시 기록들</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity onPress={() => setIsLatest(true)}>
+            <Text style={[styles.toggleText, isLatest && styles.activeToggle]}>
+              최신순
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsLatest(false)}>
+            <Text style={[styles.toggleText, !isLatest && styles.activeToggle]}>
+              인기순
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      {records.length > 0 ? (
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.columnContainer}>
+            <View style={styles.column}>
+              {leftColumn.map((item) => (
+                <ExhibitionLogCard
+                  key={item.exhibitionId}
+                  id={item.exhibition.id}
+                  image={item.exhibition.image}
+                  logTitle={item.record.content}
+                  author={{
+                    name: "user",
+                    avatar: require("@/assets/images/mainIcon.png"),
+                  }}
+                  timestamp={"방금 전"}
+                  likes={0} // Placeholder
+                  hashtags={["전시기록"]}
+                />
+              ))}
+            </View>
+            <View style={[styles.column, styles.rightColumn]}>
+              {rightColumn.map((item) => (
+                <ExhibitionLogCard
+                  key={item.exhibitionId}
+                  id={item.exhibition.id}
+                  image={item.exhibition.image}
+                  logTitle={item.record.content}
+                  author={{
+                    name: "user",
+                    avatar: require("@/assets/images/mainIcon.png"),
+                  }}
+                  timestamp={"방금 전"}
+                  likes={0} // Placeholder
+                  hashtags={["전시기록"]}
+                />
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>아직 기록된 전시가 없습니다.</Text>
+        </View>
+      )}
     </View>
   );
 }
