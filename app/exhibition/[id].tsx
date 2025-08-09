@@ -14,7 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
 import { ExhibitionDetailSkeleton } from "@/components/ui/Skeleton";
-import AutoHeightImage from '@/components/ui/AutoHeightImage';
+import AutoHeightImage from "@/components/ui/AutoHeightImage";
 import WriteRecordButton from "../(tabs)/mypage/exhibition/WriteRecordButton";
 
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
@@ -135,11 +135,7 @@ export default function ExhibitionDetailScreen() {
                   ]}>
                   {exhibition.title}
                 </Text>
-                <Text
-                  style={[
-                    styles.subtitle,
-                    { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}></Text>
+                {/* 빈 subtitle 제거 */}
               </View>
               <View style={styles.actionButtons}>
                 <TouchableOpacity
@@ -639,10 +635,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-  }, 
+  },
   explanationImageContainer: {
     marginTop: 20,
     marginBottom: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

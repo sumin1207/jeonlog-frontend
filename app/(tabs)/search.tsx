@@ -259,8 +259,8 @@ export default function SearchScreen() {
   // 검색 입력 블러 애니메이션
   const handleSearchBlur = () => {
     setIsSearchFocused(false);
-    // 약간의 지연 후 히스토리 숨기기
-    setTimeout(() => setShowHistory(false), 200);
+    // 검색 기록 클릭을 위해 지연 시간을 늘림
+    setTimeout(() => setShowHistory(false), 500);
     Animated.parallel([
       Animated.timing(searchInputScale, {
         toValue: 1,
@@ -648,13 +648,14 @@ export default function SearchScreen() {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingVertical: 10,
+      paddingVertical: 12,
       paddingHorizontal: 15,
       borderRadius: 8,
-      marginBottom: 5,
+      marginBottom: 8,
       backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
       borderWidth: 1,
       borderColor: theme === "dark" ? "#444" : "#e0e0e0",
+      minHeight: 50,
     },
     historyContent: {
       flexDirection: "row",
@@ -662,8 +663,6 @@ export default function SearchScreen() {
       flex: 1,
       paddingVertical: 8,
       paddingHorizontal: 12,
-      borderRadius: 6,
-      backgroundColor: theme === "dark" ? "#333" : "#f8f8f8",
     },
     historyText: {
       marginLeft: 8,
@@ -762,6 +761,15 @@ export default function SearchScreen() {
       fontSize: 14,
       color: theme === "dark" ? "#ccc" : "#666",
     },
+    deleteButton: {
+      padding: 8,
+      borderRadius: 4,
+      backgroundColor: theme === "dark" ? "#444" : "#f0f0f0",
+      minWidth: 32,
+      minHeight: 32,
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
   const clearSearch = () => {
@@ -776,7 +784,10 @@ export default function SearchScreen() {
       onPress={() => {
         // 키보드만 내리고 검색 기록창은 유지
         Keyboard.dismiss();
-        // showHistory는 그대로 유지 (setShowHistory(false) 제거)
+        // 검색 기록창이 열려있고 검색어가 비어있다면 유지
+        if (showHistory || searchQuery.trim() === "") {
+          // 아무것도 하지 않음 - 검색 기록창 유지
+        }
       }}>
       <View style={styles.container}>
         <TopBar />
@@ -850,7 +861,7 @@ export default function SearchScreen() {
           )}
 
           {/* 검색 기록 */}
-          {showHistory && searchHistory.length > 0 && (
+          {showHistory && searchHistory.length > 0 ? (
             <View style={styles.historyContainer}>
               <View style={styles.historyHeader}>
                 <Text
@@ -872,67 +883,80 @@ export default function SearchScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView showsVerticalScrollIndicator={false}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps='handled'>
                 {searchHistory.map((item, index) => (
-                  <View
+                  <TouchableOpacity
                     key={index}
-                    style={styles.historyItem}>
-                    <Button
-                      title={`${item}`}
+                    style={styles.historyItem}
+                    onPress={() => {
+                      console.log("🔍 === 검색 기록 클릭됨! ===");
+                      console.log("📝 클릭된 검색어:", item);
+
+                      // 검색어 설정
+                      setSearchQuery(item);
+
+                      // 검색 기록창 유지
+                      setShowHistory(true);
+
+                      // 즉시 검색 실행
+                      executeSearch(item);
+                    }}
+                    activeOpacity={0.7}>
+                    <View style={styles.historyContent}>
+                      <Ionicons
+                        name='time-outline'
+                        size={16}
+                        color={theme === "dark" ? "#ccc" : "#666"}
+                      />
+                      <Text
+                        style={[
+                          styles.historyText,
+                          { color: theme === "dark" ? "#fff" : "#1c3519" },
+                        ]}>
+                        {item}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.deleteButton}
                       onPress={(e) => {
-                        // 이벤트 전파 방지
-                        e?.stopPropagation?.();
+                        // 이벤트 버블링 방지
+                        e.stopPropagation();
 
-                        Alert.alert("Button 터치 감지!", `검색어: ${item}`);
-                        console.log("🔍 === Button 검색 기록 클릭됨! ===");
-                        console.log("📝 클릭된 검색어:", item);
-
-                        // 검색어 설정만 하고 검색 기록창은 유지
-                        setSearchQuery(item);
-
-                        // 즉시 검색 실행
-                        executeSearch(item);
-                      }}
-                      color={theme === "dark" ? "#fff" : "#1c3519"}
-                    />
-
-                    <Button
-                      title='삭제'
-                      onPress={(e) => {
-                        // 이벤트 전파 방지
-                        e?.stopPropagation?.();
-
-                        Alert.alert(
-                          "삭제 Button 터치!",
-                          `삭제할 검색어: ${item}`
-                        );
-                        console.log("🗑️ === 삭제 Button 클릭 ===");
+                        console.log("🗑️ === 삭제 버튼 클릭 ===");
                         deleteSearchHistory(item);
                       }}
-                      color='red'
-                    />
-                  </View>
+                      activeOpacity={0.7}>
+                      <Ionicons
+                        name='close'
+                        size={16}
+                        color={theme === "dark" ? "#ccc" : "#666"}
+                      />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
                 ))}
               </ScrollView>
             </View>
-          )}
+          ) : null}
 
           {/* 검색 결과 */}
           {!isLoading && (selectedMuseum || searchResults.length > 0) && (
             <Animated.View
               style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-              {selectedMuseum ? (
-                renderMuseumInfo()
-              ) : searchResults.length > 0 ? (
-                <FlatList
-                  data={searchResults}
-                  renderItem={renderSearchResult}
-                  keyExtractor={(item) => item.id}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                  keyboardShouldPersistTaps='handled'
-                />
-              ) : null}
+              {selectedMuseum
+                ? renderMuseumInfo()
+                : searchResults.length > 0 && (
+                    <FlatList
+                      data={searchResults}
+                      renderItem={renderSearchResult}
+                      keyExtractor={(item) => item.id}
+                      showsVerticalScrollIndicator={false}
+                      contentContainerStyle={{ paddingBottom: 20 }}
+                      keyboardShouldPersistTaps='handled'
+                    />
+                  )}
             </Animated.View>
           )}
 
@@ -940,7 +964,7 @@ export default function SearchScreen() {
           {!isLoading &&
             !selectedMuseum &&
             searchResults.length === 0 &&
-            searchQuery.trim() && (
+            searchQuery.trim().length > 0 && (
               <View style={styles.emptyContainer}>
                 <Ionicons
                   name='search-outline'
