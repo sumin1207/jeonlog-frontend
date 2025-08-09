@@ -156,8 +156,10 @@ export default function MuseumDetailScreen() {
     headerNavBar: {
       flexDirection: "row",
       alignItems: "center",
+      width: "100%",
+      height: 65,
       justifyContent: "space-between",
-      paddingHorizontal: 20,
+      paddingHorizontal: 10,
       paddingVertical: 15,
       backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
       borderBottomWidth: 1,
@@ -174,23 +176,29 @@ export default function MuseumDetailScreen() {
       backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
       paddingHorizontal: 20,
       paddingVertical: 20,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-end",
       borderBottomWidth: 1,
       borderBottomColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
     },
     museumTitleSection: {
       flex: 1,
     },
-    titleWithEmblem: {
+    titleContainer: {
+      width: "100%",
+    },
+    firstRow: {
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 8,
     },
+    secondRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
     museumEmblem: {
-      width: 40,
-      height: 40,
+      width: 100,
+      height: 1,
       marginLeft: 12,
     },
     backButton: {
@@ -216,17 +224,27 @@ export default function MuseumDetailScreen() {
       fontSize: 24,
       fontWeight: "bold",
       color: theme === "dark" ? "#fff" : "#000",
-      flex: 1,
     },
     badgeRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 4,
+      margin: 0,
+      padding: 0,
     },
-    govIcon: {
-      width: 24,
-      height: 24,
-      marginRight: 8,
+    museumEmblemIcon: {
+      width: 81,
+      height: 60,
+      marginLeft: 12,
+    },
+    leftSection: {
+      flex: 1,
+    },
+    centerSection: {
+      alignItems: "center",
+    },
+    rightIconsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
     },
     govText: {
       fontSize: 14,
@@ -238,9 +256,8 @@ export default function MuseumDetailScreen() {
       color: theme === "dark" ? "#ccc" : "#666",
     },
     locationText: {
-      fontSize: 14,
+      fontSize: 12,
       color: theme === "dark" ? "#999" : "#999",
-      alignSelf: "flex-end",
     },
     headerSection: {
       padding: 20,
@@ -392,28 +409,6 @@ export default function MuseumDetailScreen() {
 
         {/* 박물관 이름 */}
         <Text style={styles.navTitle}>{museum.name}</Text>
-
-        {/* 우측 아이콘들 */}
-        <View style={styles.rightIcons}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            activeOpacity={0.7}>
-            <Ionicons
-              name='heart-outline'
-              size={24}
-              color={theme === "dark" ? "#fff" : "#000"}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconButton}
-            activeOpacity={0.7}>
-            <Ionicons
-              name='share-outline'
-              size={24}
-              color={theme === "dark" ? "#fff" : "#000"}
-            />
-          </TouchableOpacity>
-        </View>
       </View>
 
       <ScrollView
@@ -430,28 +425,41 @@ export default function MuseumDetailScreen() {
 
         {/* 박물관 정보 헤더 */}
         <View style={styles.museumInfoHeader}>
-          <View style={styles.museumTitleSection}>
-            <View style={styles.titleWithEmblem}>
+          <View style={styles.titleContainer}>
+            <View style={styles.firstRow}>
               <Text style={styles.museumNameLarge}>{museum.name}</Text>
               {museum.museumEmblem && (
                 <Image
                   source={museum.museumEmblem}
-                  style={styles.museumEmblem}
+                  style={styles.museumEmblemIcon}
                   resizeMode='contain'
                 />
               )}
             </View>
-            <View style={styles.badgeRow}>
-              <Image
-                source={require("../../../assets/images/museumEmblem/logo1.png")}
-                style={styles.govIcon}
-                resizeMode='contain'
-              />
-              <Text style={styles.govText}>문화체육관광부</Text>
+            <View style={styles.secondRow}>
+              <Text style={styles.locationText}>전시장소</Text>
+              <View style={styles.rightIconsContainer}>
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  activeOpacity={0.7}>
+                  <Ionicons
+                    name='heart-outline'
+                    size={24}
+                    color={theme === "dark" ? "#fff" : "#000"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  activeOpacity={0.7}>
+                  <Ionicons
+                    name='share-outline'
+                    size={24}
+                    color={theme === "dark" ? "#fff" : "#000"}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text style={styles.govSubtext}>국립중앙박물관</Text>
           </View>
-          <Text style={styles.locationText}>전시장소</Text>
         </View>
 
         {/* 박물관 기본 정보 */}
