@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/hooks/useColorScheme";
 import { useClientOnlyValue } from "@/components/hooks/useClientOnlyValue";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -163,6 +163,10 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name='category/[type]'
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name='museum/[name]'
         options={{ href: null }}
       />
     </Tabs>

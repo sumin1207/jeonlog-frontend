@@ -460,13 +460,15 @@ export default function SearchScreen() {
           onPress={(e) => {
             // 이벤트 전파 방지
             e?.stopPropagation?.();
-            // 박물관 상세 페이지로 이동하거나 추가 정보 표시
-            console.log("박물관 상세 정보:", selectedMuseum.name);
+            // 박물관 상세 페이지로 이동 (탭 내부)
+            router.push(
+              `/(tabs)/museum/${encodeURIComponent(selectedMuseum.name)}` as any
+            );
           }}
           activeOpacity={0.7}>
           <View style={styles.museumHeader}>
             <Image
-              source={require("../../assets/images/exhibitionPoster/exhibition1.png")}
+              source={require("../../assets/images/museumBackground/bg1.jpg")}
               style={styles.museumImage}
             />
             <View style={styles.museumInfo}>

@@ -1,0 +1,587 @@
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import TopBar from "@/components/ui/TopBar";
+import { useTheme } from "@/contexts/ThemeContext";
+
+const { width: screenWidth } = Dimensions.get("window");
+
+export default function MuseumDetailScreen() {
+  const { name } = useLocalSearchParams<{ name: string }>();
+  const router = useRouter();
+  const { theme } = useTheme();
+
+  // 박물관/미술관 데이터 (나중에 props나 context로 전달받을 수 있음)
+  const museumData = {
+    국립중앙박물관: {
+      name: "국립중앙박물관",
+      headerImage: require("../../../assets/images/museumBackground/bg1.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/logo1.png"),
+      address: "04383 서울시 용산구 서빙고로 137(용산동6가 168-6)",
+      phone: "02)2077-9000",
+      website: "www.museum.go.kr",
+      hours:
+        "월, 화, 목, 금, 일요일: 10:00 - 18:00 (입장 마감: 17:30)\n수, 토요일: 10:00 - 21:00 (입장 마감: 20:30)\n옥외 전시장(정원): 7:00 - 22:00",
+      closedDays:
+        "휴관일: 1월1일, 설날(1-2일), 추석(10.6)\n상설전시관 전기문화실: 매년 4월, 11월(2주차 일요일)\n상설전시관 문화유산기부관: 매년 5월, 10월\n특별전시실 냉난방시설 이용중단시 휴관\n야외전시장은 장기 개방\n2025년 설날: 1.27(월), 11.3(월)",
+      entrance:
+        "무료(상설전시관, 어린이박물관, 무료 특별전시 해당) /\n무료(유료 특별전시 해당)",
+      description:
+        "관람시 주의하는 곳: 특별전시실 내 영상촬영 금지\n관람시 편의시설: 관람 촬영 30분 전까지",
+      parking: "400번, 502번",
+      parkingFee:
+        "승용차(15인승 이하)기준 기본요금 2000원, 매 30분당 500원(1일최대 10,000원)",
+      exhibitions: [
+        {
+          id: "1",
+          title: "일본미술, 네 가지 시선",
+          date: "2025.06.17 - 2025.08.10",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+        {
+          id: "5",
+          title: "한국미술 100년",
+          date: "2024.04.01 - 2024.06.30",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+      ],
+      subway:
+        "4호선\n경의중앙선(문산-용문)\n이촌역 2번 출구 방향 '박물관 나들길' <=> '박물관 서문'\n이촌역 2번출구 <=> 박물관 서문",
+    },
+    "DDP 뮤지엄": {
+      name: "DDP 뮤지엄",
+      headerImage: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
+      museumEmblem: undefined,
+      address: "서울 중구 을지로 281",
+      phone: "02-325-1077",
+      website: "www.ddpmuseum.com",
+      hours: "매일 10:00-19:00 (월요일 휴관)",
+      entrance: "일반 15,000원, 학생 12,000원",
+      closedDays: undefined,
+      description:
+        "동대문디자인플라자 내에 위치한 현대적인 뮤지엄으로, 디자인과 예술의 경계를 넘나드는 혁신적인 전시를 선보입니다.",
+      parking: undefined,
+      parkingFee: undefined,
+      subway: undefined,
+      exhibitions: [
+        {
+          id: "2",
+          title: "톰 삭스 전",
+          date: "2025.08.01 - 2025.09.30",
+          image: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
+        },
+        {
+          id: "6",
+          title: "디자인 특별전",
+          date: "2025.10.01 - 2025.12.31",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+      ],
+    },
+    MMCA: {
+      name: "국립현대미술관",
+      headerImage: require("../../../assets/images/exhibitionPoster/exhibition7.png"),
+      museumEmblem: undefined,
+      address: "서울특별시 종로구 삼청로 30",
+      phone: "02-3456-7890",
+      website: "www.mmca.go.kr",
+      hours: "화~일 10:00-18:00 (월요일 휴관)",
+      entrance: "일반 4,000원, 학생 2,000원",
+      closedDays: undefined,
+      description:
+        "한국 현대미술의 메카로, 국내외 현대미술 작품을 수집·연구·전시하며 한국 현대미술의 발전에 기여하고 있습니다.",
+      parking: undefined,
+      parkingFee: undefined,
+      subway: undefined,
+      exhibitions: [
+        {
+          id: "4",
+          title: "현대미술 특별전",
+          date: "2024.01.20 - 2024.05.20",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+        {
+          id: "7",
+          title: "현대조각전",
+          date: "2025.03.01 - 2025.06.30",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+      ],
+    },
+    서울시립미술관: {
+      name: "서울시립미술관",
+      headerImage: require("../../../assets/images/exhibitionPoster/exhibition8.png"),
+      museumEmblem: undefined,
+      address: "서울특별시 중구 덕수궁길 61",
+      phone: "02-2345-6789",
+      website: "www.sema.seoul.go.kr",
+      hours: "화~일 10:00-20:00 (월요일 휴관)",
+      entrance: "일반 3,000원, 학생 1,500원",
+      closedDays: undefined,
+      description:
+        "서울시가 운영하는 대표적인 시립미술관으로, 시민과 가장 가까운 곳에서 다양한 현대미술을 선보이고 있습니다.",
+      parking: undefined,
+      parkingFee: undefined,
+      subway: undefined,
+      exhibitions: [
+        {
+          id: "8",
+          title: "반 고흐 생애전",
+          date: "2024.03.01 - 2024.05.15",
+          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
+        },
+      ],
+    },
+  };
+
+  const museum = museumData[name as keyof typeof museumData];
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+    },
+    content: {
+      flex: 1,
+    },
+    headerNavBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
+    },
+    imageSection: {
+      height: 200,
+    },
+    museumImage: {
+      width: "100%",
+      height: "100%",
+    },
+    museumInfoHeader: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
+    },
+    museumTitleSection: {
+      flex: 1,
+    },
+    titleWithEmblem: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    museumEmblem: {
+      width: 40,
+      height: 40,
+      marginLeft: 12,
+    },
+    backButton: {
+      padding: 5,
+    },
+    navTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: theme === "dark" ? "#fff" : "#000",
+      flex: 1,
+      textAlign: "center",
+      marginHorizontal: 20,
+    },
+    rightIcons: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    iconButton: {
+      padding: 5,
+      marginLeft: 10,
+    },
+    museumNameLarge: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#000",
+      flex: 1,
+    },
+    badgeRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 4,
+    },
+    govIcon: {
+      width: 24,
+      height: 24,
+      marginRight: 8,
+    },
+    govText: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      fontWeight: "500",
+    },
+    govSubtext: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+    },
+    locationText: {
+      fontSize: 14,
+      color: theme === "dark" ? "#999" : "#999",
+      alignSelf: "flex-end",
+    },
+    headerSection: {
+      padding: 20,
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    museumName: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 10,
+    },
+    infoRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    infoText: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginLeft: 8,
+      flex: 1,
+    },
+    description: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      lineHeight: 20,
+      marginTop: 10,
+    },
+    section: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      margin: 20,
+      borderRadius: 12,
+      padding: 16,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 15,
+    },
+    exhibitionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#333" : "#eee",
+    },
+    exhibitionImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginRight: 15,
+    },
+    exhibitionInfo: {
+      flex: 1,
+    },
+    exhibitionTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 4,
+    },
+    exhibitionDate: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      marginBottom: 20,
+      textAlign: "center",
+    },
+    errorBackButton: {
+      backgroundColor: "#4CAF50",
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 8,
+    },
+    backButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });
+
+  if (!museum) {
+    return (
+      <View style={styles.container}>
+        <TopBar />
+        <View style={styles.errorContainer}>
+          <Text
+            style={[
+              styles.errorText,
+              { color: theme === "dark" ? "#fff" : "#333" },
+            ]}>
+            박물관 정보를 찾을 수 없습니다.
+          </Text>
+          <TouchableOpacity
+            style={styles.errorBackButton}
+            onPress={() => router.back()}
+            activeOpacity={0.7}>
+            <Text style={styles.backButtonText}>돌아가기</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <TopBar />
+
+      {/* 헤더 네비게이션 바 */}
+      <View style={styles.headerNavBar}>
+        {/* 뒤로가기 버튼 */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.7}>
+          <Ionicons
+            name='chevron-back'
+            size={24}
+            color={theme === "dark" ? "#fff" : "#000"}
+          />
+        </TouchableOpacity>
+
+        {/* 박물관 이름 */}
+        <Text style={styles.navTitle}>{museum.name}</Text>
+
+        {/* 우측 아이콘들 */}
+        <View style={styles.rightIcons}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            activeOpacity={0.7}>
+            <Ionicons
+              name='heart-outline'
+              size={24}
+              color={theme === "dark" ? "#fff" : "#000"}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconButton}
+            activeOpacity={0.7}>
+            <Ionicons
+              name='share-outline'
+              size={24}
+              color={theme === "dark" ? "#fff" : "#000"}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}>
+        {/* 박물관 이미지 */}
+        <View style={styles.imageSection}>
+          <Image
+            source={museum.headerImage}
+            style={styles.museumImage}
+            resizeMode='cover'
+          />
+        </View>
+
+        {/* 박물관 정보 헤더 */}
+        <View style={styles.museumInfoHeader}>
+          <View style={styles.museumTitleSection}>
+            <View style={styles.titleWithEmblem}>
+              <Text style={styles.museumNameLarge}>{museum.name}</Text>
+              {museum.museumEmblem && (
+                <Image
+                  source={museum.museumEmblem}
+                  style={styles.museumEmblem}
+                  resizeMode='contain'
+                />
+              )}
+            </View>
+            <View style={styles.badgeRow}>
+              <Image
+                source={require("../../../assets/images/museumEmblem/logo1.png")}
+                style={styles.govIcon}
+                resizeMode='contain'
+              />
+              <Text style={styles.govText}>문화체육관광부</Text>
+            </View>
+            <Text style={styles.govSubtext}>국립중앙박물관</Text>
+          </View>
+          <Text style={styles.locationText}>전시장소</Text>
+        </View>
+
+        {/* 박물관 기본 정보 */}
+        <View style={styles.headerSection}>
+          {/* 2. 관람시간 */}
+          <View style={styles.infoRow}>
+            <Ionicons
+              name='time-outline'
+              size={16}
+              color={theme === "dark" ? "#ccc" : "#666"}
+            />
+            <Text style={styles.infoText}>{museum.hours}</Text>
+          </View>
+
+          {/* 3. 휴관일 및 휴실일 */}
+          {museum.closedDays && (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='calendar-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.closedDays}</Text>
+            </View>
+          )}
+
+          {/* 4. 관람료 */}
+          {museum.entrance && (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='card-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.entrance}</Text>
+            </View>
+          )}
+
+          {/* 5. 위치 */}
+          <View style={styles.infoRow}>
+            <Ionicons
+              name='location-outline'
+              size={16}
+              color={theme === "dark" ? "#ccc" : "#666"}
+            />
+            <Text style={styles.infoText}>{museum.address}</Text>
+          </View>
+
+          {/* 6. 전화 */}
+          <View style={styles.infoRow}>
+            <Ionicons
+              name='call-outline'
+              size={16}
+              color={theme === "dark" ? "#ccc" : "#666"}
+            />
+            <Text style={styles.infoText}>{museum.phone}</Text>
+          </View>
+
+          {/* 7. 지하철 */}
+          {museum.subway && (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='train-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.subway}</Text>
+            </View>
+          )}
+
+          {/* 8. 버스 */}
+          {museum.parking && (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='bus-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.parking}</Text>
+            </View>
+          )}
+
+          {/* 9. 주차요금 */}
+          {museum.parkingFee && (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='car-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.parkingFee}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* 현재 전시 */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            현재 전시 ({museum.exhibitions.length}개)
+          </Text>
+
+          {museum.exhibitions.map((exhibition, index) => (
+            <TouchableOpacity
+              key={exhibition.id}
+              style={[
+                styles.exhibitionItem,
+                index === museum.exhibitions.length - 1 && {
+                  borderBottomWidth: 0,
+                },
+              ]}
+              onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
+              activeOpacity={0.7}>
+              <Image
+                source={exhibition.image}
+                style={styles.exhibitionImage}
+                resizeMode='cover'
+              />
+              <View style={styles.exhibitionInfo}>
+                <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
+                <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
+              </View>
+              <Ionicons
+                name='chevron-forward'
+                size={20}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}

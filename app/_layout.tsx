@@ -89,6 +89,10 @@ function RootLayoutNav() {
         name='category/[type]'
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name='museum/[name]'
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
