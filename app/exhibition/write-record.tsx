@@ -54,7 +54,7 @@ export default function WriteRecordScreen() {
 
       setLoading(true);
       setError(null);
-      
+
       const data = exhibitionData[exhibitionId as keyof typeof exhibitionData];
       if (data) {
         setExhibition(data);
@@ -101,14 +101,19 @@ export default function WriteRecordScreen() {
       records[exhibitionId] = newRecord;
       await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
 
-      const visitedIdsJSON = await AsyncStorage.getItem("visited_exhibition_ids");
+      const visitedIdsJSON = await AsyncStorage.getItem(
+        "visited_exhibition_ids"
+      );
       const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
       if (!visitedIds.includes(exhibitionId)) {
         visitedIds.push(exhibitionId);
-        await AsyncStorage.setItem("visited_exhibition_ids", JSON.stringify(visitedIds));
+        await AsyncStorage.setItem(
+          "visited_exhibition_ids",
+          JSON.stringify(visitedIds)
+        );
       }
 
-                  Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
+      Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
         {
           text: "OK",
           onPress: () => {
@@ -138,7 +143,11 @@ export default function WriteRecordScreen() {
   const renderExhibitionInfo = () => {
     if (loading) {
       return (
-        <ActivityIndicator style={styles.loader} size="small" color={textColor} />
+        <ActivityIndicator
+          style={styles.loader}
+          size="small"
+          color={textColor}
+        />
       );
     }
     if (error) {
@@ -173,7 +182,9 @@ export default function WriteRecordScreen() {
           <View style={{ flex: 1 }}>
             <View style={[styles.header, { borderBottomColor: borderColor }]}>
               <TouchableOpacity onPress={() => router.back()}>
-                <Text style={[styles.headerButton, { color: textColor }]}>취소</Text>
+                <Text style={[styles.headerButton, { color: textColor }]}>
+                  취소
+                </Text>
               </TouchableOpacity>
               <View style={styles.headerCenter}>
                 <TouchableOpacity
@@ -191,43 +202,75 @@ export default function WriteRecordScreen() {
                 </TouchableOpacity>
               </View>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={[styles.headerButton, styles.registerButton]}>등록</Text>
+                <Text style={[styles.headerButton, styles.registerButton]}>
+                  등록
+                </Text>
               </TouchableOpacity>
             </View>
 
             {isMenuVisible && (
-              <View style={[styles.menuContainer, { backgroundColor: menuBackgroundColor, borderColor: menuBorderColor }]}>
-                {(["공개", "팔로워만 공개", "비공개"] as Visibility[]).map((option, index) => (
-                  <React.Fragment key={option}>
-                    <TouchableOpacity
-                      style={[
-                        styles.menuItem,
-                        visibility === option && { backgroundColor: selectedItemColor },
-                      ]}
-                      onPress={() => handleVisibilityChange(option)}
-                    >
-                      <Text style={[
-                        styles.menuItemText,
-                        { color: visibility === option ? '#FFFFFF' : textColor },
-                      ]}>
-                        {option}
-                      </Text>
-                    </TouchableOpacity>
-                    {index < 2 && (
-                      <View style={[styles.separator, { backgroundColor: menuBorderColor }]} />
-                    )}
-                  </React.Fragment>
-                ))}
+              <View
+                style={[
+                  styles.menuContainer,
+                  {
+                    backgroundColor: menuBackgroundColor,
+                    borderColor: menuBorderColor,
+                  },
+                ]}
+              >
+                {(["공개", "팔로워만 공개", "비공개"] as Visibility[]).map(
+                  (option, index) => (
+                    <React.Fragment key={option}>
+                      <TouchableOpacity
+                        style={[
+                          styles.menuItem,
+                          visibility === option && {
+                            backgroundColor: selectedItemColor,
+                          },
+                        ]}
+                        onPress={() => handleVisibilityChange(option)}
+                      >
+                        <Text
+                          style={[
+                            styles.menuItemText,
+                            {
+                              color:
+                                visibility === option ? "#FFFFFF" : textColor,
+                            },
+                          ]}
+                        >
+                          {option}
+                        </Text>
+                      </TouchableOpacity>
+                      {index < 2 && (
+                        <View
+                          style={[
+                            styles.separator,
+                            { backgroundColor: menuBorderColor },
+                          ]}
+                        />
+                      )}
+                    </React.Fragment>
+                  )
+                )}
               </View>
             )}
 
             <View
-              style={[styles.exhibitionContainer, { borderBottomColor: borderColor }]}
+              style={[
+                styles.exhibitionContainer,
+                { borderBottomColor: borderColor },
+              ]}
             >
               {renderExhibitionInfo()}
             </View>
 
-            <View style={[styles.titleInputContainer, { borderBottomColor: borderColor }]}>
+            <View
+              style={[
+                styles.titleInputContainer,
+                { borderBottomColor: borderColor },
+              ]}
+            >
               <TextInput
                 style={[styles.titleInput, { color: textColor }]}
                 placeholder="제목을 입력하세요"
@@ -275,7 +318,9 @@ export default function WriteRecordScreen() {
                 </TouchableOpacity>
               </View>
               <TouchableOpacity>
-                <Text style={[styles.saveText, { color: textColor }]}>저장</Text>
+                <Text style={[styles.saveText, { color: textColor }]}>
+                  저장
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -323,9 +368,9 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   menuContainer: {
-    position: 'absolute',
-    top: 55, 
-    alignSelf: 'center',
+    position: "absolute",
+    top: 55,
+    alignSelf: "center",
     width: 150,
     borderRadius: 8,
     borderWidth: 1,
@@ -335,19 +380,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     zIndex: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   menuItem: {
     paddingVertical: 12,
     paddingHorizontal: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   menuItemText: {
     fontSize: 14,
   },
   separator: {
     height: 1,
-    width: '100%',
+    width: "100%",
   },
   exhibitionContainer: {
     flexDirection: "row",
@@ -390,7 +435,7 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     paddingVertical: 12,
   },
   contentContainer: {
