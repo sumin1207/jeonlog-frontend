@@ -813,6 +813,8 @@ export default function SearchScreen() {
                 autoCorrect={false}
                 onSubmitEditing={() => {
                   if (searchQuery.trim()) {
+                    setIsSearchFocused(false);
+                    setShowHistory(false);
                     executeSearch(searchQuery);
                   }
                 }}
@@ -861,7 +863,9 @@ export default function SearchScreen() {
           )}
 
           {/* 검색 기록 */}
-          {showHistory && searchHistory.length > 0 ? (
+          {showHistory &&
+          searchHistory.length > 0 &&
+          (isSearchFocused || searchQuery.trim() === "") ? (
             <View style={styles.historyContainer}>
               <View style={styles.historyHeader}>
                 <Text
@@ -897,8 +901,9 @@ export default function SearchScreen() {
                       // 검색어 설정
                       setSearchQuery(item);
 
-                      // 검색 기록창 유지
-                      setShowHistory(true);
+                      // 검색 실행 후 포커스 해제하여 검색 결과 표시
+                      setIsSearchFocused(false);
+                      setShowHistory(false);
 
                       // 즉시 검색 실행
                       executeSearch(item);
@@ -942,26 +947,29 @@ export default function SearchScreen() {
           ) : null}
 
           {/* 검색 결과 */}
-          {!isLoading && (selectedMuseum || searchResults.length > 0) && (
-            <Animated.View
-              style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-              {selectedMuseum
-                ? renderMuseumInfo()
-                : searchResults.length > 0 && (
-                    <FlatList
-                      data={searchResults}
-                      renderItem={renderSearchResult}
-                      keyExtractor={(item) => item.id}
-                      showsVerticalScrollIndicator={false}
-                      contentContainerStyle={{ paddingBottom: 20 }}
-                      keyboardShouldPersistTaps='handled'
-                    />
-                  )}
-            </Animated.View>
-          )}
+          {!isLoading &&
+            !isSearchFocused &&
+            (selectedMuseum || searchResults.length > 0) && (
+              <Animated.View
+                style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
+                {selectedMuseum
+                  ? renderMuseumInfo()
+                  : searchResults.length > 0 && (
+                      <FlatList
+                        data={searchResults}
+                        renderItem={renderSearchResult}
+                        keyExtractor={(item) => item.id}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingBottom: 20 }}
+                        keyboardShouldPersistTaps='handled'
+                      />
+                    )}
+              </Animated.View>
+            )}
 
           {/* 검색 결과가 없을 때만 빈 상태 표시 */}
           {!isLoading &&
+            !isSearchFocused &&
             !selectedMuseum &&
             searchResults.length === 0 &&
             searchQuery.trim().length > 0 && (
