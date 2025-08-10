@@ -23,7 +23,8 @@ export default function ExhibitionDetailScreen() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
   const router = useRouter();
-  const { isLiked, isThumbsUp, toggleLiked, toggleThumbsUp } = useExhibition();
+  const { isBookmarked, isThumbsUp, toggleBookmarked, toggleThumbsUp } =
+    useExhibition();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,13 +47,15 @@ export default function ExhibitionDetailScreen() {
         style={[
           styles.container,
           { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-        ]}>
+        ]}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
-            style={styles.backButton}>
+            style={styles.backButton}
+          >
             <Ionicons
-              name='arrow-back'
+              name="arrow-back"
               size={24}
               color={theme === "dark" ? "#fff" : "#1c3519"}
             />
@@ -61,7 +64,8 @@ export default function ExhibitionDetailScreen() {
             style={[
               styles.headerTitle,
               { color: theme === "dark" ? "#fff" : "#1c3519" },
-            ]}>
+            ]}
+          >
             전시 상세
           </Text>
           <View style={styles.headerSpacer} />
@@ -71,7 +75,8 @@ export default function ExhibitionDetailScreen() {
             style={[
               styles.errorText,
               { color: theme === "dark" ? "#ccc" : "#666" },
-            ]}>
+            ]}
+          >
             전시 정보를 찾을 수 없습니다.
           </Text>
         </View>
@@ -84,14 +89,16 @@ export default function ExhibitionDetailScreen() {
       style={[
         styles.container,
         { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-      ]}>
+      ]}
+    >
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
-          style={styles.backButton}>
+          style={styles.backButton}
+        >
           <Ionicons
-            name='arrow-back'
+            name="arrow-back"
             size={24}
             color={theme === "dark" ? "#fff" : "#1c3519"}
           />
@@ -100,7 +107,8 @@ export default function ExhibitionDetailScreen() {
           style={[
             styles.headerTitle,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
+          ]}
+        >
           전시 상세
         </Text>
         <View style={styles.headerSpacer} />
@@ -108,17 +116,19 @@ export default function ExhibitionDetailScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         {/* 포스터 이미지 */}
         <View
           style={[
             styles.imageContainer,
             { backgroundColor: theme === "dark" ? "#2a2a2a" : "#f5f5f5" },
-          ]}>
+          ]}
+        >
           <Image
             source={exhibition.image}
             style={styles.posterImage}
-            resizeMode='contain'
+            resizeMode="contain"
           />
         </View>
 
@@ -132,7 +142,8 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.title,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.title}
                 </Text>
                 {/* 빈 subtitle 제거 */}
@@ -140,13 +151,18 @@ export default function ExhibitionDetailScreen() {
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={styles.actionButton}
-                  onPress={() => toggleLiked(id as string)}>
+                  onPress={() => toggleBookmarked(id as string)}
+                >
                   <Ionicons
-                    name={isLiked(id as string) ? "heart" : "heart-outline"}
+                    name={
+                      isBookmarked(id as string)
+                        ? "bookmark"
+                        : "bookmark-outline"
+                    }
                     size={24}
                     color={
-                      isLiked(id as string)
-                        ? "#FF6B6B"
+                      isBookmarked(id as string)
+                        ? "#ffb92eff"
                         : theme === "dark"
                         ? "#ccc"
                         : "#666"
@@ -155,7 +171,8 @@ export default function ExhibitionDetailScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.actionButton}
-                  onPress={() => toggleThumbsUp(id as string)}>
+                  onPress={() => toggleThumbsUp(id as string)}
+                >
                   <Ionicons
                     name={
                       isThumbsUp(id as string)
@@ -176,7 +193,7 @@ export default function ExhibitionDetailScreen() {
             </View>
             <View style={{ alignItems: "flex-end" }}>
               <WriteRecordButton
-                title='기록하기'
+                title="기록하기"
                 onPress={() =>
                   router.push({
                     pathname: "/exhibition/write-record",
@@ -198,7 +215,8 @@ export default function ExhibitionDetailScreen() {
                   backgroundColor:
                     exhibition.category === "전시" ? "#4CAF50" : "#2196F3",
                 },
-              ]}>
+              ]}
+            >
               <Text style={styles.categoryText}>{exhibition.category}</Text>
             </View>
           </View>
@@ -209,13 +227,14 @@ export default function ExhibitionDetailScreen() {
               style={[
                 styles.sectionTitle,
                 { color: theme === "dark" ? "#fff" : "#1c3519" },
-              ]}>
+              ]}
+            >
               기본 정보
             </Text>
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='location'
+                name="location"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -224,21 +243,24 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   장소
                 </Text>
                 <Text
                   style={[
                     styles.infoValue,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.location}
                 </Text>
                 <Text
                   style={[
                     styles.infoAddress,
                     { color: theme === "dark" ? "#999" : "#888" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.address}
                 </Text>
               </View>
@@ -246,7 +268,7 @@ export default function ExhibitionDetailScreen() {
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='calendar'
+                name="calendar"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -255,14 +277,16 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   기간
                 </Text>
                 <Text
                   style={[
                     styles.infoValue,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.date}
                 </Text>
               </View>
@@ -270,7 +294,7 @@ export default function ExhibitionDetailScreen() {
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='time'
+                name="time"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -279,14 +303,16 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   관람시간
                 </Text>
                 <Text
                   style={[
                     styles.infoValue,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.time}
                 </Text>
               </View>
@@ -295,7 +321,7 @@ export default function ExhibitionDetailScreen() {
             {(exhibition as any).exhibits && (
               <View style={styles.infoItem}>
                 <Ionicons
-                  name='card'
+                  name="card"
                   size={20}
                   color={theme === "dark" ? "#ccc" : "#666"}
                 />
@@ -304,14 +330,16 @@ export default function ExhibitionDetailScreen() {
                     style={[
                       styles.infoLabel,
                       { color: theme === "dark" ? "#ccc" : "#666" },
-                    ]}>
+                    ]}
+                  >
                     전시품
                   </Text>
                   <Text
                     style={[
                       styles.infoValue,
                       { color: theme === "dark" ? "#fff" : "#1c3519" },
-                    ]}>
+                    ]}
+                  >
                     {(exhibition as any).exhibits}
                   </Text>
                 </View>
@@ -320,7 +348,7 @@ export default function ExhibitionDetailScreen() {
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='card'
+                name="card"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -329,14 +357,16 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   관람료
                 </Text>
                 <Text
                   style={[
                     styles.infoValue,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.price}
                 </Text>
               </View>
@@ -349,14 +379,16 @@ export default function ExhibitionDetailScreen() {
               style={[
                 styles.sectionTitle,
                 { color: theme === "dark" ? "#fff" : "#1c3519" },
-              ]}>
+              ]}
+            >
               전시 요약
             </Text>
             <Text
               style={[
                 styles.description,
                 { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}>
+              ]}
+            >
               {exhibition.description}
             </Text>
           </View>
@@ -368,14 +400,16 @@ export default function ExhibitionDetailScreen() {
                 style={[
                   styles.sectionTitle,
                   { color: theme === "dark" ? "#fff" : "#1c3519" },
-                ]}>
+                ]}
+              >
                 전시 소개
               </Text>
               <Text
                 style={[
                   styles.description,
                   { color: theme === "dark" ? "#ccc" : "#666" },
-                ]}>
+                ]}
+              >
                 {(exhibition as any).explanation}
               </Text>
             </View>
@@ -403,13 +437,14 @@ export default function ExhibitionDetailScreen() {
               style={[
                 styles.sectionTitle,
                 { color: theme === "dark" ? "#fff" : "#1c3519" },
-              ]}>
+              ]}
+            >
               추가 정보
             </Text>
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='business'
+                name="business"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -418,14 +453,16 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   주최
                 </Text>
                 <Text
                   style={[
                     styles.infoValue,
                     { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
+                  ]}
+                >
                   {exhibition.sponsor}
                 </Text>
               </View>
@@ -433,7 +470,7 @@ export default function ExhibitionDetailScreen() {
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='call'
+                name="call"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -442,17 +479,20 @@ export default function ExhibitionDetailScreen() {
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   문의
                 </Text>
                 <TouchableOpacity
-                  onPress={() => Linking.openURL(`tel:${exhibition.phone}`)}>
+                  onPress={() => Linking.openURL(`tel:${exhibition.phone}`)}
+                >
                   <Text
                     style={[
                       styles.infoValue,
                       styles.linkText,
                       { color: theme === "dark" ? "#4A90E2" : "#007AFF" },
-                    ]}>
+                    ]}
+                  >
                     {exhibition.phone}
                   </Text>
                 </TouchableOpacity>
@@ -460,13 +500,15 @@ export default function ExhibitionDetailScreen() {
                   <TouchableOpacity
                     onPress={() =>
                       Linking.openURL(`mailto:${(exhibition as any).email}`)
-                    }>
+                    }
+                  >
                     <Text
                       style={[
                         styles.infoValue,
                         styles.linkText,
                         { color: theme === "dark" ? "#4A90E2" : "#007AFF" },
-                      ]}>
+                      ]}
+                    >
                       {(exhibition as any).email}
                     </Text>
                   </TouchableOpacity>
@@ -476,18 +518,20 @@ export default function ExhibitionDetailScreen() {
 
             <View style={styles.infoItem}>
               <Ionicons
-                name='globe'
+                name="globe"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
               <TouchableOpacity
                 onPress={() => Linking.openURL(`https://${exhibition.website}`)}
-                style={styles.infoContent}>
+                style={styles.infoContent}
+              >
                 <Text
                   style={[
                     styles.infoLabel,
                     { color: theme === "dark" ? "#ccc" : "#666" },
-                  ]}>
+                  ]}
+                >
                   웹사이트
                 </Text>
                 <Text
@@ -495,7 +539,8 @@ export default function ExhibitionDetailScreen() {
                     styles.infoValue,
                     { color: theme === "dark" ? "#4A90E2" : "#007AFF" },
                     styles.linkText,
-                  ]}>
+                  ]}
+                >
                   {exhibition.website}
                 </Text>
               </TouchableOpacity>

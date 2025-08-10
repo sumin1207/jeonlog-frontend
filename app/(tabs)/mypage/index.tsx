@@ -34,7 +34,7 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo } = useAuth();
-  const { likedExhibitions, thumbsUpExhibitions } = useExhibition();
+  const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
 
   // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
@@ -145,28 +145,15 @@ export default function MyPageScreen() {
     onPress?: () => void,
     showArrow: boolean = true
   ) => (
-    <Pressable
-      style={styles.menuItem}
-      onPress={onPress}
-      disabled={!onPress}>
+    <Pressable style={styles.menuItem} onPress={onPress} disabled={!onPress}>
       <View style={styles.menuItemLeft}>
-        <Ionicons
-          name={icon as any}
-          size={24}
-          color='#1c3519'
-        />
+        <Ionicons name={icon as any} size={24} color="#1c3519" />
         <View style={styles.menuItemText}>
           <Text style={styles.menuItemTitle}>{title}</Text>
           {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {showArrow && (
-        <Ionicons
-          name='chevron-forward'
-          size={20}
-          color='#ccc'
-        />
-      )}
+      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
     </Pressable>
   );
 
@@ -174,21 +161,15 @@ export default function MyPageScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title='마이페이지' />
-      <ScrollView
-        style={styles.scrollView}
-        pointerEvents='auto'>
+      <TopBar title="마이페이지" />
+      <ScrollView style={styles.scrollView} pointerEvents="auto">
         {/* 사용자 정보 섹션 */}
         {renderSection(
           "사용자 정보",
           <View style={styles.userSection}>
             <View style={styles.userInfo}>
               <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
+                <Ionicons name="person" size={40} color="#fff" />
               </View>
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>{userData.name}</Text>
@@ -201,7 +182,7 @@ export default function MyPageScreen() {
                         : "logo-github"
                     }
                     size={16}
-                    color='#1c3519'
+                    color="#1c3519"
                   />
                   <Text style={styles.loginTypeText}>
                     {userData.loginType === "google" ? "Google" : "Naver"}
@@ -218,11 +199,11 @@ export default function MyPageScreen() {
           "전시 관리",
           <View>
             {renderMenuItem(
-              "heart",
+              "bookmark",
               "찜한 전시",
-              `${likedExhibitions.length}개`,
+              `${BookmarkedExhibitions.length}개`,
               () => {
-                router.push("/(tabs)/mypage/exhibition/liked");
+                router.push("/(tabs)/mypage/exhibition/Bookmarked");
               }
             )}
             {renderMenuItem(
@@ -250,11 +231,7 @@ export default function MyPageScreen() {
           <View>
             <View style={styles.menuItem}>
               <View style={styles.menuItemLeft}>
-                <Ionicons
-                  name='moon'
-                  size={24}
-                  color='#1c3519'
-                />
+                <Ionicons name="moon" size={24} color="#1c3519" />
                 <View style={styles.menuItemText}>
                   <Text style={styles.menuItemTitle}>다크모드</Text>
                 </View>
