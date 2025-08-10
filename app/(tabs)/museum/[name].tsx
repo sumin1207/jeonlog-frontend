@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
+import KakaoMap from "@/components/ui/KakaoMap";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -27,6 +28,8 @@ export default function MuseumDetailScreen() {
       headerImage: require("../../../assets/images/museumBackground/bg1.jpg"),
       museumEmblem: require("../../../assets/images/museumEmblem/logo1.png"),
       address: "04383 서울시 용산구 서빙고로 137(용산동6가 168-6)",
+      latitude: 37.524058,
+      longitude: 126.980455,
       phone: "02)2077-9000",
       website: "www.museum.go.kr",
       hours:
@@ -62,6 +65,8 @@ export default function MuseumDetailScreen() {
       headerImage: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
       museumEmblem: undefined,
       address: "서울 중구 을지로 281",
+      latitude: 37.566535,
+      longitude: 127.009422,
       phone: "02-325-1077",
       website: "www.ddpmuseum.com",
       hours: "매일 10:00-19:00 (월요일 휴관)",
@@ -92,6 +97,8 @@ export default function MuseumDetailScreen() {
       headerImage: require("../../../assets/images/exhibitionPoster/exhibition7.png"),
       museumEmblem: undefined,
       address: "서울특별시 종로구 삼청로 30",
+      latitude: 37.586316,
+      longitude: 126.983011,
       phone: "02-3456-7890",
       website: "www.mmca.go.kr",
       hours: "화~일 10:00-18:00 (월요일 휴관)",
@@ -122,6 +129,8 @@ export default function MuseumDetailScreen() {
       headerImage: require("../../../assets/images/exhibitionPoster/exhibition8.png"),
       museumEmblem: undefined,
       address: "서울특별시 중구 덕수궁길 61",
+      latitude: 37.565926,
+      longitude: 126.975229,
       phone: "02-2345-6789",
       website: "www.sema.seoul.go.kr",
       hours: "화~일 10:00-20:00 (월요일 휴관)",
@@ -364,6 +373,22 @@ export default function MuseumDetailScreen() {
       fontSize: 16,
       fontWeight: "600",
     },
+    locationInfo: {
+      marginBottom: 15,
+    },
+    mapContainer: {
+      alignItems: "center",
+      borderRadius: 12,
+      overflow: "hidden",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
   });
 
   if (!museum) {
@@ -553,6 +578,34 @@ export default function MuseumDetailScreen() {
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
             </View>
           )}
+        </View>
+
+        {/* 위치 정보 및 지도 */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>위치 정보</Text>
+
+          {/* 주소 정보 */}
+          <View style={styles.locationInfo}>
+            <View style={styles.infoRow}>
+              <Ionicons
+                name='location-outline'
+                size={16}
+                color={theme === "dark" ? "#ccc" : "#666"}
+              />
+              <Text style={styles.infoText}>{museum.address}</Text>
+            </View>
+          </View>
+
+          {/* 카카오맵 */}
+          <View style={styles.mapContainer}>
+            <KakaoMap
+              latitude={museum.latitude}
+              longitude={museum.longitude}
+              title={museum.name}
+              address={museum.address}
+              height={250}
+            />
+          </View>
         </View>
 
         {/* 현재 전시 */}
