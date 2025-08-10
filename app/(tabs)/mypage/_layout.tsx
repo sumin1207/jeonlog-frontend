@@ -5,11 +5,12 @@ export default function MyPageLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-      }}>
-      <Stack.Screen name='index' />
-      <Stack.Screen name='exhibition/liked' />
-      <Stack.Screen name='exhibition/thumbs-up' />
-      <Stack.Screen name='exhibition/visited' />
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="exhibition/Bookmarked" />
+      <Stack.Screen name="exhibition/thumbs-up" />
+      <Stack.Screen name="exhibition/visited" />
     </Stack>
   );
 }
