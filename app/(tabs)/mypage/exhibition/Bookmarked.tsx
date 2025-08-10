@@ -10,54 +10,18 @@ import {
 import { useTheme } from "../../../../contexts/ThemeContext";
 import { useExhibition } from "../../../../contexts/ExhibitionContext";
 import TopBar from "../../../../components/ui/TopBar";
+import { exhibitionData } from "../../../../data/exhibitionsDataStorage";
+import { useRouter } from "expo-router";
 
-// 전시 데이터 (나중에 API로 대체)
-const exhibitionData = {
-  "1": {
-    id: "1",
-    title: "일본미술, 네 가지 시선",
-    location: "국립중앙박물관 상설전시관 3층 306호",
-    date: "2025.06.17 - 2025.08.10",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "2": {
-    id: "2",
-    title: "톰 삭스 전",
-    location: "DDP 뮤지엄 전시 1관",
-    date: "2025.04.25 - 2025.09.07",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition2.png"),
-  },
-  "3": {
-    id: "3",
-    title: "반 고흐 생애전",
-    location: "서울시립미술관",
-    date: "2024.03.01 - 2024.05.15",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "4": {
-    id: "4",
-    title: "현대미술 특별전",
-    location: "MMCA",
-    date: "2024.01.20 - 2024.05.20",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  "5": {
-    id: "5",
-    title: "한국미술 100년",
-    location: "국립중앙박물관",
-    date: "2024.04.01 - 2024.06.30",
-    image: require("../../../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-};
-
-export default function LikedExhibitionsScreen() {
+export default function BookmarkedExhibitionsScreen() {
   const { theme } = useTheme();
-  const { likedExhibitions } = useExhibition();
+  const { BookmarkedExhibitions } = useExhibition();
+  const router = useRouter();
 
   // 찜한 전시회만 필터링
-  const likedExhibitionsData = likedExhibitions
-    .map((id) => exhibitionData[id as keyof typeof exhibitionData])
-    .filter(Boolean);
+  const BookmarkedExhibitionsData = BookmarkedExhibitions.map(
+    (id) => exhibitionData[id as keyof typeof exhibitionData]
+  ).filter(Boolean);
 
   const renderExhibitionItem = ({
     item,
@@ -68,31 +32,33 @@ export default function LikedExhibitionsScreen() {
       style={[
         styles.exhibitionItem,
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
-      ]}>
-      <Image
-        source={item.image}
-        style={styles.exhibitionImage}
-      />
+      ]}
+      onPress={() => router.push(`/exhibition/${item.id}`)}
+    >
+      <Image source={item.image} style={styles.exhibitionImage} />
       <View style={styles.exhibitionInfo}>
         <Text
           style={[
             styles.exhibitionTitle,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
+          ]}
+        >
           {item.title}
         </Text>
         <Text
           style={[
             styles.exhibitionLocation,
             { color: theme === "dark" ? "#ccc" : "#666" },
-          ]}>
+          ]}
+        >
           📍 {item.location}
         </Text>
         <Text
           style={[
             styles.exhibitionDate,
             { color: theme === "dark" ? "#ccc" : "#666" },
-          ]}>
+          ]}
+        >
           📅 {item.date}
         </Text>
       </View>
@@ -104,19 +70,21 @@ export default function LikedExhibitionsScreen() {
       style={[
         styles.container,
         { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
-      ]}>
-      <TopBar title='찜한 전시' />
+      ]}
+    >
+      <TopBar title="찜한 전시" />
       <View style={styles.content}>
         <Text
           style={[
             styles.title,
             { color: theme === "dark" ? "#fff" : "#1c3519" },
-          ]}>
-          찜한 전시 ({likedExhibitionsData.length}개)
+          ]}
+        >
+          찜한 전시 ({BookmarkedExhibitionsData.length}개)
         </Text>
-        {likedExhibitionsData.length > 0 ? (
+        {BookmarkedExhibitionsData.length > 0 ? (
           <FlatList
-            data={likedExhibitionsData}
+            data={BookmarkedExhibitionsData}
             renderItem={renderExhibitionItem}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
@@ -128,7 +96,8 @@ export default function LikedExhibitionsScreen() {
               style={[
                 styles.emptyText,
                 { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}>
+              ]}
+            >
               찜한 전시가 없습니다.
             </Text>
           </View>

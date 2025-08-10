@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ExhibitionState {
-  likedExhibitions: string[];
+  BookmarkedExhibitions: string[];
   thumbsUpExhibitions: string[];
   visitedExhibitions: string[];
 }
 
 interface ExhibitionContextType {
-  likedExhibitions: string[];
+  BookmarkedExhibitions: string[];
   thumbsUpExhibitions: string[];
   visitedExhibitions: string[];
-  toggleLiked: (exhibitionId: string) => void;
+  toggleBookmarked: (exhibitionId: string) => void;
   toggleThumbsUp: (exhibitionId: string) => void;
   toggleVisited: (exhibitionId: string) => void;
-  isLiked: (exhibitionId: string) => boolean;
+  isBookmarked: (exhibitionId: string) => boolean;
   isThumbsUp: (exhibitionId: string) => boolean;
   isVisited: (exhibitionId: string) => boolean;
 }
@@ -38,17 +38,17 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   children,
 }) => {
   const [state, setState] = useState<ExhibitionState>({
-    likedExhibitions: [],
+    BookmarkedExhibitions: [],
     thumbsUpExhibitions: [],
     visitedExhibitions: [],
   });
 
-  const toggleLiked = (exhibitionId: string) => {
+  const toggleBookmarked = (exhibitionId: string) => {
     setState((prev) => ({
       ...prev,
-      likedExhibitions: prev.likedExhibitions.includes(exhibitionId)
-        ? prev.likedExhibitions.filter((id) => id !== exhibitionId)
-        : [...prev.likedExhibitions, exhibitionId],
+      BookmarkedExhibitions: prev.BookmarkedExhibitions.includes(exhibitionId)
+        ? prev.BookmarkedExhibitions.filter((id) => id !== exhibitionId)
+        : [...prev.BookmarkedExhibitions, exhibitionId],
     }));
   };
 
@@ -70,8 +70,8 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     }));
   };
 
-  const isLiked = (exhibitionId: string) => {
-    return state.likedExhibitions.includes(exhibitionId);
+  const isBookmarked = (exhibitionId: string) => {
+    return state.BookmarkedExhibitions.includes(exhibitionId);
   };
 
   const isThumbsUp = (exhibitionId: string) => {
@@ -85,16 +85,17 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   return (
     <ExhibitionContext.Provider
       value={{
-        likedExhibitions: state.likedExhibitions,
+        BookmarkedExhibitions: state.BookmarkedExhibitions,
         thumbsUpExhibitions: state.thumbsUpExhibitions,
         visitedExhibitions: state.visitedExhibitions,
-        toggleLiked,
+        toggleBookmarked,
         toggleThumbsUp,
         toggleVisited,
-        isLiked,
+        isBookmarked,
         isThumbsUp,
         isVisited,
-      }}>
+      }}
+    >
       {children}
     </ExhibitionContext.Provider>
   );
