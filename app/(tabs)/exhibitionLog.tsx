@@ -19,6 +19,7 @@ interface Record {
   record: {
     title: string;
     createdAt: string;
+    hashtags?: string[];
   };
   exhibition: {
     id: string;
@@ -232,7 +233,11 @@ export default function ExhibitionLogScreen() {
                     }}
                     timestamp={formatTimestamp(item.record.createdAt)}
                     likes={0} // Placeholder
-                    hashtags={["전시기록"]}
+                    hashtags={
+                      (item.record.hashtags && item.record.hashtags.length > 0)
+                        ? item.record.hashtags
+                        : ["전시기록"]
+                    }
                   />
                 </TouchableOpacity>
               ))}
@@ -259,7 +264,11 @@ export default function ExhibitionLogScreen() {
                     }}
                     timestamp={formatTimestamp(item.record.createdAt)}
                     likes={0} // Placeholder
-                    hashtags={["전시기록"]}
+                    hashtags={
+                      (item.record.hashtags && item.record.hashtags.length > 0)
+                        ? item.record.hashtags
+                        : ["전시기록"]
+                    }
                   />
                 </TouchableOpacity>
               ))}
