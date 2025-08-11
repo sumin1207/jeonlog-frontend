@@ -15,13 +15,7 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
 }) {
-  return (
-    <FontAwesome
-      size={28}
-      style={{ marginBottom: -3 }}
-      {...props}
-    />
-  );
+  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -39,17 +33,14 @@ export default function TabLayout() {
           borderTopColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
         },
       }}
-      initialRouteName='home'>
+      initialRouteName="home"
+    >
       <Tabs.Screen
-        name='home'
+        name="home"
         options={{
           title: "홈",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='home-outline'
-              size={size}
-              color={color}
-            />
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -65,15 +56,11 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name='category'
+        name="category"
         options={{
           title: "카테고리",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='grid-outline'
-              size={size}
-              color={color}
-            />
+            <Ionicons name="grid-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -89,15 +76,11 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name='exhibitionLog'
+        name="exhibitionLog"
         options={{
           title: "전시 기록",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='images-outline'
-              size={size}
-              color={color}
-            />
+            <Ionicons name="images-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -113,16 +96,12 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name='search'
+        name="search"
         options={{
           title: "검색",
           href: null,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='search-outline'
-              size={size}
-              color={color}
-            />
+            <Ionicons name="search-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -138,15 +117,11 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name='mypage'
+        name="mypage"
         options={{
           title: "마이페이지",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name='person-outline'
-              size={size}
-              color={color}
-            />
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -161,12 +136,10 @@ export default function TabLayout() {
           },
         })}
       />
+      <Tabs.Screen name="category/[type]" options={{ href: null }} />
+      <Tabs.Screen name="museum/[name]" options={{ href: null }} />
       <Tabs.Screen
-        name='category/[type]'
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name='museum/[name]'
+        name="exhibition-log/[exhibitionLog-id]"
         options={{ href: null }}
       />
     </Tabs>

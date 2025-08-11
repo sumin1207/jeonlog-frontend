@@ -10,12 +10,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  InteractionManager,
 } from "react-native";
-import { useLocalSearchParams, Stack } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "@/data/exhibitionsDataStorage";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import TopBar from "@/components/ui/TopBar";
 
 interface Record {
   title: string;
@@ -58,24 +60,33 @@ export default function ExhibitionLogDetailScreen() {
       setRecord(currentRecord || null);
 
       // Load exhibition details
-      const currentExhibition = exhibitionData[id as keyof typeof exhibitionData];
+      const currentExhibition =
+        exhibitionData[id as keyof typeof exhibitionData];
       setExhibition(currentExhibition || null);
 
       // Load comments
-      const savedCommentsJSON = await AsyncStorage.getItem("exhibition_comments");
-      const allComments = savedCommentsJSON ? JSON.parse(savedCommentsJSON) : {};
+      const savedCommentsJSON = await AsyncStorage.getItem(
+        "exhibition_comments"
+      );
+      const allComments = savedCommentsJSON
+        ? JSON.parse(savedCommentsJSON)
+        : {};
       setComments(allComments[id] || []);
-
     } catch (error) {
       console.error("Error loading exhibition log details:", error);
-      Alert.alert("오류", "전시 기록 상세 정보를 불러오는 중 문제가 발생했습니다.");
+      Alert.alert(
+        "오류",
+        "전시 기록 상세 정보를 불러오는 중 문제가 발생했습니다."
+      );
     } finally {
       setIsLoading(false);
     }
   }, [exhibitionLogId]);
 
   useEffect(() => {
-    loadData();
+    InteractionManager.runAfterInteractions(() => {
+      loadData();
+    });
   }, [loadData]);
 
   const handleAddComment = async () => {
@@ -86,10 +97,17 @@ export default function ExhibitionLogDetailScreen() {
     setNewComment("");
 
     try {
-      const savedCommentsJSON = await AsyncStorage.getItem("exhibition_comments");
-      const allComments = savedCommentsJSON ? JSON.parse(savedCommentsJSON) : {};
+      const savedCommentsJSON = await AsyncStorage.getItem(
+        "exhibition_comments"
+      );
+      const allComments = savedCommentsJSON
+        ? JSON.parse(savedCommentsJSON)
+        : {};
       allComments[exhibitionLogId as string] = updatedComments;
-      await AsyncStorage.setItem("exhibition_comments", JSON.stringify(allComments));
+      await AsyncStorage.setItem(
+        "exhibition_comments",
+        JSON.stringify(allComments)
+      );
     } catch (error) {
       console.error("Error saving comment:", error);
       Alert.alert("오류", "댓글 저장 중 문제가 발생했습니다.");
@@ -199,18 +217,16 @@ export default function ExhibitionLogDetailScreen() {
   if (!record && !exhibition) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
-          전시 기록을 찾을 수 없습니다.
-        </Text>
+        <Text style={styles.errorText}>전시 기록을 찾을 수 없습니다.</Text>
       </View>
     );
   }
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
+    <View style={styles.container}>
+      <TopBar />
       <KeyboardAvoidingView
-        style={styles.container}
+        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
@@ -219,7 +235,9 @@ export default function ExhibitionLogDetailScreen() {
             {exhibition?.image && (
               <Image source={exhibition.image} style={styles.image} />
             )}
-            <Text style={styles.title}>{record?.title || exhibition?.title || "제목 없음"}</Text>
+            <Text style={styles.title}>
+              {record?.title || exhibition?.title || "제목 없음"}
+            </Text>
             {record?.content && (
               <Text style={styles.description}>{record.content}</Text>
             )}
@@ -257,6 +275,6 @@ export default function ExhibitionLogDetailScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 }
