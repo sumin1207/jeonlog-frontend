@@ -107,10 +107,13 @@ export default function ExhibitionLogScreen() {
       }
 
       setRecords(loadedRecords);
-      const uniqueIds = new Set(loadedRecords.map(item => item.exhibitionId));
+      const uniqueIds = new Set(loadedRecords.map((item) => item.exhibitionId));
       if (uniqueIds.size !== loadedRecords.length) {
         console.warn("Duplicate exhibitionIds found in records!");
-        console.log("All exhibitionIds:", loadedRecords.map(item => item.exhibitionId));
+        console.log(
+          "All exhibitionIds:",
+          loadedRecords.map((item) => item.exhibitionId)
+        );
       }
     } catch (error) {
       console.error("Error loading records:", error);
@@ -216,7 +219,10 @@ export default function ExhibitionLogScreen() {
                 <TouchableOpacity
                   key={item.exhibitionId}
                   onPress={() => {
-                    console.log("Navigating with exhibitionId:", item.exhibitionId);
+                    console.log(
+                      "Navigating with exhibitionId:",
+                      item.exhibitionId
+                    );
                     router.push({
                       pathname: `/exhibition-log/${item.exhibitionId}`,
                       params: { exhibitionLogId: item.exhibitionId },
@@ -234,7 +240,7 @@ export default function ExhibitionLogScreen() {
                     timestamp={formatTimestamp(item.record.createdAt)}
                     likes={0} // Placeholder
                     hashtags={
-                      (item.record.hashtags && item.record.hashtags.length > 0)
+                      item.record.hashtags && item.record.hashtags.length > 0
                         ? item.record.hashtags
                         : ["전시기록"]
                     }
@@ -247,7 +253,10 @@ export default function ExhibitionLogScreen() {
                 <TouchableOpacity
                   key={item.exhibitionId}
                   onPress={() => {
-                    console.log("Navigating with exhibitionId:", item.exhibitionId);
+                    console.log(
+                      "Navigating with exhibitionId:",
+                      item.exhibitionId
+                    );
                     router.push({
                       pathname: `/exhibition-log/${item.exhibitionId}`,
                       params: { exhibitionLogId: item.exhibitionId },
@@ -265,7 +274,7 @@ export default function ExhibitionLogScreen() {
                     timestamp={formatTimestamp(item.record.createdAt)}
                     likes={0} // Placeholder
                     hashtags={
-                      (item.record.hashtags && item.record.hashtags.length > 0)
+                      item.record.hashtags && item.record.hashtags.length > 0
                         ? item.record.hashtags
                         : ["전시기록"]
                     }
