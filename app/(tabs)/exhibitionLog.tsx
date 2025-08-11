@@ -17,7 +17,8 @@ import { useFocusEffect } from "expo-router";
 interface Record {
   exhibitionId: string;
   record: {
-    content: string;
+    title: string;
+    createdAt: string;
   };
   exhibition: {
     id: string;
@@ -25,6 +26,28 @@ interface Record {
     image: any;
   };
 }
+
+const formatTimestamp = (isoDate: string) => {
+  if (!isoDate) {
+    return "방금 전";
+  }
+  const now = new Date();
+  const past = new Date(isoDate);
+  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}분 전`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays}일 전`;
+};
 
 export default function ExhibitionLogScreen() {
   const { theme } = useTheme();
@@ -173,12 +196,12 @@ export default function ExhibitionLogScreen() {
                   key={item.exhibitionId}
                   id={item.exhibition.id}
                   image={item.exhibition.image}
-                  logTitle={item.record.content}
+                  logTitle={item.record.title}
                   author={{
                     name: "user",
                     avatar: require("@/assets/images/mainIcon.png"),
                   }}
-                  timestamp={"방금 전"}
+                  timestamp={formatTimestamp(item.record.createdAt)}
                   likes={0} // Placeholder
                   hashtags={["전시기록"]}
                 />
@@ -190,12 +213,12 @@ export default function ExhibitionLogScreen() {
                   key={item.exhibitionId}
                   id={item.exhibition.id}
                   image={item.exhibition.image}
-                  logTitle={item.record.content}
+                  logTitle={item.record.title}
                   author={{
                     name: "user",
                     avatar: require("@/assets/images/mainIcon.png"),
                   }}
-                  timestamp={"방금 전"}
+                  timestamp={formatTimestamp(item.record.createdAt)}
                   likes={0} // Placeholder
                   hashtags={["전시기록"]}
                 />
