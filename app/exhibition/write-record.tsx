@@ -95,7 +95,12 @@ export default function WriteRecordScreen() {
     }
 
     try {
-      const newRecord = { title, content, visibility };
+      const newRecord = {
+        title,
+        content,
+        visibility,
+        createdAt: new Date().toISOString(),
+      };
       const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
       const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
       records[exhibitionId] = newRecord;
