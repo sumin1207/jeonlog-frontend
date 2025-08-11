@@ -54,6 +54,12 @@ export default function ExhibitionLogScreen() {
   const [records, setRecords] = useState<Record[]>([]);
   const [isLatest, setIsLatest] = useState(true);
 
+  useFocusEffect(
+    useCallback(() => {
+      loadRecords();
+    }, [isLatest])
+  );
+
   const loadRecords = async () => {
     try {
       const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
@@ -64,7 +70,7 @@ export default function ExhibitionLogScreen() {
       );
       const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
 
-      const loadedRecords = visitedIds
+      let loadedRecords = visitedIds
         .map((exhibitionId: string) => {
           const exhibition =
             exhibitionData[exhibitionId as keyof typeof exhibitionData];
@@ -84,18 +90,26 @@ export default function ExhibitionLogScreen() {
         })
         .filter((item: any): item is Record => item !== null && item.record);
 
-      setRecords(loadedRecords.reverse());
+      if (isLatest) {
+        loadedRecords.sort((a, b) => {
+          if (a.record.createdAt && b.record.createdAt) {
+            return (
+              new Date(b.record.createdAt).getTime() -
+              new Date(a.record.createdAt).getTime()
+            );
+          }
+          return 0;
+        });
+      } else {
+        // 인기순 정렬 로직 (추후 구현)
+      }
+
+      setRecords(loadedRecords);
     } catch (error) {
       console.error("Error loading records:", error);
       Alert.alert("오류", "전시 기록을 불러오는 중 문제가 발생했습니다.");
     }
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadRecords();
-    }, [])
-  );
 
   const { leftColumn, rightColumn } = useMemo(() => {
     const left: Record[] = [];
