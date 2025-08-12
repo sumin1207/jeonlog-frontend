@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { exhibitionData } from "../../data/exhibitionsDataStorage";
-import ExhibitionLogCard from "@/components/exhibition/ExhibitionLogCard";
+import { exhibitionData } from "../../../data/exhibitionsDataStorage";
+import ExhibitionLogCard from "./ExhibitionLogCard";
 import { useFocusEffect, useRouter } from "expo-router";
 
 interface Record {
