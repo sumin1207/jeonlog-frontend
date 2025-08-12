@@ -40,7 +40,7 @@ const useNaverLogin = () => {
       if (response?.type === "success") {
         console.log("✅ Naver OAuth2 인증 완료, 백엔드로 리디렉트 예정");
         console.log("📋 Authorization Code:", response.params?.code);
-        console.log("🔄 백엔드에서 JWT 토큰 생성 후 리디렉트 예정");
+        console.log("🔄", response.params?.state);
       } else if (response?.type === "error") {
         console.error("❌ Naver OAuth2 에러:", response.error);
         console.error("🔍 에러 코드:", response.error?.code);
