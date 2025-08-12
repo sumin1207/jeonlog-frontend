@@ -55,12 +55,11 @@ React Native와 Spring 기반의 모바일 앱으로, 전시를 쉽고 재미있
 ### **Frontend (App)**
 
 * **Framework**: React Native 0.xx
-* **Language**: JavaScript / TypeScript
+* **Language**: TypeScript
 * **Navigation**: React Navigation
-* **State Management**: Zustand / Redux
-* **UI**: Styled-Components / Tailwind-RN
-* **Image Handling**: React Native FastImage
-* **Charts**: Victory Native / Recharts (RN 지원 버전)
+* **State Management**: Context API
+* **UI**: Styled-Components / ShadCN
+* **Image Handling**: Expo-image
 
 ### **Backend**
 
@@ -85,7 +84,7 @@ exhibition-log-app/
 │   │   ├── MyPage/         # 마이페이지
 │   │   └── Search/         # 검색 화면
 │   ├── components/         # 재사용 가능한 UI 컴포넌트
-│   ├── store/              # Zustand/Redux 상태 관리
+│   ├── store/              # Context API 전역 상태 관리
 │   ├── utils/              # 유틸 함수
 │   ├── assets/             # 이미지, 폰트
 │   └── styles/             # 전역 스타일
@@ -109,7 +108,7 @@ exhibition-log-app/
 npm install
 
 # 앱 실행 (Expo 사용 시)
-npx expo start
+npx expo start --web
 ```
 
 ### 2. 백엔드 실행
@@ -131,20 +130,4 @@ npx expo start
 * **카드형 전시 정보 디자인**
 * **검색어 자동완성 & 인기 검색어 노출**
 * **사진 중심의 전시 기록 피드**
-
----
-
-## 🤝 기여 방법
-
-1. 프로젝트 Fork
-2. 기능 브랜치 생성 (`git checkout -b feature/AmazingFeature`)
-3. 변경 사항 커밋 (`git commit -m 'Add some AmazingFeature'`)
-4. 브랜치 푸시 (`git push origin feature/AmazingFeature`)
-5. Pull Request 생성
-
----
-
-## 📝 라이선스
-
-이 프로젝트는 **MIT License**로 배포됩니다.
 
