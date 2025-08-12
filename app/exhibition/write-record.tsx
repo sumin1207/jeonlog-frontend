@@ -95,7 +95,18 @@ export default function WriteRecordScreen() {
     }
 
     try {
-      const newRecord = { title, content, visibility };
+      const hashtags = [];
+    const regex = /#([a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]+)/g;
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      hashtags.push(match[1]);
+    }
+    const newRecord = {
+      title,
+      content,
+      createdAt: new Date().toISOString(),
+      hashtags,
+    };
       const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
       const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
       records[exhibitionId] = newRecord;

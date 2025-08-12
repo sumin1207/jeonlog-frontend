@@ -12,12 +12,14 @@ import { useTheme } from "../../contexts/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../data/exhibitionsDataStorage";
 import ExhibitionLogCard from "@/components/exhibition/ExhibitionLogCard";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 interface Record {
   exhibitionId: string;
   record: {
-    content: string;
+    title: string;
+    createdAt: string;
+    hashtags?: string[];
   };
   exhibition: {
     id: string;
@@ -26,10 +28,39 @@ interface Record {
   };
 }
 
+const formatTimestamp = (isoDate: string) => {
+  if (!isoDate) {
+    return "방금 전";
+  }
+  const now = new Date();
+  const past = new Date(isoDate);
+  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}분 전`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays}일 전`;
+};
+
 export default function ExhibitionLogScreen() {
   const { theme } = useTheme();
+  const router = useRouter();
   const [records, setRecords] = useState<Record[]>([]);
   const [isLatest, setIsLatest] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadRecords();
+    }, [isLatest])
+  );
 
   const loadRecords = async () => {
     try {
@@ -41,7 +72,7 @@ export default function ExhibitionLogScreen() {
       );
       const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
 
-      const loadedRecords = visitedIds
+      let loadedRecords = visitedIds
         .map((exhibitionId: string) => {
           const exhibition =
             exhibitionData[exhibitionId as keyof typeof exhibitionData];
@@ -61,18 +92,34 @@ export default function ExhibitionLogScreen() {
         })
         .filter((item: any): item is Record => item !== null && item.record);
 
-      setRecords(loadedRecords.reverse());
+      if (isLatest) {
+        loadedRecords.sort((a, b) => {
+          if (a.record.createdAt && b.record.createdAt) {
+            return (
+              new Date(b.record.createdAt).getTime() -
+              new Date(a.record.createdAt).getTime()
+            );
+          }
+          return 0;
+        });
+      } else {
+        // 인기순 정렬 로직 (추후 구현)
+      }
+
+      setRecords(loadedRecords);
+      const uniqueIds = new Set(loadedRecords.map((item) => item.exhibitionId));
+      if (uniqueIds.size !== loadedRecords.length) {
+        console.warn("Duplicate exhibitionIds found in records!");
+        console.log(
+          "All exhibitionIds:",
+          loadedRecords.map((item) => item.exhibitionId)
+        );
+      }
     } catch (error) {
       console.error("Error loading records:", error);
       Alert.alert("오류", "전시 기록을 불러오는 중 문제가 발생했습니다.");
     }
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadRecords();
-    }, [])
-  );
 
   const { leftColumn, rightColumn } = useMemo(() => {
     const left: Record[] = [];
@@ -169,36 +216,70 @@ export default function ExhibitionLogScreen() {
           <View style={styles.columnContainer}>
             <View style={styles.column}>
               {leftColumn.map((item) => (
-                <ExhibitionLogCard
+                <TouchableOpacity
                   key={item.exhibitionId}
-                  id={item.exhibition.id}
-                  image={item.exhibition.image}
-                  logTitle={item.record.content}
-                  author={{
-                    name: "user",
-                    avatar: require("@/assets/images/mainIcon.png"),
+                  onPress={() => {
+                    console.log(
+                      "Navigating with exhibitionId:",
+                      item.exhibitionId
+                    );
+                    router.push({
+                      pathname: `/exhibition-log/${item.exhibitionId}`,
+                      params: { exhibitionLogId: item.exhibitionId },
+                    });
                   }}
-                  timestamp={"방금 전"}
-                  likes={0} // Placeholder
-                  hashtags={["전시기록"]}
-                />
+                >
+                  <ExhibitionLogCard
+                    id={item.exhibition.id}
+                    image={item.exhibition.image}
+                    logTitle={item.record.title}
+                    author={{
+                      name: "user",
+                      avatar: require("@/assets/images/mainIcon.png"),
+                    }}
+                    timestamp={formatTimestamp(item.record.createdAt)}
+                    likes={0} // Placeholder
+                    hashtags={
+                      item.record.hashtags && item.record.hashtags.length > 0
+                        ? item.record.hashtags
+                        : ["전시기록"]
+                    }
+                  />
+                </TouchableOpacity>
               ))}
             </View>
             <View style={[styles.column, styles.rightColumn]}>
               {rightColumn.map((item) => (
-                <ExhibitionLogCard
+                <TouchableOpacity
                   key={item.exhibitionId}
-                  id={item.exhibition.id}
-                  image={item.exhibition.image}
-                  logTitle={item.record.content}
-                  author={{
-                    name: "user",
-                    avatar: require("@/assets/images/mainIcon.png"),
+                  onPress={() => {
+                    console.log(
+                      "Navigating with exhibitionId:",
+                      item.exhibitionId
+                    );
+                    router.push({
+                      pathname: `/exhibition-log/${item.exhibitionId}`,
+                      params: { exhibitionLogId: item.exhibitionId },
+                    });
                   }}
-                  timestamp={"방금 전"}
-                  likes={0} // Placeholder
-                  hashtags={["전시기록"]}
-                />
+                >
+                  <ExhibitionLogCard
+                    id={item.exhibition.id}
+                    image={item.exhibition.image}
+                    logTitle={item.record.title}
+                    author={{
+                      name: "user",
+                      avatar: require("@/assets/images/mainIcon.png"),
+                    }}
+                    timestamp={formatTimestamp(item.record.createdAt)}
+                    likes={0} // Placeholder
+                    hashtags={
+                      item.record.hashtags && item.record.hashtags.length > 0
+                        ? item.record.hashtags
+                        : ["전시기록"]
+                    }
+                  />
+                </TouchableOpacity>
               ))}
             </View>
           </View>
