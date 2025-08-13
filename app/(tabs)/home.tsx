@@ -11,16 +11,28 @@ import HorizontalSliding from "@/components/exhibition/HorizontalSliding";
 import RecommendForYou from "@/components/exhibition/RecommendForYou";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../components/context/AuthContext";
 import { ExhibitionCardSkeleton } from "@/components/ui/Skeleton";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
+  const { isLoggedIn, userInfo } = useAuth();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("전체");
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("20-30대");
   const router = useRouter();
+
+  // AuthContext 상태 확인
+  useEffect(() => {
+    console.log(
+      "🔍 Home: AuthContext 상태 - isLoggedIn:",
+      isLoggedIn,
+      "userInfo:",
+      userInfo
+    );
+  }, [isLoggedIn, userInfo]);
 
   useEffect(() => {
     const loadHomeData = async () => {

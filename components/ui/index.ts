@@ -1,5 +1,5 @@
 export { default as TopBar } from "./TopBar";
-export { default as KakaoMap } from "./KakaoMap";
+export { default as NaverMap } from "./NaverMap";
 export { MonoText } from "./StyledText";
 export { Text, View, useThemeColor } from "./Themed";
 export { default as EditScreenInfo } from "./EditScreenInfo";

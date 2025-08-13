@@ -40,7 +40,19 @@ const useNaverLogin = () => {
       if (response?.type === "success") {
         console.log("✅ Naver OAuth2 인증 완료, 백엔드로 리디렉트 예정");
         console.log("📋 Authorization Code:", response.params?.code);
-        console.log("🔄", response.params?.state);
+        console.log("🔄 State:", response.params?.state);
+
+        // 백엔드의 OAuth2 엔드포인트로 직접 리디렉트
+        // 백엔드에서 JWT 토큰을 생성하고 프론트엔드로 리디렉트할 예정
+        const backendOAuthUrl = `http://localhost:8080/oauth2/authorization/naver`;
+        console.log("🔄 백엔드 OAuth2 엔드포인트로 리디렉트:", backendOAuthUrl);
+
+        // 웹 브라우저로 백엔드 OAuth2 엔드포인트 열기
+        // 백엔드에서 처리 후 http://localhost:8081/oauth2/redirect로 리디렉트됨
+        await WebBrowser.openAuthSessionAsync(
+          backendOAuthUrl,
+          "http://localhost:8081/oauth2/redirect"
+        );
       } else if (response?.type === "error") {
         console.error("❌ Naver OAuth2 에러:", response.error);
         console.error("🔍 에러 코드:", response.error?.code);

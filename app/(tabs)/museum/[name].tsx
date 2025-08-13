@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
-import KakaoMap from "@/components/ui/KakaoMap";
+import { NaverMap } from "@/components/ui";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -35,9 +35,9 @@ export default function MuseumDetailScreen() {
       hours:
         "월, 화, 목, 금, 일요일: 10:00 - 18:00 (입장 마감: 17:30)\n수, 토요일: 10:00 - 21:00 (입장 마감: 20:30)\n옥외 전시장(정원): 7:00 - 22:00",
       closedDays:
-        "휴관일: 1월1일, 설날(1-2일), 추석(10.6)\n상설전시관 전기문화실: 매년 4월, 11월(2주차 일요일)\n상설전시관 문화유산기부관: 매년 5월, 10월\n특별전시실 냉난방시설 이용중단시 휴관\n야외전시장은 장기 개방\n2025년 설날: 1.27(월), 11.3(월)",
+        "휴관일: 1월1일, 설날(1.29.), 추석(10.6.)\n상설전시관 정기휴실일: 매년 4월, 11월(첫째 월요일)\n상설전시관 내 특별전시실 2 휴실\n특별전시실 1(특별전시 미운영시 휴실),\n야외전시장은 정상 개관\n2025년 휴실일: 4.7.(월), 11.3.(월)",
       entrance:
-        "무료(상설전시관, 어린이박물관, 무료 특별전시 해당) /\n무료(유료 특별전시 해당)",
+        "무료(상설전시관, 어린이박물관, 무료 특별전시 해당) /\n유료(유료 특별전시 해당)\n\n관람권 구입하는 곳: 특별전시실 1 앞 매표소\n관람권 판매시간: 관람 종료 30분 전까지",
       description:
         "관람시 주의하는 곳: 특별전시실 내 영상촬영 금지\n관람시 편의시설: 관람 촬영 30분 전까지",
       parking: "400번, 502번",
@@ -269,18 +269,21 @@ export default function MuseumDetailScreen() {
       color: theme === "dark" ? "#999" : "#999",
     },
     headerSection: {
-      padding: 20,
+      padding: 25,
       backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      borderBottomLeftRadius: 20,
-      borderBottomRightRadius: 20,
+      margin: 15,
+      marginBottom: 20,
+      borderRadius: 16,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
-        height: 2,
+        height: 4,
       },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
     },
     museumName: {
       fontSize: 24,
@@ -290,14 +293,24 @@ export default function MuseumDetailScreen() {
     },
     infoRow: {
       flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 8,
+      alignItems: "flex-start",
+      marginBottom: 16,
+      paddingVertical: 4,
     },
     infoText: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-      marginLeft: 8,
+      fontSize: 15,
+      color: theme === "dark" ? "#ccc" : "#555",
+      marginLeft: 12,
       flex: 1,
+      lineHeight: 22,
+      letterSpacing: 0.3,
+    },
+    infoLabel: {
+      fontSize: 16,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      fontWeight: "700",
+      marginBottom: 8,
+      letterSpacing: 0.5,
     },
     description: {
       fontSize: 14,
@@ -307,23 +320,27 @@ export default function MuseumDetailScreen() {
     },
     section: {
       backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      margin: 20,
-      borderRadius: 12,
-      padding: 16,
+      margin: 15,
+      marginBottom: 20,
+      borderRadius: 16,
+      padding: 20,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
-        height: 2,
+        height: 4,
       },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
+      fontSize: 20,
+      fontWeight: "700",
       color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 15,
+      marginBottom: 20,
+      letterSpacing: 0.5,
     },
     exhibitionItem: {
       flexDirection: "row",
@@ -378,16 +395,24 @@ export default function MuseumDetailScreen() {
     },
     mapContainer: {
       alignItems: "center",
-      borderRadius: 12,
+      borderRadius: 16,
       overflow: "hidden",
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
-        height: 2,
+        height: 4,
       },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    infoSection: {
+      marginBottom: 20,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
     },
   });
 
@@ -490,91 +515,63 @@ export default function MuseumDetailScreen() {
         {/* 박물관 기본 정보 */}
         <View style={styles.headerSection}>
           {/* 2. 관람시간 */}
-          <View style={styles.infoRow}>
-            <Ionicons
-              name='time-outline'
-              size={16}
-              color={theme === "dark" ? "#ccc" : "#666"}
-            />
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>관람시간</Text>
             <Text style={styles.infoText}>{museum.hours}</Text>
           </View>
 
           {/* 3. 휴관일 및 휴실일 */}
           {museum.closedDays && (
-            <View style={styles.infoRow}>
-              <Ionicons
-                name='calendar-outline'
-                size={16}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
+            <View style={styles.infoSection}>
+              <Text style={styles.infoLabel}>휴관일 및 휴실일</Text>
               <Text style={styles.infoText}>{museum.closedDays}</Text>
             </View>
           )}
 
           {/* 4. 관람료 */}
           {museum.entrance && (
-            <View style={styles.infoRow}>
-              <Ionicons
-                name='card-outline'
-                size={16}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
+            <View style={styles.infoSection}>
+              <Text style={styles.infoLabel}>관람료</Text>
               <Text style={styles.infoText}>{museum.entrance}</Text>
             </View>
           )}
 
           {/* 5. 위치 */}
-          <View style={styles.infoRow}>
-            <Ionicons
-              name='location-outline'
-              size={16}
-              color={theme === "dark" ? "#ccc" : "#666"}
-            />
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>위치</Text>
             <Text style={styles.infoText}>{museum.address}</Text>
           </View>
 
           {/* 6. 전화 */}
-          <View style={styles.infoRow}>
-            <Ionicons
-              name='call-outline'
-              size={16}
-              color={theme === "dark" ? "#ccc" : "#666"}
-            />
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>전화</Text>
             <Text style={styles.infoText}>{museum.phone}</Text>
           </View>
 
           {/* 7. 지하철 */}
           {museum.subway && (
-            <View style={styles.infoRow}>
-              <Ionicons
-                name='train-outline'
-                size={16}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
+            <View style={styles.infoSection}>
+              <Text style={styles.infoLabel}>지하철</Text>
               <Text style={styles.infoText}>{museum.subway}</Text>
             </View>
           )}
 
           {/* 8. 버스 */}
           {museum.parking && (
-            <View style={styles.infoRow}>
-              <Ionicons
-                name='bus-outline'
-                size={16}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
+            <View style={styles.infoSection}>
+              <Text style={styles.infoLabel}>버스</Text>
               <Text style={styles.infoText}>{museum.parking}</Text>
             </View>
           )}
 
           {/* 9. 주차요금 */}
           {museum.parkingFee && (
-            <View style={styles.infoRow}>
-              <Ionicons
-                name='car-outline'
-                size={16}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
+            <View
+              style={[
+                styles.infoSection,
+                { borderBottomWidth: 0, paddingBottom: 0 },
+              ]}>
+              <Text style={styles.infoLabel}>주차요금</Text>
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
             </View>
           )}
@@ -596,9 +593,9 @@ export default function MuseumDetailScreen() {
             </View>
           </View>
 
-          {/* 카카오맵 */}
+          {/* 네이버맵 */}
           <View style={styles.mapContainer}>
-            <KakaoMap
+            <NaverMap
               latitude={museum.latitude}
               longitude={museum.longitude}
               title={museum.name}

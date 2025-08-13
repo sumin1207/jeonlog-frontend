@@ -11,7 +11,7 @@ export default ({ config }) => {
       EXPO_GOOGLE_CLIENT_SECRET:
         process.env.EXPO_GOOGLE_CLIENT_SECRET ||
         process.env.GOOGLE_CLIENT_SECRET,
-      EXPO_KAKAO_MAP_API_KEY: process.env.KAKAO_MAP_API_KEY,
+      EXPO_NAVER_MAP_API_KEY: process.env.NAVER_CLIENT_ID, // 네이버맵은 NAVER_CLIENT_ID 사용
     },
   };
 };

@@ -14,16 +14,10 @@ import { Ionicons } from "@expo/vector-icons";
 import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
+import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
+import { removeStoredToken } from "../../../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// 임시 인증 훅 (나중에 실제 구현으로 교체)
-const useAuth = () => ({
-  isLoggedIn: true,
-  setIsLoggedIn: () => {},
-  logout: () => {},
-  userInfo: { id: "1", accessToken: "temp" },
-});
 
 // 임시 회원탈퇴 함수 (나중에 실제 구현으로 교체)
 const deleteAccount = async (userId: string, accessToken?: string) => {
@@ -33,16 +27,73 @@ const deleteAccount = async (userId: string, accessToken?: string) => {
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { isLoggedIn, setIsLoggedIn, logout, userInfo } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
   const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
 
-  // 임시 사용자 데이터 (나중에 실제 데이터로 교체)
-  const userData = {
-    name: "홍길동",
-    loginType: "google", // "google" 또는 "naver"
-    email: "hong@example.com",
-  };
+  const styles = getStyles(theme);
+
+  // 디버깅을 위한 로그
+  console.log(
+    "🔍 MyPage: 현재 상태 - isLoading:",
+    isLoading,
+    "isLoggedIn:",
+    isLoggedIn,
+    "userInfo:",
+    userInfo
+  );
+
+  // 로딩 중일 때 로딩 UI 표시
+  if (isLoading) {
+    console.log("🔍 MyPage: 로딩 중 UI 표시");
+    return (
+      <View style={styles.container}>
+        <TopBar title='마이페이지' />
+        <View style={styles.loadingContainer}>
+          <Ionicons
+            name='reload'
+            size={60}
+            color='#1c3519'
+          />
+          <Text style={styles.loadingTitle}>로그인 상태 확인 중...</Text>
+          <Text style={styles.loadingSubtitle}>잠시만 기다려주세요</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // 로그인하지 않은 경우 로그인 화면으로 이동
+  if (!isLoggedIn || !userInfo) {
+    console.log(
+      "🔍 MyPage: 로그인 필요 - isLoggedIn:",
+      isLoggedIn,
+      "userInfo:",
+      userInfo
+    );
+    return (
+      <View style={styles.container}>
+        <TopBar title='마이페이지' />
+        <View style={styles.loginRequiredContainer}>
+          <Ionicons
+            name='person-circle-outline'
+            size={80}
+            color='#ccc'
+          />
+          <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
+          <Text style={styles.loginRequiredSubtitle}>
+            마이페이지를 이용하려면 로그인해주세요
+          </Text>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push("/")}>
+            <Text style={styles.loginButtonText}>로그인 하러가기</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -62,15 +113,27 @@ export default function MyPageScreen() {
     }, [])
   );
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
       { text: "취소", style: "cancel" },
       {
         text: "로그아웃",
         style: "destructive",
-        onPress: () => {
-          logout(); // 새로운 logout 함수 사용
-          router.replace("/"); // 첫 페이지로 이동
+        onPress: async () => {
+          try {
+            // 저장된 JWT 토큰 제거
+            await removeStoredToken();
+            // 로컬 사용자 데이터 정리
+            clearLocalUserData();
+            // AuthContext 로그아웃
+            logout();
+            router.replace("/");
+          } catch (error) {
+            console.error("로그아웃 에러:", error);
+            // 에러가 발생해도 로그아웃 처리
+            logout();
+            router.replace("/");
+          }
         },
       },
     ]);
@@ -145,50 +208,68 @@ export default function MyPageScreen() {
     onPress?: () => void,
     showArrow: boolean = true
   ) => (
-    <Pressable style={styles.menuItem} onPress={onPress} disabled={!onPress}>
+    <Pressable
+      style={styles.menuItem}
+      onPress={onPress}
+      disabled={!onPress}>
       <View style={styles.menuItemLeft}>
-        <Ionicons name={icon as any} size={24} color="#1c3519" />
+        <Ionicons
+          name={icon as any}
+          size={24}
+          color='#1c3519'
+        />
         <View style={styles.menuItemText}>
           <Text style={styles.menuItemTitle}>{title}</Text>
           {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
+      {showArrow && (
+        <Ionicons
+          name='chevron-forward'
+          size={20}
+          color='#ccc'
+        />
+      )}
     </Pressable>
   );
 
-  const styles = getStyles(theme);
-
   return (
     <View style={styles.container}>
-      <TopBar title="마이페이지" />
-      <ScrollView style={styles.scrollView} pointerEvents="auto">
+      <TopBar title='마이페이지' />
+      <ScrollView
+        style={styles.scrollView}
+        pointerEvents='auto'>
         {/* 사용자 정보 섹션 */}
         {renderSection(
           "사용자 정보",
           <View style={styles.userSection}>
             <View style={styles.userInfo}>
               <View style={styles.avatar}>
-                <Ionicons name="person" size={40} color="#fff" />
+                <Ionicons
+                  name='person'
+                  size={40}
+                  color='#fff'
+                />
               </View>
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>{userData.name}</Text>
-                <Text style={styles.userEmail}>{userData.email}</Text>
+                <Text style={styles.userName}>{userInfo.name}</Text>
+                <Text style={styles.userEmail}>{userInfo.email}</Text>
                 <View style={styles.loginType}>
                   <Ionicons
                     name={
-                      userData.loginType === "google"
+                      userInfo.loginType === "google"
                         ? "logo-google"
                         : "logo-github"
                     }
                     size={16}
-                    color="#1c3519"
+                    color='#1c3519'
                   />
                   <Text style={styles.loginTypeText}>
-                    {userData.loginType === "google" ? "Google" : "Naver"}
+                    {userInfo.loginType === "google" ? "Google" : "Naver"}
                     로그인
                   </Text>
                 </View>
+                <Text style={styles.userId}>ID: {userInfo.id}</Text>
               </View>
             </View>
           </View>
@@ -231,7 +312,11 @@ export default function MyPageScreen() {
           <View>
             <View style={styles.menuItem}>
               <View style={styles.menuItemLeft}>
-                <Ionicons name="moon" size={24} color="#1c3519" />
+                <Ionicons
+                  name='moon'
+                  size={24}
+                  color='#1c3519'
+                />
                 <View style={styles.menuItemText}>
                   <Text style={styles.menuItemTitle}>다크모드</Text>
                 </View>
@@ -332,6 +417,11 @@ const getStyles = (theme: ThemeType) =>
       color: theme === "dark" ? "#fff" : "#1c3519",
       marginLeft: 4,
     },
+    userId: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 4,
+    },
     menuItem: {
       flexDirection: "row",
       alignItems: "center",
@@ -359,5 +449,53 @@ const getStyles = (theme: ThemeType) =>
       fontSize: 14,
       color: theme === "dark" ? "#ccc" : "#666",
       marginTop: 2,
+    },
+    loginRequiredContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    loginRequiredTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: "#1c3519",
+      marginTop: 20,
+    },
+    loginRequiredSubtitle: {
+      fontSize: 16,
+      color: "#666",
+      marginTop: 10,
+      textAlign: "center",
+    },
+    loginButton: {
+      backgroundColor: "#1c3519",
+      paddingVertical: 15,
+      paddingHorizontal: 30,
+      borderRadius: 10,
+      marginTop: 30,
+    },
+    loginButtonText: {
+      color: "#fff",
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    loadingTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#1c3519",
+      marginTop: 20,
+    },
+    loadingSubtitle: {
+      fontSize: 16,
+      color: "#666",
+      marginTop: 10,
+      textAlign: "center",
     },
   });
