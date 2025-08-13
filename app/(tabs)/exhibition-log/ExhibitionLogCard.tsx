@@ -1,6 +1,8 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, Image, StyleSheet } from "react-native";
+import LikeButton from "./like/LikeButton";
+import CountLike from "./like/countLike";
+import { useLikes } from "@/contexts/LikeContext";
 
 interface ExhibitionLogCardProps {
   id: string;
@@ -13,6 +15,7 @@ interface ExhibitionLogCardProps {
   timestamp: string;
   likes: number;
   hashtags: string[];
+  isInitiallyLiked?: boolean;
 }
 
 const ExhibitionLogCard = ({
@@ -23,7 +26,22 @@ const ExhibitionLogCard = ({
   timestamp,
   likes,
   hashtags,
+  isInitiallyLiked = false,
 }: ExhibitionLogCardProps) => {
+  const { userLikes } = useLikes();
+
+  // 좋아요 눌렸는지?
+  const hasUserInteracted = userLikes[id] !== undefined;
+  const isLiked = hasUserInteracted ? userLikes[id]! : isInitiallyLiked;
+
+  // 좋아요 개수 확인
+  let displayLikeCount = likes;
+  if (isInitiallyLiked && !isLiked) {
+    displayLikeCount = likes - 1;
+  } else if (!isInitiallyLiked && isLiked) {
+    displayLikeCount = likes + 1;
+  }
+
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
@@ -40,8 +58,8 @@ const ExhibitionLogCard = ({
             </View>
           </View>
           <View style={styles.likesContainer}>
-            <Ionicons name="heart-outline" size={20} color="#666" />
-            <Text style={styles.likesCount}>{likes}</Text>
+            <LikeButton exhibitionLogId={id} />
+            <CountLike count={displayLikeCount} />
           </View>
         </View>
         <View style={styles.hashtagsContainer}>
@@ -110,11 +128,6 @@ const styles = StyleSheet.create({
   likesContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  likesCount: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: "#666",
   },
   hashtagsContainer: {
     flexDirection: "row",

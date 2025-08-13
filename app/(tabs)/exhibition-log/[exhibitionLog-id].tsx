@@ -16,14 +16,18 @@ import { useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "@/data/exhibitionsDataStorage";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
 import Skeleton from "@/components/ui/Skeleton";
+import LikeButton from "./like/LikeButton";
+import CountLike from "./like/countLike";
+import { useLikes } from "@/contexts/LikeContext";
 
 interface Record {
   title: string;
   createdAt: string;
   content?: string;
+  likes?: number;
+  isLiked?: boolean;
 }
 
 interface Exhibition {
@@ -81,7 +85,7 @@ const createStyles = (theme: "light" | "dark") =>
       fontSize: 15,
       lineHeight: 22,
       color: theme === "dark" ? "#E0E0E0" : "#333333",
-      marginBottom: 16, // Changed from marginTop to marginBottom
+      marginBottom: 16,
     },
     actionBar: {
       flexDirection: "row",
@@ -163,14 +167,13 @@ export default function ExhibitionLogDetailScreen() {
   const { exhibitionLogId } = useLocalSearchParams();
   const { theme } = useTheme();
   const styles = createStyles(theme);
+  const { userLikes } = useLikes();
 
   const [record, setRecord] = useState<Record | null>(null);
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -256,6 +259,20 @@ export default function ExhibitionLogDetailScreen() {
     );
   }
 
+  const id = exhibitionLogId as string;
+  const isInitiallyLiked = record?.isLiked || false;
+  const initialLikes = record?.likes || 0;
+
+  const hasUserInteracted = userLikes[id] !== undefined;
+  const isLiked = hasUserInteracted ? userLikes[id]! : isInitiallyLiked;
+
+  let displayLikeCount = initialLikes;
+  if (isInitiallyLiked && !isLiked) {
+    displayLikeCount = initialLikes - 1;
+  } else if (!isInitiallyLiked && isLiked) {
+    displayLikeCount = initialLikes + 1;
+  }
+
   return (
     <View style={styles.container}>
       <TopBar />
@@ -297,14 +314,8 @@ export default function ExhibitionLogDetailScreen() {
             {record?.content || exhibition?.description || "내용 없음"}
           </Text>
           <View style={styles.actionBar}>
-            <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
-              <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
-                size={26}
-                color={isLiked ? "#FF3040" : theme === "dark" ? "#FFF" : "#000"}
-                style={styles.actionIcon}
-              />
-            </TouchableOpacity>
+            <LikeButton exhibitionLogId={id} />
+            <CountLike count={displayLikeCount} />
           </View>
 
           <View style={styles.commentsSection}>
