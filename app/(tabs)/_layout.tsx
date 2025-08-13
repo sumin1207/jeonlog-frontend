@@ -76,7 +76,7 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
-        name="exhibitionLog"
+        name="exhibition-log"
         options={{
           title: "전시 기록",
           tabBarIcon: ({ color, size }) => (
@@ -89,7 +89,7 @@ export default function TabLayout() {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{ name: "exhibitionLog" }],
+                routes: [{ name: "exhibition-log" }],
               })
             );
           },
