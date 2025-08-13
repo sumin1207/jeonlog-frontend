@@ -10,6 +10,7 @@ import { useColorScheme } from "@/components/hooks/useColorScheme";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ExhibitionProvider } from "@/contexts/ExhibitionContext";
 import { AuthProvider } from "@/components/context/AuthContext";
+import { LikeProvider } from "@/contexts/LikeContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,7 +50,9 @@ export default function RootLayout() {
     <AuthProvider>
       <ThemeProvider>
         <ExhibitionProvider>
-          <RootLayoutNav />
+          <LikeProvider>
+            <RootLayoutNav />
+          </LikeProvider>
         </ExhibitionProvider>
       </ThemeProvider>
     </AuthProvider>
