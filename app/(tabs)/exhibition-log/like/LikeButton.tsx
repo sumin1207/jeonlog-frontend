@@ -6,9 +6,10 @@ import { useLikes } from '@/contexts/LikeContext';
 
 interface LikeButtonProps {
   exhibitionLogId: any;
+  size?: number;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ exhibitionLogId }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ exhibitionLogId, size = 24 }) => {
   const { userLikes, toggleLike } = useLikes();
   const isLiked = userLikes[exhibitionLogId] || false;
 
@@ -20,7 +21,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ exhibitionLogId }) => {
     <Pressable onPress={handlePress}>
       <Ionicons
         name={isLiked ? 'heart' : 'heart-outline'}
-        size={24}
+        size={size}
         color={isLiked ? 'red' : 'black'}
       />
     </Pressable>

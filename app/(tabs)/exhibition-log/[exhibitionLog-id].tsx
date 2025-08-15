@@ -22,12 +22,18 @@ import LikeButton from "./like/LikeButton";
 import CountLike from "./like/countLike";
 import { useLikes } from "@/contexts/LikeContext";
 
+interface Author {
+  name: string;
+  avatar: any;
+}
+
 interface Record {
   title: string;
   createdAt: string;
   content?: string;
   likes?: number;
   isLiked?: boolean;
+  author?: Author;
 }
 
 interface Exhibition {
@@ -51,9 +57,10 @@ const createStyles = (theme: "light" | "dark") =>
     },
     postContainer: {
       paddingHorizontal: 16,
+      marginBottom: 16,
     },
     postTitle: {
-      fontSize: 22,
+      fontSize: 24,
       fontWeight: "bold",
       color: theme === "dark" ? "#FFFFFF" : "#000000",
       marginBottom: 16,
@@ -61,13 +68,12 @@ const createStyles = (theme: "light" | "dark") =>
     authorContainer: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 12,
+      marginBottom: 16,
     },
     authorAvatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: theme === "dark" ? "#333333" : "#E0E0E0",
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       marginRight: 12,
     },
     authorName: {
@@ -77,14 +83,16 @@ const createStyles = (theme: "light" | "dark") =>
     },
     image: {
       width: "100%",
-      aspectRatio: 4 / 3,
+      height: undefined,
+      aspectRatio: 1,
       borderRadius: 12,
       backgroundColor: theme === "dark" ? "#333" : "#E0E0E0",
     },
     postContent: {
-      fontSize: 15,
-      lineHeight: 22,
+      fontSize: 16,
+      lineHeight: 24,
       color: theme === "dark" ? "#E0E0E0" : "#333333",
+      paddingHorizontal: 16,
       marginBottom: 16,
     },
     actionBar: {
@@ -113,9 +121,9 @@ const createStyles = (theme: "light" | "dark") =>
       marginBottom: 12,
     },
     commentAvatar: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
       backgroundColor: theme === "dark" ? "#333333" : "#E0E0E0",
       marginRight: 10,
     },
@@ -171,6 +179,7 @@ export default function ExhibitionLogDetailScreen() {
 
   const [record, setRecord] = useState<Record | null>(null);
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
+  const [author, setAuthor] = useState<Author | null>(null);
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -185,7 +194,18 @@ export default function ExhibitionLogDetailScreen() {
       const id = exhibitionLogId as string;
       const recordsJSON = await AsyncStorage.getItem("exhibition_records");
       const records = recordsJSON ? JSON.parse(recordsJSON) : {};
-      setRecord(records[id] || null);
+      const currentRecord = records[id] || null;
+      setRecord(currentRecord);
+
+      if (currentRecord && currentRecord.author) {
+        setAuthor(currentRecord.author);
+      } else {
+        setAuthor({
+          //임시 유저 데이터
+          name: "userId",
+          avatar: require("@/assets/images/mainIcon.png"),
+        });
+      }
 
       const exhibitionDetails =
         exhibitionData[id as keyof typeof exhibitionData];
@@ -232,7 +252,7 @@ export default function ExhibitionLogDetailScreen() {
       <View
         style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}
       >
-        <Skeleton style={{ width: 32, height: 32, borderRadius: 16 }} />
+        <Skeleton style={{ width: 40, height: 40, borderRadius: 20 }} />
         <Skeleton style={{ width: 100, height: 20, marginLeft: 12 }} />
       </View>
       <Skeleton style={styles.image} />
@@ -283,30 +303,21 @@ export default function ExhibitionLogDetailScreen() {
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.postContainer}>
-            <Text style={styles.postTitle}>
-              {record?.title || "사용자 지정 제목 없음"}
-            </Text>
-            <View style={styles.authorContainer}>
-              <View style={styles.authorAvatar} />
-              <Text style={styles.authorName}>user</Text>
-            </View>
+            <Text style={styles.postTitle}>{record?.title}</Text>
+            {author && (
+              <View style={styles.authorContainer}>
+                <Image source={author.avatar} style={styles.authorAvatar} />
+                <Text style={styles.authorName}>{author.name}</Text>
+              </View>
+            )}
           </View>
 
           <View style={styles.postContainer}>
-                    {exhibition?.image && (
+            {exhibition?.image && (
               <Image
                 source={exhibition.image}
-                style={[
-                  styles.image,
-                  {
-                    width: "100%",
-                    height: undefined,
-                    aspectRatio: 1.33,
-                    alignSelf: "center",
-                    maxHeight: 300,
-                  },
-                ]}
-                resizeMode="contain"
+                style={styles.image}
+                resizeMode="cover"
               />
             )}
           </View>
@@ -322,7 +333,10 @@ export default function ExhibitionLogDetailScreen() {
             <Text style={styles.commentsTitle}>댓글 {comments.length}개</Text>
             {comments.map((comment, index) => (
               <View key={index} style={styles.comment}>
-                <View style={styles.commentAvatar} />
+                <Image
+                  source={require("@/assets/images/mainIcon.png")}
+                  style={styles.commentAvatar}
+                />
                 <View style={styles.commentBody}>
                   <Text style={styles.commentText}>
                     <Text style={styles.commentAuthor}>익명 </Text>
