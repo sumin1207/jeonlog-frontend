@@ -30,11 +30,9 @@ const ExhibitionLogCard = ({
 }: ExhibitionLogCardProps) => {
   const { userLikes } = useLikes();
 
-  // 좋아요 눌렸는지?
   const hasUserInteracted = userLikes[id] !== undefined;
   const isLiked = hasUserInteracted ? userLikes[id]! : isInitiallyLiked;
 
-  // 좋아요 개수 확인
   let displayLikeCount = likes;
   if (isInitiallyLiked && !isLiked) {
     displayLikeCount = likes - 1;
@@ -44,11 +42,15 @@ const ExhibitionLogCard = ({
 
   return (
     <View style={styles.card}>
-      <View style={styles.imageContainer}>
-        <Image source={image} style={styles.mainImage} />
-      </View>
+      <Image source={image} style={styles.mainImage} />
       <View style={styles.contentContainer}>
-        <Text style={styles.logTitle}>{logTitle}</Text>
+        <View style={styles.hashtagsContainer}>
+          {hashtags.map((tag, index) => (
+            <Text key={index} style={styles.hashtag}>
+              #{tag}
+            </Text>
+          ))}
+        </View>
         <View style={styles.authorAndLikesContainer}>
           <View style={styles.authorContainer}>
             <Image source={author.avatar} style={styles.avatar} />
@@ -58,16 +60,9 @@ const ExhibitionLogCard = ({
             </View>
           </View>
           <View style={styles.likesContainer}>
-            <LikeButton exhibitionLogId={id} />
+            <LikeButton exhibitionLogId={id} size={19} />
             <CountLike count={displayLikeCount} />
           </View>
-        </View>
-        <View style={styles.hashtagsContainer}>
-          {hashtags.map((tag, index) => (
-            <Text key={index} style={styles.hashtag}>
-              #{tag}
-            </Text>
-          ))}
         </View>
       </View>
     </View>
@@ -80,17 +75,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     overflow: "hidden",
   },
-  imageContainer: {
-    backgroundColor: "#FFFFFF",
-    overflow: "hidden",
-  },
   mainImage: {
     width: "100%",
     height: 213,
+    borderRadius: 8,
   },
   contentContainer: {
     backgroundColor: "#FFFFFF",
-    padding: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingHorizontal: 8,
   },
   logTitle: {
     fontWeight: "bold",
@@ -100,17 +94,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
   },
   authorContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
     flex: 1,
     marginRight: 8,
   },
   avatar: {
-    width: 32,
-    height: 32,
+    width: 25,
+    height: 25,
     borderRadius: 16,
     marginRight: 8,
   },
@@ -123,7 +117,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: "#666",
+    color: "#7f7f7fff",
   },
   likesContainer: {
     flexDirection: "row",
@@ -132,10 +126,11 @@ const styles = StyleSheet.create({
   hashtagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
+    marginBottom: 8,
   },
   hashtag: {
     fontSize: 12,
-    color: "#007AFF",
+    color: "#9e9e9eff",
     marginRight: 8,
     marginBottom: 4,
   },
