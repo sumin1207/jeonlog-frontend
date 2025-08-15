@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timestamp: {
-    fontSize: 12,
+    fontSize: 10.5,
     color: "#7f7f7fff",
   },
   likesContainer: {
