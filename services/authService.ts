@@ -2,6 +2,7 @@
 // JWT 토큰은 백엔드에서 리디렉트로 전달됨
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getBackendUrl } from "../constants/Config";
 
 // 저장된 JWT 토큰 가져오기
 export const getStoredToken = async () => {
@@ -90,6 +91,42 @@ export const createAuthHeaders = async () => {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
+};
+
+// 백엔드에서 사용자 정보 가져오기
+export const fetchUserInfo = async () => {
+  try {
+    const headers = await createAuthHeaders();
+    const response = await fetch(`${getBackendUrl()}/api/user/profile`, {
+      method: "GET",
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("❌ 사용자 정보 가져오기 에러:", error);
+    throw error;
+  }
+};
+
+// 백엔드에서 로그아웃 처리
+export const logoutFromBackend = async () => {
+  try {
+    const headers = await createAuthHeaders();
+    await fetch(`${getBackendUrl()}/api/auth/logout`, {
+      method: "POST",
+      headers,
+    });
+  } catch (error) {
+    console.error("❌ 백엔드 로그아웃 에러:", error);
+  } finally {
+    // 로컬 토큰 제거
+    await removeStoredToken();
+  }
 };
 
 // OAuth2 리디렉트 방식에서는 사용자 정보를 백엔드에서 처리

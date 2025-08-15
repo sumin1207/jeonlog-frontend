@@ -1,47 +1,88 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import useNaverLogin from "../../hooks/useNaverLogin";
+import { getBackendUrl } from "../../constants/Config";
 
 interface NaverLoginButtonProps {
   onSuccess?: () => void;
 }
 
 const NaverLoginButton = ({ onSuccess }: NaverLoginButtonProps) => {
+  const { promptAsync } = useNaverLogin();
+  const router = useRouter();
+
   const handleNaverLogin = async () => {
     try {
       console.log("🚀 네이버 로그인 시작");
 
-      // 백엔드의 OAuth2 엔드포인트로 직접 이동
-      // 백엔드에서 네이버 OAuth2 인증을 처리하고 JWT 토큰을 생성한 후
-      // 프론트엔드의 /oauth2/redirect로 리디렉트할 예정
-      const backendOAuthUrl =
-        "http://localhost:8080/oauth2/authorization/naver";
-      console.log("🔄 백엔드 OAuth2 엔드포인트로 이동:", backendOAuthUrl);
+      // 백엔드 URL 가져오기
+      const backendUrl = getBackendUrl();
+      console.log("🔗 백엔드 서버:", backendUrl);
 
-      // 웹 브라우저로 백엔드 OAuth2 엔드포인트 열기
-      const result = await WebBrowser.openAuthSessionAsync(
-        backendOAuthUrl,
-        "http://localhost:8081/oauth2/redirect"
-      );
+      // 네이버 OAuth2 인증 시작
+      const result = await promptAsync();
 
-      console.log("🔍 WebBrowser 결과:", result);
+      if (result?.type === "success") {
+        console.log("✅ 네이버 OAuth2 인증 성공");
+        console.log("📋 Authorization Code:", result.params?.code);
 
-      if (result.type === "success") {
-        console.log("✅ 네이버 로그인 성공");
+        // 백엔드로 인증 코드 전송하여 JWT 토큰 받기
+        await exchangeCodeForToken(result.params?.code, backendUrl);
+
+        console.log("🎉 로그인 완료! 홈화면으로 이동합니다.");
+
+        // 홈화면으로 리다이렉트
+        router.replace("/(tabs)/home");
+
         if (onSuccess) {
           onSuccess();
         }
-      } else if (result.type === "cancel") {
+      } else if (result?.type === "cancel") {
         console.log("⚠️ 네이버 로그인 취소됨");
-      } else if (result.type === "dismiss") {
-        console.log("⚠️ 네이버 로그인 창이 닫힘");
-      } else {
-        console.log("ℹ️ 네이버 로그인 결과:", result.type);
+      } else if (result?.type === "error") {
+        console.error("❌ 네이버 로그인 에러:", result.error);
+        Alert.alert("로그인 실패", "네이버 로그인 중 오류가 발생했습니다.");
       }
     } catch (error) {
       console.error("❌ 네이버 로그인 처리 에러:", error);
       Alert.alert("로그인 실패", "네이버 로그인 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 인증 코드를 백엔드로 전송하여 JWT 토큰 받기
+  const exchangeCodeForToken = async (code: string, backendUrl: string) => {
+    try {
+      console.log("🔄 백엔드로 인증 코드 전송 중...");
+
+      const response = await fetch(`${backendUrl}/api/auth/naver/callback`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(
+        "✅ JWT 토큰 받기 성공:",
+        data.token ? "토큰 있음" : "토큰 없음"
+      );
+
+      // JWT 토큰을 AsyncStorage에 저장
+      if (data.token) {
+        await AsyncStorage.setItem("jwt_token", data.token);
+        console.log("💾 JWT 토큰 저장 완료");
+      }
+    } catch (error) {
+      console.error("❌ 토큰 교환 에러:", error);
+      throw error;
     }
   };
 

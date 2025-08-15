@@ -43,6 +43,15 @@ export const getNaverMapApiKey = (): string => {
   return apiKey || "";
 };
 
+// 백엔드 서버 URL 가져오기
+export const getBackendUrl = (): string => {
+  const extra = Constants.expoConfig?.extra;
+  const backendUrl = extra?.EXPO_BACKEND_URL || "http://localhost:3000";
+
+  console.log("🔗 백엔드 서버 URL:", backendUrl);
+  return backendUrl;
+};
+
 // 환경변수 로딩 상태 확인
 export const isConfigLoaded = (): boolean => {
   const extra = Constants.expoConfig?.extra;

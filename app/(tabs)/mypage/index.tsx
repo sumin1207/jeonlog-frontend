@@ -8,10 +8,13 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  Modal,
+  Image,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import TopBar from "../../../components/ui/TopBar";
+// TopBar import 제거
+// import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
@@ -30,6 +33,7 @@ export default function MyPageScreen() {
   const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
   const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const styles = getStyles(theme);
 
@@ -48,7 +52,6 @@ export default function MyPageScreen() {
     console.log("🔍 MyPage: 로딩 중 UI 표시");
     return (
       <View style={styles.container}>
-        <TopBar title='마이페이지' />
         <View style={styles.loadingContainer}>
           <Ionicons
             name='reload'
@@ -63,35 +66,35 @@ export default function MyPageScreen() {
   }
 
   // 로그인하지 않은 경우 로그인 화면으로 이동
-  if (!isLoggedIn || !userInfo) {
-    console.log(
-      "🔍 MyPage: 로그인 필요 - isLoggedIn:",
-      isLoggedIn,
-      "userInfo:",
-      userInfo
-    );
-    return (
-      <View style={styles.container}>
-        <TopBar title='마이페이지' />
-        <View style={styles.loginRequiredContainer}>
-          <Ionicons
-            name='person-circle-outline'
-            size={80}
-            color='#ccc'
-          />
-          <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
-          <Text style={styles.loginRequiredSubtitle}>
-            마이페이지를 이용하려면 로그인해주세요
-          </Text>
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => router.push("/")}>
-            <Text style={styles.loginButtonText}>로그인 하러가기</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
+  // if (!isLoggedIn || !userInfo) {
+  //   console.log(
+  //     "🔍 MyPage: 로그인 필요 - isLoggedIn:",
+  //     isLoggedIn,
+  //     "userInfo:",
+  //     userInfo
+  //   );
+  //   return (
+  //     <View style={styles.container}>
+  //       <TopBar title='마이페이지' />
+  //       <View style={styles.loginRequiredContainer}>
+  //         <Ionicons
+  //           name='person-circle-outline'
+  //           size={80}
+  //           color='#ccc'
+  //         />
+  //         <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
+  //         <Text style={styles.loginRequiredSubtitle}>
+  //           마이페이지를 이용하려면 로그인해주세요
+  //         </Text>
+  //         <TouchableOpacity
+  //           style={styles.loginButton}
+  //           onPress={() => router.push("/")}>
+  //           <Text style={styles.loginButtonText}>로그인 하러가기</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
   console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
@@ -235,7 +238,29 @@ export default function MyPageScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title='마이페이지' />
+      {/* 상단 커스텀 헤더 */}
+      <View style={styles.headerWrap}>
+        {/* 로고는 필요시 추가 가능 */}
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.headerIconBtn}>
+            <Ionicons
+              name='notifications-outline'
+              size={24}
+              color='#fff'
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            onPress={() => router.push("/mypage/setting")}>
+            <Ionicons
+              name='settings-outline'
+              size={24}
+              color='#fff'
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* 설정 모달 완전 제거 */}
       <ScrollView
         style={styles.scrollView}
         pointerEvents='auto'>
@@ -252,12 +277,14 @@ export default function MyPageScreen() {
                 />
               </View>
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>{userInfo.name}</Text>
-                <Text style={styles.userEmail}>{userInfo.email}</Text>
+                <Text style={styles.userName}>
+                  {userInfo?.name ?? "비회원"}
+                </Text>
+                <Text style={styles.userEmail}>{userInfo?.email ?? "-"}</Text>
                 <View style={styles.loginType}>
                   <Ionicons
                     name={
-                      userInfo.loginType === "google"
+                      userInfo?.loginType === "google"
                         ? "logo-google"
                         : "logo-github"
                     }
@@ -265,90 +292,17 @@ export default function MyPageScreen() {
                     color='#1c3519'
                   />
                   <Text style={styles.loginTypeText}>
-                    {userInfo.loginType === "google" ? "Google" : "Naver"}
+                    {userInfo?.loginType === "google"
+                      ? "Google"
+                      : userInfo?.loginType === "naver"
+                      ? "Naver"
+                      : "Guest"}
                     로그인
                   </Text>
                 </View>
-                <Text style={styles.userId}>ID: {userInfo.id}</Text>
+                <Text style={styles.userId}>ID: {userInfo?.id ?? "-"}</Text>
               </View>
             </View>
-          </View>
-        )}
-
-        {/* 전시 관련 기능 */}
-        {renderSection(
-          "전시 관리",
-          <View>
-            {renderMenuItem(
-              "bookmark",
-              "찜한 전시",
-              `${BookmarkedExhibitions.length}개`,
-              () => {
-                router.push("/(tabs)/mypage/exhibition/Bookmarked");
-              }
-            )}
-            {renderMenuItem(
-              "thumbs-up",
-              "좋아요 전시",
-              `${thumbsUpExhibitions.length}개`,
-              () => {
-                router.push("/(tabs)/mypage/exhibition/thumbs-up");
-              }
-            )}
-            {renderMenuItem(
-              "location",
-              "방문한 전시",
-              `${visitedCount}개`,
-              () => {
-                router.push("/(tabs)/mypage/exhibition/visited");
-              }
-            )}
-          </View>
-        )}
-
-        {/* 설정 */}
-        {renderSection(
-          "설정",
-          <View>
-            <View style={styles.menuItem}>
-              <View style={styles.menuItemLeft}>
-                <Ionicons
-                  name='moon'
-                  size={24}
-                  color='#1c3519'
-                />
-                <View style={styles.menuItemText}>
-                  <Text style={styles.menuItemTitle}>다크모드</Text>
-                </View>
-              </View>
-              <Switch
-                value={theme === "dark"}
-                onValueChange={(value) => setTheme(value ? "dark" : "light")}
-                trackColor={{ false: "#ccc", true: "#1c3519" }}
-                thumbColor={theme === "dark" ? "#fff" : "#f4f3f4"}
-              />
-            </View>
-          </View>
-        )}
-
-        {/* 계정 관리 */}
-        {renderSection(
-          "계정 관리",
-          <View>
-            {renderMenuItem(
-              "log-out",
-              "로그아웃",
-              undefined,
-              handleLogout,
-              false
-            )}
-            {renderMenuItem(
-              "trash",
-              "회원탈퇴",
-              undefined,
-              handleDeleteAccount,
-              false
-            )}
           </View>
         )}
       </ScrollView>
@@ -497,5 +451,67 @@ const getStyles = (theme: ThemeType) =>
       color: "#666",
       marginTop: 10,
       textAlign: "center",
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.3)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContent: {
+      backgroundColor: "#fff",
+      borderRadius: 16,
+      padding: 24,
+      width: 280,
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 20,
+      color: "#1c3519",
+    },
+    modalButton: {
+      width: "100%",
+      paddingVertical: 14,
+      borderRadius: 8,
+      backgroundColor: "#f5f5f5",
+      marginBottom: 12,
+      alignItems: "center",
+    },
+    modalButtonText: {
+      fontSize: 16,
+      color: "#1c3519",
+      fontWeight: "bold",
+    },
+    modalCloseButton: {
+      marginTop: 8,
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    modalCloseButtonText: {
+      color: "#666",
+      fontSize: 15,
+    },
+    headerWrap: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: "#1c3519",
+      height: 80,
+      paddingTop: 20,
+      paddingHorizontal: 16,
+    },
+    headerLogo: {
+      width: 120,
+      height: 40,
+    },
+    headerIcons: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    headerIconBtn: {
+      marginLeft: 16,
+      padding: 4,
     },
   });

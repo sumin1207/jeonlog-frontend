@@ -12,10 +12,26 @@ import { useRouter } from "expo-router";
 
 export default function CategoryScreen() {
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState("지역별");
+  const [activeTab, setActiveTab] = useState("장르별");
   const router = useRouter();
 
-  const tabs = ["지역별", "성격별"];
+  const tabs = ["장르별", "성격별", "지역별"];
+
+  const genreData = [
+    "현대미술",
+    "회화",
+    "사진",
+    "조각/설치",
+    "디지털아트",
+    "일러스트/그래픽",
+    "패션/텍스타일",
+    "건축/디자인",
+    "공예/도예",
+    "해외명화/고전미술",
+  ];
+
+  // 성격별 데이터
+  const personalityData = ["차분한", "역동적인", "로맨틱한", "고전적인"];
 
   // 지역별 데이터
   const regionData = [
@@ -28,9 +44,6 @@ export default function CategoryScreen() {
     "용산, 중구, 종로",
     "영등포, 강서, 양천",
   ];
-
-  // 성격별 데이터
-  const personalityData = ["차분한", "역동적인", "로맨틱한", "고전적인"];
 
   const styles = StyleSheet.create({
     container: {
@@ -116,7 +129,12 @@ export default function CategoryScreen() {
     </TouchableOpacity>
   );
 
-  const currentData = activeTab === "지역별" ? regionData : personalityData;
+  const currentData =
+    activeTab === "지역별"
+      ? regionData
+      : activeTab === "장르별"
+      ? genreData
+      : personalityData;
 
   return (
     <View style={styles.container}>

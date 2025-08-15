@@ -12,9 +12,10 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface TopBarProps {
   title?: string;
+  right?: React.ReactNode;
 }
 
-export default function TopBar({ title }: TopBarProps) {
+export default function TopBar({ title, right }: TopBarProps) {
   const router = useRouter();
   const [isSearchPressed, setIsSearchPressed] = useState(false);
 
@@ -82,36 +83,40 @@ export default function TopBar({ title }: TopBarProps) {
         </Pressable>
       </View>
       <View style={styles.rightContainer}>
-        <Animated.View
-          style={[
-            styles.searchButtonContainer,
-            {
-              transform: [{ scale: searchButtonScale }],
-              opacity: searchButtonOpacity,
-            },
-          ]}>
-          <Pressable
-            style={styles.searchButton}
-            onPress={handleSearchPress}>
-            <Animated.View
-              style={{
-                transform: [
-                  {
-                    rotate: searchIconRotation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ["0deg", "360deg"],
-                    }),
-                  },
-                ],
-              }}>
-              <Ionicons
-                name='search-outline'
-                size={24}
-                color={isSearchPressed ? "#4CAF50" : "white"}
-              />
-            </Animated.View>
-          </Pressable>
-        </Animated.View>
+        {right ? (
+          right
+        ) : (
+          <Animated.View
+            style={[
+              styles.searchButtonContainer,
+              {
+                transform: [{ scale: searchButtonScale }],
+                opacity: searchButtonOpacity,
+              },
+            ]}>
+            <Pressable
+              style={styles.searchButton}
+              onPress={handleSearchPress}>
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate: searchIconRotation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ["0deg", "360deg"],
+                      }),
+                    },
+                  ],
+                }}>
+                <Ionicons
+                  name='search-outline'
+                  size={24}
+                  color={isSearchPressed ? "#4CAF50" : "white"}
+                />
+              </Animated.View>
+            </Pressable>
+          </Animated.View>
+        )}
       </View>
     </View>
   );

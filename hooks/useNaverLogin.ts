@@ -1,90 +1,58 @@
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import { useEffect } from "react";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 
-const extra = Constants.expoConfig?.extra as {
+const { EXPO_NAVER_CLIENT_ID } = Constants.expoConfig?.extra as {
   EXPO_NAVER_CLIENT_ID: string;
-  EXPO_NAVER_CLIENT_SECRET: string;
 };
-
-const NAVER_CLIENT_ID = extra?.EXPO_NAVER_CLIENT_ID;
-const NAVER_CLIENT_SECRET = extra?.EXPO_NAVER_CLIENT_SECRET;
 
 WebBrowser.maybeCompleteAuthSession();
 
 const useNaverLogin = () => {
+  const CLIENT_ID = EXPO_NAVER_CLIENT_ID;
+
+  // CLIENT_ID 검증
+  if (!CLIENT_ID) {
+    console.error("❌ EXPO_NAVER_CLIENT_ID가 설정되지 않았습니다!");
+    console.error("🔍 app.config.js 또는 .env 파일을 확인해주세요.");
+  } else {
+    console.log(
+      "✅ Naver Client ID 확인됨:",
+      CLIENT_ID.substring(0, 10) + "..."
+    );
+  }
+
   const discovery = {
     authorizationEndpoint: "https://nid.naver.com/oauth2.0/authorize",
     tokenEndpoint: "https://nid.naver.com/oauth2.0/token",
+    revocationEndpoint: "https://nid.naver.com/oauth2.0/token",
+    userInfoEndpoint: "https://openapi.naver.com/v1/nid/me",
   };
 
-  const redirectUri = AuthSession.makeRedirectUri();
+  const redirectUri =
+    Platform.OS === "web"
+      ? "http://localhost:8081"
+      : AuthSession.makeRedirectUri();
+
+  // 리디렉트 URI 검증
+  console.log("🌐 Platform:", Platform.OS);
+  console.log("🔗 Redirect URI:", redirectUri);
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
-      clientId: NAVER_CLIENT_ID,
-      clientSecret: NAVER_CLIENT_SECRET,
+      clientId: CLIENT_ID,
       redirectUri: redirectUri,
+      scopes: ["openid", "profile", "email"],
       responseType: AuthSession.ResponseType.Code,
-      scopes: ["name", "email"],
     },
     discovery
   );
 
-  const handleNaverLoginSuccess = async (response: any) => {
-    try {
-      console.log("🚀 Naver 로그인 응답:", response);
-
-      if (response?.type === "success") {
-        console.log("✅ Naver OAuth2 인증 완료, 백엔드로 리디렉트 예정");
-        console.log("📋 Authorization Code:", response.params?.code);
-        console.log("🔄 State:", response.params?.state);
-
-        // 백엔드의 OAuth2 엔드포인트로 직접 리디렉트
-        // 백엔드에서 JWT 토큰을 생성하고 프론트엔드로 리디렉트할 예정
-        const backendOAuthUrl = `http://localhost:8080/oauth2/authorization/naver`;
-        console.log("🔄 백엔드 OAuth2 엔드포인트로 리디렉트:", backendOAuthUrl);
-
-        // 웹 브라우저로 백엔드 OAuth2 엔드포인트 열기
-        // 백엔드에서 처리 후 http://localhost:8081/oauth2/redirect로 리디렉트됨
-        await WebBrowser.openAuthSessionAsync(
-          backendOAuthUrl,
-          "http://localhost:8081/oauth2/redirect"
-        );
-      } else if (response?.type === "error") {
-        console.error("❌ Naver OAuth2 에러:", response.error);
-        console.error("🔍 에러 코드:", response.error?.code);
-        console.error("📝 에러 메시지:", response.error?.message);
-      } else if (response?.type === "cancel") {
-        console.log("⚠️ Naver 로그인 취소됨");
-      }
-    } catch (error) {
-      console.error("❌ Naver 로그인 처리 에러:", error);
-    }
-  };
-
-  // response가 변경될 때마다 로그인 성공 여부를 확인
-  useEffect(() => {
-    console.log("🔄 Naver OAuth2 응답 변경됨:", response);
-
-    if (response?.type === "success") {
-      // 로그인 성공 시 handleNaverLoginSuccess 호출
-      handleNaverLoginSuccess(response);
-    } else if (response?.type === "error") {
-      // 에러 발생 시 상세 정보 출력
-      console.error("❌ Naver OAuth2 에러 발생:", response.error);
-      handleNaverLoginSuccess(response);
-    } else if (response?.type === "cancel") {
-      console.log("⚠️ Naver OAuth2 취소됨");
-      handleNaverLoginSuccess(response);
-    }
-  }, [response]);
-
   return {
     promptAsync,
     request,
+    response,
   };
 };
 
