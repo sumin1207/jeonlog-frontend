@@ -283,9 +283,7 @@ export default function ExhibitionLogDetailScreen() {
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.postContainer}>
-            <Text style={styles.postTitle}>
-              {record?.title || "사용자 지정 제목 없음"}
-            </Text>
+            <Text style={styles.postTitle}></Text>
             <View style={styles.authorContainer}>
               <View style={styles.authorAvatar} />
               <Text style={styles.authorName}>user</Text>
@@ -293,7 +291,7 @@ export default function ExhibitionLogDetailScreen() {
           </View>
 
           <View style={styles.postContainer}>
-                    {exhibition?.image && (
+            {exhibition?.image && (
               <Image
                 source={exhibition.image}
                 style={[
