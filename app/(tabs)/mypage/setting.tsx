@@ -23,6 +23,9 @@ export default function MyPageSettingScreen() {
   const { logout, userInfo } = useAuth();
   const [visitedCount, setVisitedCount] = React.useState(0);
 
+  // 다크모드 스타일 동적 적용
+  const dynamicStyles = getStyles(theme);
+
   React.useEffect(() => {
     // 방문한 전시 수 불러오기 (마이페이지와 동일)
     (async () => {
@@ -52,8 +55,8 @@ export default function MyPageSettingScreen() {
   };
 
   const renderSection = (title: string, children: React.ReactNode) => (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View style={dynamicStyles.section}>
+      <Text style={dynamicStyles.sectionTitle}>{title}</Text>
       {children}
     </View>
   );
@@ -65,18 +68,20 @@ export default function MyPageSettingScreen() {
     showArrow: boolean = true
   ) => (
     <Pressable
-      style={styles.menuItem}
+      style={dynamicStyles.menuItem}
       onPress={onPress}
       disabled={!onPress}>
-      <View style={styles.menuItemLeft}>
+      <View style={dynamicStyles.menuItemLeft}>
         <Ionicons
           name={icon}
           size={24}
-          color='#1c3519'
+          color={theme === "dark" ? "#fff" : "#1c3519"}
         />
-        <View style={styles.menuItemText}>
-          <Text style={styles.menuItemTitle}>{title}</Text>
-          {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
+        <View style={dynamicStyles.menuItemText}>
+          <Text style={dynamicStyles.menuItemTitle}>{title}</Text>
+          {subtitle && (
+            <Text style={dynamicStyles.menuItemSubtitle}>{subtitle}</Text>
+          )}
         </View>
       </View>
       {showArrow && (
@@ -90,16 +95,16 @@ export default function MyPageSettingScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       <ScrollView
-        style={styles.scrollView}
+        style={dynamicStyles.scrollView}
         pointerEvents='auto'>
         {renderSection(
           "전시 관리",
           <View>
             {renderMenuItem(
               "bookmark",
-              "찜한 전시",
+              "북마크한 전시",
               `${BookmarkedExhibitions.length}개`,
               () => {
                 router.push("/(tabs)/mypage/exhibition/Bookmarked");
@@ -126,15 +131,15 @@ export default function MyPageSettingScreen() {
         {renderSection(
           "설정",
           <View>
-            <View style={styles.menuItem}>
-              <View style={styles.menuItemLeft}>
+            <View style={dynamicStyles.menuItem}>
+              <View style={dynamicStyles.menuItemLeft}>
                 <Ionicons
                   name='moon'
                   size={24}
-                  color='#1c3519'
+                  color={theme === "dark" ? "#fff" : "#1c3519"}
                 />
-                <View style={styles.menuItemText}>
-                  <Text style={styles.menuItemTitle}>다크모드</Text>
+                <View style={dynamicStyles.menuItemText}>
+                  <Text style={dynamicStyles.menuItemTitle}>다크모드</Text>
                 </View>
               </View>
               <Switch
@@ -170,51 +175,54 @@ export default function MyPageSettingScreen() {
   );
 }
 
+function getStyles(theme: ThemeType) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    section: {
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginHorizontal: 20,
+      marginVertical: 10,
+    },
+    menuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    menuItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    menuItemText: {
+      marginLeft: 15,
+      flex: 1,
+    },
+    menuItemTitle: {
+      fontSize: 16,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    menuItemSubtitle: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 2,
+    },
+  });
+}
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1c3519",
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  menuItemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  menuItemText: {
-    marginLeft: 15,
-    flex: 1,
-  },
-  menuItemTitle: {
-    fontSize: 16,
-    color: "#1c3519",
-  },
-  menuItemSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 2,
-  },
-});

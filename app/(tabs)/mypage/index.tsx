@@ -10,17 +10,18 @@ import {
   Alert,
   Modal,
   Image,
+  Dimensions,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-// TopBar import 제거
-// import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
 import { removeStoredToken } from "../../../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ExhibitionLogCard from "../exhibition-log/ExhibitionLogCard";
+import { useEffect } from "react";
 
 // 임시 회원탈퇴 함수 (나중에 실제 구현으로 교체)
 const deleteAccount = async (userId: string, accessToken?: string) => {
@@ -34,6 +35,54 @@ export default function MyPageScreen() {
   const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [myRecords, setMyRecords] = useState<any[]>([]);
+  const [recordSort, setRecordSort] = useState<"latest" | "popular">("latest");
+  const windowWidth = Dimensions.get("window").width;
+
+  // 내 기록 불러오기 (최신순)
+  useEffect(() => {
+    const loadMyRecords = async () => {
+      try {
+        const savedRecordsJSON = await AsyncStorage.getItem(
+          "exhibition_records"
+        );
+        const savedRecords = savedRecordsJSON
+          ? JSON.parse(savedRecordsJSON)
+          : {};
+        const visitedIdsJSON = await AsyncStorage.getItem(
+          "visited_exhibition_ids"
+        );
+        const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
+        const exhibitionData =
+          require("../../../data/exhibitionsDataStorage").exhibitionData;
+        const records = visitedIds
+          .map((exhibitionId: string) => {
+            const exhibition = exhibitionData[exhibitionId];
+            if (!exhibition) return null;
+            const record = savedRecords[exhibitionId];
+            if (!record) return null;
+            return {
+              id: exhibition.id,
+              image: exhibition.image,
+              logTitle: record.title,
+              author: {
+                name: userInfo?.name || "user",
+                avatar: require("../../../assets/images/mainIcon.png"),
+              },
+              timestamp: record.createdAt,
+              likes: 0,
+              hashtags: record.hashtags || ["전시기록"],
+            };
+          })
+          .filter(Boolean)
+          .reverse();
+        setMyRecords(records);
+      } catch (e) {
+        setMyRecords([]);
+      }
+    };
+    loadMyRecords();
+  }, [userInfo]);
 
   const styles = getStyles(theme);
 
@@ -240,13 +289,12 @@ export default function MyPageScreen() {
     <View style={styles.container}>
       {/* 상단 커스텀 헤더 */}
       <View style={styles.headerWrap}>
-        {/* 로고는 필요시 추가 가능 */}
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.headerIconBtn}>
             <Ionicons
               name='notifications-outline'
               size={24}
-              color='#fff'
+              color='#222'
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -255,56 +303,205 @@ export default function MyPageScreen() {
             <Ionicons
               name='settings-outline'
               size={24}
-              color='#fff'
+              color='#222'
             />
           </TouchableOpacity>
         </View>
       </View>
-      {/* 설정 모달 완전 제거 */}
       <ScrollView
         style={styles.scrollView}
         pointerEvents='auto'>
-        {/* 사용자 정보 섹션 */}
-        {renderSection(
-          "사용자 정보",
-          <View style={styles.userSection}>
-            <View style={styles.userInfo}>
-              <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
-              </View>
-              <View style={styles.userDetails}>
-                <Text style={styles.userName}>
-                  {userInfo?.name ?? "비회원"}
-                </Text>
-                <Text style={styles.userEmail}>{userInfo?.email ?? "-"}</Text>
-                <View style={styles.loginType}>
-                  <Ionicons
-                    name={
-                      userInfo?.loginType === "google"
-                        ? "logo-google"
-                        : "logo-github"
-                    }
-                    size={16}
-                    color='#1c3519'
-                  />
-                  <Text style={styles.loginTypeText}>
-                    {userInfo?.loginType === "google"
-                      ? "Google"
-                      : userInfo?.loginType === "naver"
-                      ? "Naver"
-                      : "Guest"}
-                    로그인
+        {/* 프로필 영역 - 자연스러운 배치로 개선 */}
+        <View
+          style={{
+            backgroundColor: "#fff",
+            paddingTop: 32,
+            paddingBottom: 18,
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: "#ededed",
+          }}>
+          {/* 사진 | 닉네임/숫자 2단 배치 */}
+          <View
+            style={{
+              flexDirection: "row",
+              width: windowWidth - 40,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              marginBottom: 10,
+            }}>
+            {/* 왼쪽: 프로필 사진 */}
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                backgroundColor: "#e5e5e5",
+                justifyContent: "center",
+                alignItems: "center",
+                marginRight: 18,
+              }}>
+              <Ionicons
+                name='person'
+                size={36}
+                color='#bdbdbd'
+              />
+            </View>
+            {/* 오른쪽: 닉네임(위), 숫자(아래) */}
+            <View style={{ flex: 1, justifyContent: "center" }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: "#222",
+                  marginBottom: 8,
+                }}>
+                닉네임
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}>
+                <View
+                  style={{ alignItems: "center", width: 54, marginRight: 8 }}>
+                  <Text
+                    style={{ fontSize: 15, fontWeight: "bold", color: "#222" }}>
+                    0
                   </Text>
+                  <Text style={{ fontSize: 11, color: "#888" }}>기록 수</Text>
                 </View>
-                <Text style={styles.userId}>ID: {userInfo?.id ?? "-"}</Text>
+                <View
+                  style={{ alignItems: "center", width: 54, marginRight: 8 }}>
+                  <Text
+                    style={{ fontSize: 15, fontWeight: "bold", color: "#222" }}>
+                    0
+                  </Text>
+                  <Text style={{ fontSize: 11, color: "#888" }}>팔로워</Text>
+                </View>
+                <View style={{ alignItems: "center", width: 54 }}>
+                  <Text
+                    style={{ fontSize: 15, fontWeight: "bold", color: "#222" }}>
+                    10
+                  </Text>
+                  <Text style={{ fontSize: 11, color: "#888" }}>팔로잉</Text>
+                </View>
               </View>
             </View>
           </View>
-        )}
+          {/* 버튼 영역: 오른쪽 정렬, 간격/높이 통일 */}
+          <View
+            style={{
+              flexDirection: "row",
+              width: windowWidth - 40,
+              justifyContent: "flex-end",
+              marginTop: 6,
+            }}>
+            <TouchableOpacity
+              style={{
+                height: 28,
+                minWidth: 40,
+                paddingHorizontal: 12,
+                borderRadius: 5,
+                backgroundColor: "#f5f5f5",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "#bdbdbd",
+                marginRight: 10,
+              }}>
+              <Text
+                style={{ fontSize: 13, color: "#1976d2", fontWeight: "bold" }}>
+                프로필 편집
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                height: 28,
+                borderRadius: 5,
+                backgroundColor: "#fff",
+                borderWidth: 1,
+                borderColor: "#ededed",
+                paddingHorizontal: 14,
+              }}
+              onPress={() => router.push("/mypage/exhibition/Bookmarked")}>
+              <Ionicons
+                name='bookmark-outline'
+                size={17}
+                color='#1976d2'
+                style={{ marginRight: 4 }}
+              />
+              <Text
+                style={{ fontSize: 13, color: "#1976d2", fontWeight: "bold" }}>
+                저장한 전시
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* 구분선 */}
+        <View
+          style={{ height: 8, backgroundColor: "#fafafa", width: "100%" }}
+        />
+        {/* 내 전시 기록 섹션 타이틀/토글 */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginHorizontal: 16,
+            marginTop: 18,
+            marginBottom: 8,
+          }}>
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "#222" }}>
+            나의 전시 기록들
+          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity onPress={() => setRecordSort("latest")}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: recordSort === "latest" ? "#1976d2" : "#bbb",
+                  fontWeight: recordSort === "latest" ? "bold" : "normal",
+                  marginRight: 8,
+                }}>
+                최신순
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setRecordSort("popular")}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: recordSort === "popular" ? "#1976d2" : "#bbb",
+                  fontWeight: recordSort === "popular" ? "bold" : "normal",
+                }}>
+                인기순
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* 내 전시 기록 카드 리스트 */}
+        <View style={{ marginHorizontal: 12, marginBottom: 20 }}>
+          {myRecords.length === 0 ? (
+            <Text style={{ color: "#bbb", textAlign: "center", marginTop: 30 }}>
+              아직 기록한 전시가 없습니다.
+            </Text>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}>
+              {myRecords.map((item, idx) => (
+                <View
+                  key={item.id}
+                  style={{ marginRight: 16 }}>
+                  <ExhibitionLogCard {...item} />
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
