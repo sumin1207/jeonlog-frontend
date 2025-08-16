@@ -172,7 +172,12 @@ const createStyles = (theme: "light" | "dark") =>
   });
 
 export default function ExhibitionLogDetailScreen() {
-  const { exhibitionLogId } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const exhibitionLogId = Array.isArray(params.exhibitionLogId)
+    ? params.exhibitionLogId[0]
+    : params.exhibitionLogId;
+
+  console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const { userLikes } = useLikes();
@@ -183,12 +188,16 @@ export default function ExhibitionLogDetailScreen() {
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Ensure this is present
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       if (!exhibitionLogId) {
-        Alert.alert("오류", "전시 기록 ID를 찾을 수 없습니다.");
+        setError(
+          `오류: 전시 기록 ID를 찾을 수 없습니다. ID: ${exhibitionLogId}`
+        );
+        setIsLoading(false); // Use setIsLoading here
         return;
       }
       const id = exhibitionLogId as string;
@@ -216,6 +225,7 @@ export default function ExhibitionLogDetailScreen() {
       setComments(allComments[id] || []);
     } catch (error) {
       console.error("Error loading data:", error);
+      setError("데이터 로딩 중 오류가 발생했습니다."); // Set error state on catch
     } finally {
       setIsLoading(false);
     }
@@ -261,15 +271,6 @@ export default function ExhibitionLogDetailScreen() {
     </View>
   );
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <TopBar />
-        {renderLoading()}
-      </View>
-    );
-  }
-
   if (!record && !exhibition) {
     return (
       <View style={styles.errorContainer}>
@@ -303,7 +304,7 @@ export default function ExhibitionLogDetailScreen() {
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.postContainer}>
-            <Text style={styles.postTitle}>{record?.title}</Text>
+            <Text style={styles.postTitle}>{String(record?.title)}</Text>
             {author && (
               <View style={styles.authorContainer}>
                 <Image source={author.avatar} style={styles.authorAvatar} />
@@ -322,7 +323,7 @@ export default function ExhibitionLogDetailScreen() {
             )}
           </View>
           <Text style={styles.postContent}>
-            {record?.content || exhibition?.description || "내용 없음"}
+            {String(record?.content || exhibition?.description || "내용 없음")}
           </Text>
           <View style={styles.actionBar}>
             <LikeButton exhibitionLogId={id} />
