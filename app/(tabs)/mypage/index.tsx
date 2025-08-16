@@ -31,7 +31,8 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
-  const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
+  const { BookmarkedExhibitions, thumbsUpExhibitions, visitedExhibitions } =
+    useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
   const [settingsVisible, setSettingsVisible] = useState(false);
 
@@ -53,11 +54,7 @@ export default function MyPageScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Ionicons
-            name='reload'
-            size={60}
-            color='#1c3519'
-          />
+          <Ionicons name="reload" size={60} color="#1c3519" />
           <Text style={styles.loadingTitle}>로그인 상태 확인 중...</Text>
           <Text style={styles.loadingSubtitle}>잠시만 기다려주세요</Text>
         </View>
@@ -97,24 +94,6 @@ export default function MyPageScreen() {
   // }
 
   console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadVisitedCount = async () => {
-        try {
-          const visitedIdsJSON = await AsyncStorage.getItem(
-            "visited_exhibition_ids"
-          );
-          const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
-          setVisitedCount(visitedIds.length);
-        } catch (error) {
-          console.error("Failed to load visited exhibitions count:", error);
-        }
-      };
-
-      loadVisitedCount();
-    }, [])
-  );
 
   const handleLogout = async () => {
     Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
@@ -211,28 +190,15 @@ export default function MyPageScreen() {
     onPress?: () => void,
     showArrow: boolean = true
   ) => (
-    <Pressable
-      style={styles.menuItem}
-      onPress={onPress}
-      disabled={!onPress}>
+    <Pressable style={styles.menuItem} onPress={onPress} disabled={!onPress}>
       <View style={styles.menuItemLeft}>
-        <Ionicons
-          name={icon as any}
-          size={24}
-          color='#1c3519'
-        />
+        <Ionicons name={icon as any} size={24} color="#1c3519" />
         <View style={styles.menuItemText}>
           <Text style={styles.menuItemTitle}>{title}</Text>
           {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {showArrow && (
-        <Ionicons
-          name='chevron-forward'
-          size={20}
-          color='#ccc'
-        />
-      )}
+      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
     </Pressable>
   );
 
@@ -243,38 +209,25 @@ export default function MyPageScreen() {
         {/* 로고는 필요시 추가 가능 */}
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.headerIconBtn}>
-            <Ionicons
-              name='notifications-outline'
-              size={24}
-              color='#fff'
-            />
+            <Ionicons name="notifications-outline" size={24} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerIconBtn}
-            onPress={() => router.push("/mypage/setting")}>
-            <Ionicons
-              name='settings-outline'
-              size={24}
-              color='#fff'
-            />
+            onPress={() => router.push("/mypage/setting")}
+          >
+            <Ionicons name="settings-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
       {/* 설정 모달 완전 제거 */}
-      <ScrollView
-        style={styles.scrollView}
-        pointerEvents='auto'>
+      <ScrollView style={styles.scrollView} pointerEvents="auto">
         {/* 사용자 정보 섹션 */}
         {renderSection(
           "사용자 정보",
           <View style={styles.userSection}>
             <View style={styles.userInfo}>
               <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
+                <Ionicons name="person" size={40} color="#fff" />
               </View>
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>
@@ -289,7 +242,7 @@ export default function MyPageScreen() {
                         : "logo-github"
                     }
                     size={16}
-                    color='#1c3519'
+                    color="#1c3519"
                   />
                   <Text style={styles.loginTypeText}>
                     {userInfo?.loginType === "google"
@@ -303,6 +256,40 @@ export default function MyPageScreen() {
                 <Text style={styles.userId}>ID: {userInfo?.id ?? "-"}</Text>
               </View>
             </View>
+          </View>
+        )}
+        {renderSection(
+          "전시 관리",
+          <View style={styles.activitySection}>
+            <TouchableOpacity
+              style={styles.activityItem}
+              onPress={() =>
+                router.push("/(tabs)/mypage/exhibition/Bookmarked")
+              }
+            >
+              <Text style={styles.activityCount}>
+                {BookmarkedExhibitions.length}
+              </Text>
+              <Text style={styles.activityLabel}>찜한 전시</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.activityItem}
+              onPress={() => router.push("/(tabs)/mypage/exhibition/thumbs-up")}
+            >
+              <Text style={styles.activityCount}>
+                {thumbsUpExhibitions.length}
+              </Text>
+              <Text style={styles.activityLabel}>좋아요 전시</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.activityItem}
+              onPress={() => router.push("/(tabs)/mypage/exhibition/visited")}
+            >
+              <Text style={styles.activityCount}>
+                {visitedExhibitions.length}
+              </Text>
+              <Text style={styles.activityLabel}>방문한 전시</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -375,6 +362,27 @@ const getStyles = (theme: ThemeType) =>
       fontSize: 14,
       color: theme === "dark" ? "#ccc" : "#666",
       marginTop: 4,
+    },
+    activitySection: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      marginHorizontal: 20,
+      borderRadius: 12,
+      padding: 20,
+    },
+    activityItem: {
+      alignItems: "center",
+    },
+    activityCount: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    activityLabel: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 5,
     },
     menuItem: {
       flexDirection: "row",

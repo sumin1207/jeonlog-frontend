@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface ExhibitionState {
   BookmarkedExhibitions: string[];
@@ -34,6 +35,8 @@ interface ExhibitionProviderProps {
   children: ReactNode;
 }
 
+const STORAGE_KEY = "exhibitionState";
+
 export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   children,
 }) => {
@@ -42,6 +45,37 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     thumbsUpExhibitions: [],
     visitedExhibitions: [],
   });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadState = async () => {
+      try {
+        const storedState = await AsyncStorage.getItem(STORAGE_KEY);
+        if (storedState !== null) {
+          setState(JSON.parse(storedState));
+        }
+      } catch (error) {
+        console.error("Failed to load exhibition state from storage", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadState();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const saveState = async () => {
+        try {
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (error) {
+          console.error("Failed to save exhibition state to storage", error);
+        }
+      };
+      saveState();
+    }
+  }, [state, isLoading]);
 
   const toggleBookmarked = (exhibitionId: string) => {
     setState((prev) => ({
@@ -81,6 +115,10 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   const isVisited = (exhibitionId: string) => {
     return state.visitedExhibitions.includes(exhibitionId);
   };
+
+  if (isLoading) {
+    return null; // or a loading spinner
+  }
 
   return (
     <ExhibitionContext.Provider

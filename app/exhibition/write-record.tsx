@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useExhibition } from "../../contexts/ExhibitionContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
@@ -32,6 +33,7 @@ const getExhibitionId = (
 
 export default function WriteRecordScreen() {
   const { theme } = useTheme();
+  const { toggleVisited } = useExhibition();
   const router = useRouter();
   const params = useLocalSearchParams();
   const exhibitionId = getExhibitionId(params.exhibitionId);
@@ -112,17 +114,7 @@ export default function WriteRecordScreen() {
       records[exhibitionId] = newRecord;
       await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
 
-      const visitedIdsJSON = await AsyncStorage.getItem(
-        "visited_exhibition_ids"
-      );
-      const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
-      if (!visitedIds.includes(exhibitionId)) {
-        visitedIds.push(exhibitionId);
-        await AsyncStorage.setItem(
-          "visited_exhibition_ids",
-          JSON.stringify(visitedIds)
-        );
-      }
+      toggleVisited(exhibitionId);
 
       Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
         {
