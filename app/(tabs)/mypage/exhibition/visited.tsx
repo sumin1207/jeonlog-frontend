@@ -63,15 +63,14 @@ export default function VisitedExhibitionsPage() {
         },
       ]}
       onPress={() => {
-        if (item.id && typeof item.id === 'string') {
+        if (item.id && typeof item.id === "string") {
           console.log("Navigating to exhibition log with ID:", item.id);
           router.push({
             pathname: `/exhibition-log/${item.id}`,
             params: { exhibitionLogId: item.id },
           });
         } else {
-          console.warn("Invalid exhibition ID for navigation:", item.id);
-          Alert.alert("오류", "전시 기록을 불러올 수 없습니다. 유효하지 않은 ID입니다.");
+          console.log("Invalid exhibition ID for navigation:", item.id);
         }
       }}
     >
