@@ -17,6 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "@/data/exhibitionsDataStorage";
 import { useTheme } from "@/contexts/ThemeContext";
+import BackButton from "@/components/ui/BackButton";
 import Skeleton from "@/components/ui/Skeleton";
 import LikeButton from "./like/LikeButton";
 import CountLike from "./like/countLike";
@@ -53,12 +54,9 @@ const createStyles = (theme: "light" | "dark") =>
     headerContainer: {
       flexDirection: "row",
       alignItems: "center",
-      paddingTop: Platform.OS === "ios" ? 50 : 20,
+      paddingTop: 30,
       paddingBottom: 10,
       paddingHorizontal: 10,
-    },
-    backButton: {
-      padding: 5,
     },
     headerTitle: {
       fontSize: 22,
@@ -298,7 +296,7 @@ export default function ExhibitionLogDetailScreen() {
     return (
       <View style={styles.errorContainer}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back-circle" size={40} color="#1c3519" />
+          <Ionicons name="arrow-back-circle" size={40} color="#1c3519" />
         </Pressable>
         <Text style={styles.errorText}>전시 기록을 찾을 수 없습니다.</Text>
       </View>
@@ -328,10 +326,10 @@ export default function ExhibitionLogDetailScreen() {
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
-            <Pressable onPress={() => router.back()} style={({ pressed }) => [styles.backButton, { opacity: pressed ? 0.5 : 1.0 }]}>
-              <Ionicons name="arrow-back" size={28} color={theme === 'dark' ? '#FFFFFF' : '#000000'} />
-            </Pressable>
-            <Text style={styles.headerTitle} numberOfLines={1}>{String(record?.title)}</Text>
+            <BackButton color={theme === "dark" ? "#FFFFFF" : "#000000"} />
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {String(record?.title)}
+            </Text>
             <View style={styles.headerPlaceholder} />
           </View>
           <View style={styles.postContainer}>
