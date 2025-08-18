@@ -48,7 +48,7 @@ export default function CategoryScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#fff",
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
     },
     content: {
       flex: 1,
@@ -96,7 +96,7 @@ export default function CategoryScreen() {
       paddingHorizontal: 20,
       marginBottom: 12,
       borderRadius: 12,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#f8f8f8",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#ffffffff",
       borderWidth: 1,
       borderColor: theme === "dark" ? "#333" : "#e0e0e0",
       minHeight: 60,
@@ -124,7 +124,8 @@ export default function CategoryScreen() {
       key={categoryName}
       style={styles.categoryButton}
       onPress={() => handleCategoryPress(categoryName)}
-      activeOpacity={0.7}>
+      activeOpacity={0.7}
+    >
       <Text style={styles.categoryText}>{categoryName}</Text>
     </TouchableOpacity>
   );
@@ -139,9 +140,7 @@ export default function CategoryScreen() {
   return (
     <View style={styles.container}>
       <TopBar />
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>카테고리</Text>
 
         {/* 탭 네비게이션 */}
@@ -151,12 +150,14 @@ export default function CategoryScreen() {
               key={tab}
               style={styles.tab}
               onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}>
+              activeOpacity={0.7}
+            >
               <Text
                 style={[
                   styles.tabText,
                   activeTab === tab && styles.activeTabText,
-                ]}>
+                ]}
+              >
                 {tab}
               </Text>
               {activeTab === tab && <View style={styles.activeTabIndicator} />}
