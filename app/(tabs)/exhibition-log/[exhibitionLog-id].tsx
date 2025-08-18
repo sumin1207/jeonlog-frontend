@@ -11,16 +11,18 @@ import {
   Platform,
   Alert,
   InteractionManager,
+  Pressable,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "@/data/exhibitionsDataStorage";
 import { useTheme } from "@/contexts/ThemeContext";
-import TopBar from "@/components/ui/TopBar";
+import BackButton from "@/components/ui/BackButton";
 import Skeleton from "@/components/ui/Skeleton";
 import LikeButton from "./like/LikeButton";
 import CountLike from "./like/countLike";
 import { useLikes } from "@/contexts/LikeContext";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Author {
   name: string;
@@ -49,6 +51,23 @@ const createStyles = (theme: "light" | "dark") =>
       flex: 1,
       backgroundColor: theme === "dark" ? "#121212" : "#FFFFFF",
     },
+    headerContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingTop: 30,
+      paddingBottom: 10,
+      paddingHorizontal: 10,
+    },
+    headerTitle: {
+      fontSize: 22,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#FFFFFF" : "#000000",
+      textAlign: "center",
+      flex: 1,
+    },
+    headerPlaceholder: {
+      width: 28 + 10, // Icon size + padding
+    },
     keyboardAvoidingView: {
       flex: 1,
     },
@@ -64,6 +83,7 @@ const createStyles = (theme: "light" | "dark") =>
       fontWeight: "bold",
       color: theme === "dark" ? "#FFFFFF" : "#000000",
       marginBottom: 16,
+      marginTop: 50, // Add margin to avoid overlap with back button
     },
     authorContainer: {
       flexDirection: "row",
@@ -172,7 +192,13 @@ const createStyles = (theme: "light" | "dark") =>
   });
 
 export default function ExhibitionLogDetailScreen() {
-  const { exhibitionLogId } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const exhibitionLogId = Array.isArray(params.exhibitionLogId)
+    ? params.exhibitionLogId[0]
+    : params.exhibitionLogId;
+
+  console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const { userLikes } = useLikes();
@@ -183,12 +209,16 @@ export default function ExhibitionLogDetailScreen() {
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Ensure this is present
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       if (!exhibitionLogId) {
-        Alert.alert("오류", "전시 기록 ID를 찾을 수 없습니다.");
+        setError(
+          `오류: 전시 기록 ID를 찾을 수 없습니다. ID: ${exhibitionLogId}`
+        );
+        setIsLoading(false); // Use setIsLoading here
         return;
       }
       const id = exhibitionLogId as string;
@@ -216,6 +246,7 @@ export default function ExhibitionLogDetailScreen() {
       setComments(allComments[id] || []);
     } catch (error) {
       console.error("Error loading data:", error);
+      setError("데이터 로딩 중 오류가 발생했습니다."); // Set error state on catch
     } finally {
       setIsLoading(false);
     }
@@ -261,19 +292,12 @@ export default function ExhibitionLogDetailScreen() {
     </View>
   );
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <TopBar />
-        {renderLoading()}
-      </View>
-    );
-  }
-
   if (!record && !exhibition) {
     return (
       <View style={styles.errorContainer}>
-        <TopBar />
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back-circle" size={40} color="#1c3519" />
+        </Pressable>
         <Text style={styles.errorText}>전시 기록을 찾을 수 없습니다.</Text>
       </View>
     );
@@ -295,15 +319,20 @@ export default function ExhibitionLogDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar />
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
         <ScrollView style={styles.scrollView}>
+          <View style={styles.headerContainer}>
+            <BackButton color={theme === "dark" ? "#FFFFFF" : "#000000"} />
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {String(record?.title)}
+            </Text>
+            <View style={styles.headerPlaceholder} />
+          </View>
           <View style={styles.postContainer}>
-            <Text style={styles.postTitle}>{record?.title}</Text>
             {author && (
               <View style={styles.authorContainer}>
                 <Image source={author.avatar} style={styles.authorAvatar} />
@@ -322,7 +351,7 @@ export default function ExhibitionLogDetailScreen() {
             )}
           </View>
           <Text style={styles.postContent}>
-            {record?.content || exhibition?.description || "내용 없음"}
+            {String(record?.content || exhibition?.description || "내용 없음")}
           </Text>
           <View style={styles.actionBar}>
             <LikeButton exhibitionLogId={id} />

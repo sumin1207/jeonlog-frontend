@@ -6,22 +6,22 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Pressable,
 } from "react-native";
 import { useTheme } from "../../../../contexts/ThemeContext";
 import { useExhibition } from "../../../../contexts/ExhibitionContext";
-import TopBar from "../../../../components/ui/TopBar";
 import { exhibitionData } from "../../../../data/exhibitionsDataStorage";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function BookmarkedExhibitionsScreen() {
   const { theme } = useTheme();
   const { BookmarkedExhibitions } = useExhibition();
   const router = useRouter();
 
-  // 찜한 전시회만 필터링
-  const BookmarkedExhibitionsData = BookmarkedExhibitions.map(
-    (id) => exhibitionData[id as keyof typeof exhibitionData]
-  ).filter(Boolean);
+  const bookmarkedExhibitionsData = BookmarkedExhibitions
+    .map((id) => exhibitionData[id as keyof typeof exhibitionData])
+    .filter(Boolean);
 
   const renderExhibitionItem = ({
     item,
@@ -31,7 +31,10 @@ export default function BookmarkedExhibitionsScreen() {
     <TouchableOpacity
       style={[
         styles.exhibitionItem,
-        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
+        {
+          backgroundColor: theme === "dark" ? "#2a2a2a" : "#ffffff",
+          borderColor: theme === "dark" ? "#444" : "#eee",
+        },
       ]}
       onPress={() => router.push(`/exhibition/${item.id}`)}
     >
@@ -40,26 +43,27 @@ export default function BookmarkedExhibitionsScreen() {
         <Text
           style={[
             styles.exhibitionTitle,
-            { color: theme === "dark" ? "#fff" : "#1c3519" },
+            { color: theme === "dark" ? "#ffffff" : "#000000" },
           ]}
+          numberOfLines={2}
         >
           {item.title}
         </Text>
         <Text
           style={[
             styles.exhibitionLocation,
-            { color: theme === "dark" ? "#ccc" : "#666" },
+            { color: theme === "dark" ? "#cccccc" : "#555555" },
           ]}
         >
-          📍 {item.location}
+          {item.location}
         </Text>
         <Text
           style={[
             styles.exhibitionDate,
-            { color: theme === "dark" ? "#ccc" : "#666" },
+            { color: theme === "dark" ? "#cccccc" : "#555555" },
           ]}
         >
-          📅 {item.date}
+          {item.date}
         </Text>
       </View>
     </TouchableOpacity>
@@ -69,40 +73,52 @@ export default function BookmarkedExhibitionsScreen() {
     <View
       style={[
         styles.container,
-        { backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5" },
+        { backgroundColor: theme === "dark" ? "#121212" : "#f8f8f8" },
       ]}
     >
-      <TopBar title="찜한 전시" />
-      <View style={styles.content}>
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: theme === "dark" ? "#121212" : "#ffffff" },
+        ]}
+      >
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={theme === "dark" ? "white" : "black"}
+          />
+        </Pressable>
         <Text
           style={[
-            styles.title,
-            { color: theme === "dark" ? "#fff" : "#1c3519" },
+            styles.headerTitle,
+            { color: theme === "dark" ? "white" : "black" },
           ]}
         >
-          찜한 전시 ({BookmarkedExhibitionsData.length}개)
+          찜한 전시 ({bookmarkedExhibitionsData.length}개)
         </Text>
-        {BookmarkedExhibitionsData.length > 0 ? (
-          <FlatList
-            data={BookmarkedExhibitionsData}
-            renderItem={renderExhibitionItem}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text
-              style={[
-                styles.emptyText,
-                { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}
-            >
-              찜한 전시가 없습니다.
-            </Text>
-          </View>
-        )}
+        <View style={{ width: 24 }} />
       </View>
+      {bookmarkedExhibitionsData.length > 0 ? (
+        <FlatList
+          data={bookmarkedExhibitionsData}
+          renderItem={renderExhibitionItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContentContainer}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text
+            style={[
+              styles.emptyText,
+              { color: theme === "dark" ? "#cccccc" : "#666666" },
+            ]}
+          >
+            찜한 전시가 없습니다.
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -111,48 +127,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 40,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
   },
-  title: {
+  backButton: {
+    padding: 5,
+  },
+  headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 15,
+  },
+  listContentContainer: {
+    padding: 20,
   },
   exhibitionItem: {
     flexDirection: "row",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
+    alignItems: "center",
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 10,
+    borderWidth: 1,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   exhibitionImage: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 120,
     borderRadius: 8,
-    marginRight: 16,
+    marginRight: 15,
   },
   exhibitionInfo: {
     flex: 1,
-    justifyContent: "center",
+    height: 110,
+    justifyContent: "space-between",
   },
   exhibitionTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
+    fontWeight: "bold",
   },
   exhibitionLocation: {
     fontSize: 14,
-    marginBottom: 2,
   },
   exhibitionDate: {
     fontSize: 14,

@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  SafeAreaView,
 } from "react-native";
-import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -16,7 +16,7 @@ export default function CategoryDetailScreen() {
   const router = useRouter();
   const { type, category } = useLocalSearchParams();
 
-  // 지역별 데이터
+  // Data (remains unchanged)
   const regionData = {
     "강남, 서초, 양재": [
       {
@@ -180,7 +180,6 @@ export default function CategoryDetailScreen() {
     ],
   };
 
-  // 성격별 데이터
   const personalityData = {
     차분한: [
       {
@@ -278,59 +277,51 @@ export default function CategoryDetailScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#fff",
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 20,
+      backgroundColor: theme === "dark" ? "#000000" : "#FFFFFF",
     },
     header: {
       flexDirection: "row",
-      alignItems: "flex-start",
-      marginTop: 20,
-      marginBottom: 30,
-      paddingHorizontal: 5,
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#2a2a2a" : "#f0f0f0",
     },
     backButton: {
-      marginRight: 15,
       padding: 8,
-      marginTop: 4,
+      marginLeft: -8,
+    },
+    headerTitleContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    categoryType: {
+      fontSize: 12,
+      fontWeight: "500",
+      color: theme === "dark" ? "#888" : "#666",
     },
     title: {
       fontSize: 20,
       fontWeight: "bold",
       color: theme === "dark" ? "#fff" : "#1c3519",
-      flex: 1,
-      flexWrap: "wrap",
-      lineHeight: 20,
+      marginTop: 2,
     },
-    categoryType: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-      marginBottom: 2,
+    listContainer: {
+      paddingHorizontal: 20,
     },
-    // 전시 목록 스타일
     exhibitionItem: {
       flexDirection: "row",
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      marginBottom: 15,
-      borderRadius: 12,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#f8f8f8",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      paddingVertical: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#2a2a2a" : "#f0f0f0",
+      alignItems: "center",
     },
     exhibitionImage: {
-      width: 70,
-      height: 70,
-      borderRadius: 8,
-      backgroundColor: theme === "dark" ? "#333" : "#e0e0e0",
+      width: 80,
+      height: 80,
+      borderRadius: 12,
+      backgroundColor: theme === "dark" ? "#2c2c2c" : "#f0f0f0",
       justifyContent: "center",
       alignItems: "center",
       marginRight: 16,
@@ -340,30 +331,31 @@ export default function CategoryDetailScreen() {
       justifyContent: "center",
     },
     exhibitionTitle: {
-      fontSize: 16,
+      fontSize: 17,
       fontWeight: "600",
       color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 6,
+      marginBottom: 8,
     },
     exhibitionLocation: {
       fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
+      color: theme === "dark" ? "#ccc" : "#555",
       marginBottom: 4,
     },
     exhibitionDate: {
-      fontSize: 12,
-      color: theme === "dark" ? "#ccc" : "#666",
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#555",
     },
     emptyContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: 50,
+      paddingHorizontal: 40,
     },
     emptyText: {
       fontSize: 16,
-      color: theme === "dark" ? "#ccc" : "#666",
+      color: theme === "dark" ? "#999" : "#666",
       textAlign: "center",
+      lineHeight: 24,
     },
   });
 
@@ -371,73 +363,72 @@ export default function CategoryDetailScreen() {
     <TouchableOpacity
       style={styles.exhibitionItem}
       onPress={() => router.push(`/exhibition/${item.id}` as any)}
-      activeOpacity={0.7}>
+      activeOpacity={0.7}
+    >
       <View style={styles.exhibitionImage}>
         <Ionicons
-          name='image-outline'
-          size={28}
-          color={theme === "dark" ? "#666" : "#ccc"}
+          name="image-outline"
+          size={32}
+          color={theme === "dark" ? "#555" : "#ccc"}
         />
       </View>
       <View style={styles.exhibitionInfo}>
-        <Text style={styles.exhibitionTitle}>{item.title}</Text>
-        <Text style={styles.exhibitionLocation}>{item.location}</Text>
-        <Text style={styles.exhibitionDate}>{item.date}</Text>
+        <Text style={styles.exhibitionTitle} numberOfLines={1}>
+          {item.title}
+        </Text>
+        <Text style={styles.exhibitionLocation} numberOfLines={1}>
+          {item.location}
+        </Text>
+        <Text style={styles.exhibitionDate} numberOfLines={1}>
+          {item.date}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      <TopBar />
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            activeOpacity={0.7}>
-            <Ionicons
-              name='arrow-back'
-              size={24}
-              color={theme === "dark" ? "#fff" : "#1c3519"}
-            />
-          </TouchableOpacity>
-          <View style={{ flex: 1, paddingRight: 20 }}>
-            <Text style={styles.categoryType}>
-              {type === "region" ? "지역별" : "성격별"}
-            </Text>
-            <Text
-              style={styles.title}
-              numberOfLines={2}>
-              {category}
-            </Text>
-          </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="arrow-back-outline"
+            size={28}
+            color={theme === "dark" ? "#fff" : "#1c3519"}
+          />
+        </TouchableOpacity>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.categoryType}>
+            {type === "region" ? "지역별" : "성격별"}
+          </Text>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {category}
+          </Text>
         </View>
-
-        {/* 전시 목록 */}
-        {exhibitionData.length > 0 ? (
-          <View style={{ marginTop: 10 }}>
-            <FlatList
-              data={exhibitionData}
-              renderItem={renderExhibitionItem}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 20 }}
-            />
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Ionicons
-              name='search-outline'
-              size={60}
-              color={theme === "dark" ? "#ccc" : "#666"}
-            />
-            <Text style={styles.emptyText}>
-              해당 카테고리의 전시가 없습니다.
-            </Text>
-          </View>
-        )}
+        <View style={{ width: 44 }} />
       </View>
-    </View>
+
+      {exhibitionData.length > 0 ? (
+        <FlatList
+          data={exhibitionData}
+          renderItem={renderExhibitionItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Ionicons
+            name="sad-outline"
+            size={60}
+            color={theme === "dark" ? "#555" : "#ccc"}
+          />
+          <Text style={styles.emptyText}>해당 카테고리의 전시가 없습니다.</Text>
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
