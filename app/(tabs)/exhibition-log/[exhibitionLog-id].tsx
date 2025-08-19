@@ -66,7 +66,7 @@ const createStyles = (theme: "light" | "dark") =>
       flex: 1,
     },
     headerPlaceholder: {
-      width: 28 + 10, // Icon size + padding
+      width: 28 + 10, //아이콘 사이즈+padding
     },
     keyboardAvoidingView: {
       flex: 1,
@@ -83,7 +83,7 @@ const createStyles = (theme: "light" | "dark") =>
       fontWeight: "bold",
       color: theme === "dark" ? "#FFFFFF" : "#000000",
       marginBottom: 16,
-      marginTop: 50, // Add margin to avoid overlap with back button
+      marginTop: 50, //뒤로가기 버튼과 마진 
     },
     authorContainer: {
       flexDirection: "row",
@@ -194,9 +194,9 @@ const createStyles = (theme: "light" | "dark") =>
 export default function ExhibitionLogDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const exhibitionLogId = Array.isArray(params.exhibitionLogId)
-    ? params.exhibitionLogId[0]
-    : params.exhibitionLogId;
+  const exhibitionLogId = Array.isArray(params['exhibition-log-id'])
+    ? params['exhibition-log-id'][0]
+    : params['exhibition-log-id'];
 
   console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
   const { theme } = useTheme();
@@ -209,7 +209,7 @@ export default function ExhibitionLogDetailScreen() {
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Ensure this is present
+  const [error, setError] = useState<string | null>(null); 
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -218,7 +218,7 @@ export default function ExhibitionLogDetailScreen() {
         setError(
           `오류: 전시 기록 ID를 찾을 수 없습니다. ID: ${exhibitionLogId}`
         );
-        setIsLoading(false); // Use setIsLoading here
+        setIsLoading(false); 
         return;
       }
       const id = exhibitionLogId as string;

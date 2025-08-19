@@ -1,21 +1,22 @@
+//기존의 index.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Switch,
   ScrollView,
-  ActivityIndicator,
+  Pressable,
   Alert,
   Modal,
   Image,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 // TopBar import 제거
 // import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
-import { useAuth } from "../../../components/context/AuthContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
@@ -38,31 +39,23 @@ export default function MyPageScreen() {
 
   const styles = getStyles(theme);
 
-  // 방문한 기록 카운트 통일
-  const validVisitedCount = visitedExhibitions.filter(
-    (id) => exhibitionData[id as keyof typeof exhibitionData]
-  ).length;
+  // 디버깅을 위한 로그
+  console.log(
+    "🔍 MyPage: 현재 상태 - isLoading:",
+    isLoading,
+    "isLoggedIn:",
+    isLoggedIn,
+    "userInfo:",
+    userInfo
+  );
 
-  const handleGuestAction = () => {
-    Alert.alert(
-      "로그인 필요",
-      "로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?",
-      [
-        { text: "취소", style: "cancel" },
-        { text: "로그인", onPress: () => router.push("/") },
-      ]
-    );
-  };
-
+  // 로딩 중일 때 로딩 UI 표시
   if (isLoading) {
+    console.log("🔍 MyPage: 로딩 중 UI 표시");
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Ionicons
-            name='reload'
-            size={60}
-            color='#1c3519'
-          />
+          <Ionicons name="reload" size={60} color="#1c3519" />
           <Text style={styles.loadingTitle}>로그인 상태 확인 중...</Text>
           <Text style={styles.loadingSubtitle}>잠시만 기다려주세요</Text>
         </View>
@@ -198,28 +191,15 @@ export default function MyPageScreen() {
     onPress?: () => void,
     showArrow: boolean = true
   ) => (
-    <Pressable
-      style={styles.menuItem}
-      onPress={onPress}
-      disabled={!onPress}>
+    <Pressable style={styles.menuItem} onPress={onPress} disabled={!onPress}>
       <View style={styles.menuItemLeft}>
-        <Ionicons
-          name={icon as any}
-          size={24}
-          color='#1c3519'
-        />
+        <Ionicons name={icon as any} size={24} color="#1c3519" />
         <View style={styles.menuItemText}>
           <Text style={styles.menuItemTitle}>{title}</Text>
           {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {showArrow && (
-        <Ionicons
-          name='chevron-forward'
-          size={20}
-          color='#ccc'
-        />
-      )}
+      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
     </Pressable>
   );
 
@@ -230,38 +210,25 @@ export default function MyPageScreen() {
         {/* 로고는 필요시 추가 가능 */}
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.headerIconBtn}>
-            <Ionicons
-              name='notifications-outline'
-              size={24}
-              color='#fff'
-            />
+            <Ionicons name="notifications-outline" size={24} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerIconBtn}
-            onPress={() => router.push("/mypage/setting")}>
-            <Ionicons
-              name='settings-outline'
-              size={24}
-              color='#fff'
-            />
+            onPress={() => router.push("/mypage/setting")}
+          >
+            <Ionicons name="settings-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
       {/* 설정 모달 완전 제거 */}
-      <ScrollView
-        style={styles.scrollView}
-        pointerEvents='auto'>
+      <ScrollView style={styles.scrollView} pointerEvents="auto">
         {/* 사용자 정보 섹션 */}
         {renderSection(
           "사용자 정보",
           <View style={styles.userSection}>
             <View style={styles.userInfo}>
               <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
+                <Ionicons name="person" size={40} color="#fff" />
               </View>
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>
@@ -276,7 +243,7 @@ export default function MyPageScreen() {
                         : "logo-github"
                     }
                     size={16}
-                    color='#1c3519'
+                    color="#1c3519"
                   />
                   <Text style={styles.loginTypeText}>
                     {userInfo?.loginType === "google"
@@ -299,7 +266,8 @@ export default function MyPageScreen() {
               style={styles.activityItem}
               onPress={() =>
                 router.push("/(tabs)/mypage/exhibition/Bookmarked")
-              }>
+              }
+            >
               <Text style={styles.activityCount}>
                 {BookmarkedExhibitions.length}
               </Text>
@@ -307,9 +275,8 @@ export default function MyPageScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.activityItem}
-              onPress={() =>
-                router.push("/(tabs)/mypage/exhibition/thumbs-up")
-              }>
+              onPress={() => router.push("/(tabs)/mypage/exhibition/thumbs-up")}
+            >
               <Text style={styles.activityCount}>
                 {thumbsUpExhibitions.length}
               </Text>
@@ -317,7 +284,8 @@ export default function MyPageScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.activityItem}
-              onPress={() => router.push("/(tabs)/mypage/exhibition/visited")}>
+              onPress={() => router.push("/(tabs)/mypage/exhibition/visited")}
+            >
               <Text style={styles.activityCount}>
                 {visitedExhibitions.length}
               </Text>
@@ -336,19 +304,216 @@ const getStyles = (theme: ThemeType) =>
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
     },
-    centered: {
+    scrollView: {
+      flex: 1,
+    },
+    section: {
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginHorizontal: 20,
+      marginVertical: 10,
+    },
+    userSection: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      marginHorizontal: 20,
+      borderRadius: 12,
+      padding: 20,
+    },
+    userInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    avatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#1c3519",
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 15,
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginBottom: 4,
+    },
+    loginType: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    loginTypeText: {
+      fontSize: 12,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginLeft: 4,
+    },
+    userId: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 4,
+    },
+    activitySection: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      marginHorizontal: 20,
+      borderRadius: 12,
+      padding: 20,
+    },
+    activityItem: {
+      alignItems: "center",
+    },
+    activityCount: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    activityLabel: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 5,
+    },
+    menuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    menuItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    menuItemText: {
+      marginLeft: 15,
+      flex: 1,
+    },
+    menuItemTitle: {
+      fontSize: 16,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    menuItemSubtitle: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 2,
+    },
+    loginRequiredContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      padding: 20,
+    },
+    loginRequiredTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: "#1c3519",
+      marginTop: 20,
+    },
+    loginRequiredSubtitle: {
+      fontSize: 16,
+      color: "#666",
+      marginTop: 10,
+      textAlign: "center",
+    },
+    loginButton: {
+      backgroundColor: "#1c3519",
+      paddingVertical: 15,
+      paddingHorizontal: 30,
+      borderRadius: 10,
+      marginTop: 30,
+    },
+    loginButtonText: {
+      color: "#fff",
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    loadingTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#1c3519",
+      marginTop: 20,
+    },
+    loadingSubtitle: {
+      fontSize: 16,
+      color: "#666",
+      marginTop: 10,
+      textAlign: "center",
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.3)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContent: {
+      backgroundColor: "#fff",
+      borderRadius: 16,
+      padding: 24,
+      width: 280,
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 20,
+      color: "#1c3519",
+    },
+    modalButton: {
+      width: "100%",
+      paddingVertical: 14,
+      borderRadius: 8,
+      backgroundColor: "#f5f5f5",
+      marginBottom: 12,
+      alignItems: "center",
+    },
+    modalButtonText: {
+      fontSize: 16,
+      color: "#1c3519",
+      fontWeight: "bold",
+    },
+    modalCloseButton: {
+      marginTop: 8,
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    modalCloseButtonText: {
+      color: "#666",
+      fontSize: 15,
     },
     headerWrap: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       backgroundColor: "#1c3519",
-      height: 90,
-      paddingTop: 35,
+      height: 80,
+      paddingTop: 20,
       paddingHorizontal: 16,
+    },
+    headerLogo: {
+      width: 120,
+      height: 40,
     },
     headerIcons: {
       flexDirection: "row",
@@ -357,124 +522,5 @@ const getStyles = (theme: ThemeType) =>
     headerIconBtn: {
       marginLeft: 16,
       padding: 4,
-    },
-    profileSection: {
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-      backgroundColor: "#fff",
-    },
-    profileInfo: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    avatar: {
-      width: 90,
-      height: 90,
-      borderRadius: 45,
-      backgroundColor: "#EFEFEF",
-      marginRight: 20,
-    },
-    profileText: {
-      flex: 1,
-    },
-    nickname: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 10,
-    },
-    stats: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-    },
-    statItem: {
-      alignItems: "center",
-    },
-    statNumber: {
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    statLabel: {
-      fontSize: 14,
-      color: "#666",
-      marginTop: 4,
-    },
-    profileButtons: {
-      flexDirection: "row",
-      marginTop: 20,
-    },
-    editProfileButton: {
-      flex: 1,
-      backgroundColor: "#EFEFEF",
-      borderRadius: 8,
-      paddingVertical: 10,
-      alignItems: "center",
-      marginRight: 8,
-    },
-    editProfileButtonText: {
-      fontWeight: "bold",
-    },
-    savedExhibitionsButton: {
-      flex: 1,
-      flexDirection: "row",
-      backgroundColor: "#EFEFEF",
-      borderRadius: 8,
-      paddingVertical: 10,
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 8,
-    },
-    savedExhibitionsButtonText: {
-      fontWeight: "bold",
-      marginLeft: 4,
-    },
-    divider: {
-      height: 8,
-      backgroundColor: "#F5F5F5",
-    },
-    recordsSection: {
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      backgroundColor: "#fff",
-    },
-    recordsHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    recordsTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    sortButtons: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    sortText: {
-      fontSize: 13,
-      color: "#999",
-    },
-    activeSortText: {
-      color: "#000",
-      fontWeight: "bold",
-    },
-    sortDivider: {
-      marginHorizontal: 5,
-      color: "#E0E0E0",
-    },
-    recordsGrid: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-    },
-    centeredMessageContainer: {
-      width: "100%",
-      alignItems: "center",
-      marginTop: 40,
-      paddingBottom: 40,
-    },
-    noRecordsText: {
-      fontSize: 16,
-      color: "#888",
     },
   });
