@@ -363,23 +363,28 @@ export default function CategoryDetailScreen() {
     <TouchableOpacity
       style={styles.exhibitionItem}
       onPress={() => router.push(`/exhibition/${item.id}` as any)}
-      activeOpacity={0.7}
-    >
+      activeOpacity={0.7}>
       <View style={styles.exhibitionImage}>
         <Ionicons
-          name="image-outline"
+          name='image-outline'
           size={32}
           color={theme === "dark" ? "#555" : "#ccc"}
         />
       </View>
       <View style={styles.exhibitionInfo}>
-        <Text style={styles.exhibitionTitle} numberOfLines={1}>
+        <Text
+          style={styles.exhibitionTitle}
+          numberOfLines={1}>
           {item.title}
         </Text>
-        <Text style={styles.exhibitionLocation} numberOfLines={1}>
+        <Text
+          style={styles.exhibitionLocation}
+          numberOfLines={1}>
           {item.location}
         </Text>
-        <Text style={styles.exhibitionDate} numberOfLines={1}>
+        <Text
+          style={styles.exhibitionDate}
+          numberOfLines={1}>
           {item.date}
         </Text>
       </View>
@@ -392,10 +397,9 @@ export default function CategoryDetailScreen() {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
+          activeOpacity={0.7}>
           <Ionicons
-            name="arrow-back-outline"
+            name='arrow-back-outline'
             size={28}
             color={theme === "dark" ? "#fff" : "#1c3519"}
           />
@@ -404,7 +408,10 @@ export default function CategoryDetailScreen() {
           <Text style={styles.categoryType}>
             {type === "region" ? "지역별" : "성격별"}
           </Text>
-          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+          <Text
+            style={styles.title}
+            numberOfLines={1}
+            ellipsizeMode='tail'>
             {category}
           </Text>
         </View>
@@ -422,7 +429,7 @@ export default function CategoryDetailScreen() {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons
-            name="sad-outline"
+            name='sad-outline'
             size={60}
             color={theme === "dark" ? "#555" : "#ccc"}
           />

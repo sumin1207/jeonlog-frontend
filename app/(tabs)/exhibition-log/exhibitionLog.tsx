@@ -195,7 +195,6 @@ export default function ExhibitionLogScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar />
       <View style={styles.headerContainer}>
         <Text style={styles.title}> 다른 시선으로 본 전시 기록들</Text>
         <View style={styles.toggleContainer}>
@@ -227,8 +226,7 @@ export default function ExhibitionLogScreen() {
                       pathname: `/exhibition-log/${item.exhibitionId}`,
                       params: { exhibitionLogId: item.exhibitionId },
                     });
-                  }}
-                >
+                  }}>
                   <ExhibitionLogCard
                     id={item.exhibition.id}
                     image={item.exhibition.image}
@@ -261,8 +259,7 @@ export default function ExhibitionLogScreen() {
                       pathname: `/exhibition-log/${item.exhibitionId}`,
                       params: { exhibitionLogId: item.exhibitionId },
                     });
-                  }}
-                >
+                  }}>
                   <ExhibitionLogCard
                     id={item.exhibition.id}
                     image={item.exhibition.image}

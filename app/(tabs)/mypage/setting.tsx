@@ -7,6 +7,7 @@ import {
   ScrollView,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -46,10 +47,16 @@ export default function MyPageSettingScreen() {
     await removeStoredToken();
     clearLocalUserData();
     logout();
+    Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.", [
+      { text: "확인", onPress: () => router.replace("/") },
+    ]);
     router.replace("/");
   };
   const handleDeleteAccount = async () => {
     clearLocalUserData();
+    Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
+      { text: "확인", onPress: () => router.replace("/") },
+    ]);
     logout();
     router.replace("/");
   };

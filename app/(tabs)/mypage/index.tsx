@@ -270,72 +270,262 @@ export default function MyPageScreen() {
 
   return (
     <View style={styles.container}>
-      {/* 상단 커스텀 헤더 */}
-      <View style={styles.headerWrap}>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.headerIconBtn}>
-            <Ionicons
-              name='notifications-outline'
-              size={24}
-              color='#fff'
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.headerIconBtn}
-            onPress={() => router.push("/mypage/setting")}>
-            <Ionicons
-              name='settings-outline'
-              size={24}
-              color='#fff'
-            />
-          </TouchableOpacity>
-        </View>
+      {/* 상단 알림/설정 버튼만 오른쪽 상단에 띄움 */}
+      <View
+        style={[
+          styles.headerIcons,
+          { position: "absolute", top: 20, right: 16, zIndex: 10 },
+        ]}>
+        <TouchableOpacity
+          style={styles.headerIconBtn}
+          onPress={() => router.push("/mypage/setting")}>
+          <Ionicons
+            name='notifications-outline'
+            size={24}
+            color={theme === "dark" ? "#fff" : "#1c3519"}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.headerIconBtn}
+          onPress={() => router.push("/mypage/setting")}>
+          <Ionicons
+            name='settings-outline'
+            size={24}
+            color={theme === "dark" ? "#fff" : "#1c3519"}
+          />
+        </TouchableOpacity>
       </View>
-      {/* 설정 모달 완전 제거 */}
+
       <ScrollView
         style={styles.scrollView}
         pointerEvents='auto'>
-        {/* 사용자 정보 섹션 */}
-        {renderSection(
-          "사용자 정보",
-          <View style={styles.userSection}>
-            <View style={styles.userInfo}>
-              <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
-              </View>
-              <View style={styles.userDetails}>
-                <Text style={styles.userName}>
-                  {userInfo?.name ?? "비회원"}
-                </Text>
-                <Text style={styles.userEmail}>{userInfo?.email ?? "-"}</Text>
-                <View style={styles.loginType}>
-                  <Ionicons
-                    name={
-                      userInfo?.loginType === "google"
-                        ? "logo-google"
-                        : "logo-github"
-                    }
-                    size={16}
-                    color='#1c3519'
-                  />
-                  <Text style={styles.loginTypeText}>
-                    {userInfo?.loginType === "google"
-                      ? "Google"
-                      : userInfo?.loginType === "naver"
-                      ? "Naver"
-                      : "Guest"}
-                    로그인
-                  </Text>
-                  <Text style={{ fontSize: 11, color: "#888" }}>팔로잉</Text>
-                </View>
-              </View>
+        {/* 프로필 영역 - 이미지처럼 세로 중앙 정렬 */}
+        <View
+          style={{
+            backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+            paddingTop: 32,
+            paddingBottom: 18,
+            alignItems: "center",
+            borderBottomWidth: 1,
+            borderBottomColor: theme === "dark" ? "#3a3a3a" : "#ededed",
+          }}>
+          {/* 프로필 사진 */}
+          <View
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              backgroundColor: theme === "dark" ? "#3a3a3a" : "#ededed",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 12,
+            }}>
+            <Ionicons
+              name='person'
+              size={54}
+              color={theme === "dark" ? "#888" : "#bdbdbd"}
+            />
+          </View>
+          {/* 닉네임 */}
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: theme === "dark" ? "#fff" : "#222",
+              marginBottom: 10,
+            }}>
+            {userInfo?.name ?? "닉네임"}
+          </Text>
+          {/* 기록수/팔로워/팔로잉 */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 18,
+            }}>
+            <View style={{ alignItems: "center", marginHorizontal: 12 }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: "bold",
+                  color: theme === "dark" ? "#fff" : "#222",
+                }}>
+                {visitedExhibitions?.length ?? 0}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: theme === "dark" ? "#ccc" : "#888",
+                }}>
+                기록 수
+              </Text>
+            </View>
+            <View style={{ alignItems: "center", marginHorizontal: 12 }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: "bold",
+                  color: theme === "dark" ? "#fff" : "#222",
+                }}>
+                0
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: theme === "dark" ? "#ccc" : "#888",
+                }}>
+                팔로워
+              </Text>
+            </View>
+            <View style={{ alignItems: "center", marginHorizontal: 12 }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: "bold",
+                  color: theme === "dark" ? "#fff" : "#222",
+                }}>
+                0
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: theme === "dark" ? "#ccc" : "#888",
+                }}>
+                팔로잉
+              </Text>
             </View>
           </View>
-        )}
+          {/* 버튼 영역: 중앙 정렬, 동일한 스타일 */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 4,
+            }}>
+            <TouchableOpacity
+              style={{
+                height: 36,
+                minWidth: 110,
+                borderRadius: 8,
+                backgroundColor: theme === "dark" ? "#222" : "#f5f5f5",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: theme === "dark" ? "#3a3a3a" : "#ededed",
+                marginRight: 10,
+              }}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: theme === "dark" ? "#fff" : "#222",
+                  fontWeight: "bold",
+                }}>
+                프로필 수정
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                height: 36,
+                minWidth: 110,
+                borderRadius: 8,
+                backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+                borderWidth: 1,
+                borderColor: theme === "dark" ? "#3a3a3a" : "#ededed",
+                justifyContent: "center",
+                paddingHorizontal: 10,
+              }}
+              onPress={() => router.push("/mypage/exhibition/Bookmarked")}>
+              <Ionicons
+                name='bookmark-outline'
+                size={20}
+                color={theme === "dark" ? "#fff" : "#222"}
+                style={{ marginRight: 6 }}
+              />
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: theme === "dark" ? "#fff" : "#222",
+                  fontWeight: "bold",
+                }}>
+                저장한 전시
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* 구분선 */}
+        <View
+          style={{
+            height: 8,
+            backgroundColor: theme === "dark" ? "#222" : "#fafafa",
+            width: "100%",
+          }}
+        />
+        {/* 내 전시 기록 섹션 타이틀/토글 */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginHorizontal: 16,
+            marginTop: 18,
+            marginBottom: 8,
+          }}>
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: "bold",
+              color: theme === "dark" ? "#fff" : "#222",
+            }}>
+            나의 전시 기록들
+          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity onPress={() => setRecordSort("latest")}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: recordSort === "latest" ? "#1976d2" : "#bbb",
+                  fontWeight: recordSort === "latest" ? "bold" : "normal",
+                  marginRight: 8,
+                }}>
+                최신순
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setRecordSort("popular")}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: recordSort === "popular" ? "#1976d2" : "#bbb",
+                  fontWeight: recordSort === "popular" ? "bold" : "normal",
+                }}>
+                인기순
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* 내 전시 기록 카드 리스트 */}
+        <View style={{ marginHorizontal: 12, marginBottom: 20 }}>
+          {myRecords.length === 0 ? (
+            <Text style={{ color: "#bbb", textAlign: "center", marginTop: 30 }}>
+              아직 기록한 전시가 없습니다.
+            </Text>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}>
+              {myRecords.map((item, idx) => (
+                <View
+                  key={item.id}
+                  style={{ marginRight: 16 }}>
+                  <ExhibitionLogCard {...item} />
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -346,6 +536,7 @@ const getStyles = (theme: ThemeType) =>
     container: {
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+      position: "relative", // 버튼 absolute 위치 보장
     },
     scrollView: {
       flex: 1,
