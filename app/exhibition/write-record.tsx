@@ -33,7 +33,7 @@ const getExhibitionId = (
 
 export default function WriteRecordScreen() {
   const { theme } = useTheme();
-  const { toggleVisited } = useExhibition();
+  const { markAsVisited, addMyLog } = useExhibition();
   const router = useRouter();
   const params = useLocalSearchParams();
   const exhibitionId = getExhibitionId(params.exhibitionId);
@@ -108,19 +108,17 @@ export default function WriteRecordScreen() {
       content,
       createdAt: new Date().toISOString(),
       hashtags,
+      visibility,
     };
-      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
-      const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
-      records[exhibitionId] = newRecord;
-      await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
 
-      toggleVisited(exhibitionId);
+      await addMyLog(exhibitionId, newRecord);
+      markAsVisited(exhibitionId);
 
       Alert.alert("등록 완료", "게시글이 등록되었습니다!", [
         {
           text: "OK",
           onPress: () => {
-            router.replace("/(tabs)/mypage/exhibition/visited");
+            router.replace("/(tabs)/mypage");
           },
         },
       ]);

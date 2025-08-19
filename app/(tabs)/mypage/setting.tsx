@@ -15,28 +15,17 @@ import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
 import { removeStoredToken } from "../../../services/authService";
+import { exhibitionData } from "../../../data/exhibitionsDataStorage"; // Import exhibitionData
 
 export default function MyPageSettingScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { BookmarkedExhibitions, thumbsUpExhibitions } = useExhibition();
+  // Get visitedExhibitions from context
+  const { BookmarkedExhibitions, thumbsUpExhibitions, visitedExhibitions } = useExhibition();
   const { logout, userInfo } = useAuth();
-  const [visitedCount, setVisitedCount] = React.useState(0);
 
-  React.useEffect(() => {
-    // 방문한 전시 수 불러오기 (마이페이지와 동일)
-    (async () => {
-      try {
-        const visitedIdsJSON = await AsyncStorage.getItem(
-          "visited_exhibition_ids"
-        );
-        const visitedIds = visitedIdsJSON ? JSON.parse(visitedIdsJSON) : [];
-        setVisitedCount(visitedIds.length);
-      } catch (error) {
-        // 무시
-      }
-    })();
-  }, []);
+  // Filter visited exhibitions to get a valid count
+  const validVisitedCount = visitedExhibitions.filter(id => exhibitionData[id as keyof typeof exhibitionData]).length;
 
   const handleLogout = async () => {
     // 기존 마이페이지와 동일
@@ -116,7 +105,7 @@ export default function MyPageSettingScreen() {
             {renderMenuItem(
               "location-outline",
               "방문한 전시",
-              `${visitedCount}개`,
+              `${validVisitedCount}개`,
               () => {
                 router.push("/(tabs)/mypage/exhibition/visited");
               }
