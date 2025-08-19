@@ -23,6 +23,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SearchResultSkeleton } from "@/components/ui/Skeleton";
 import { exhibitionData } from "../../data/exhibitionsDataStorage";
+import searchService from "../../services/searchService";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -142,6 +143,8 @@ export default function SearchScreen() {
   const [showHistory, setShowHistory] = useState(false);
   const [selectedMuseum, setSelectedMuseum] = useState<any>(null);
   const router = useRouter();
+  const [apiResults, setApiResults] = useState<any[]>([]);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   // 애니메이션 값들
   const searchInputScale = useRef(new Animated.Value(1)).current;
@@ -309,7 +312,7 @@ export default function SearchScreen() {
     }, 1000);
   };
 
-  // 검색 실행 함수
+  // 검색 실행 함수 (API 호출 통합)
   const executeSearch = (query: string) => {
     console.log("🚀 === executeSearch 함수 시작 ===");
     console.log("📝 받은 검색어:", query);
@@ -322,55 +325,32 @@ export default function SearchScreen() {
 
     console.log("✅ 상태 업데이트 완료");
 
-    // 즉시 검색 실행
-    setIsLoading(true);
-    // setShowHistory(false) 제거 - 검색 기록창 유지
-
-    console.log("🔄 로딩 상태 설정 완료");
-
-    // 박물관/미술관 검색
-    console.log("🏛️ 박물관/미술관 검색 시작");
-    const foundMuseum = Object.values(museumData).find(
-      (museum) =>
-        museum.name.toLowerCase().includes(query.toLowerCase()) ||
-        museum.address.toLowerCase().includes(query.toLowerCase())
-    );
-
-    console.log("🏛️ 찾은 박물관:", foundMuseum ? foundMuseum.name : "없음");
-
-    if (foundMuseum) {
-      console.log("🏛️ 박물관 검색 결과 설정");
-      setSelectedMuseum(foundMuseum);
-      setSearchResults([]);
-    } else {
-      console.log("🎨 일반 전시 검색 시작");
-      // 일반 전시 검색
-      setSelectedMuseum(null);
-      const allExhibitions = Object.values(exhibitionData);
-      console.log("📊 전체 전시회 수:", allExhibitions.length);
-
-      const filteredResults = allExhibitions.filter(
-        (exhibition: any) =>
-          exhibition.title.toLowerCase().includes(query.toLowerCase()) ||
-          exhibition.location.toLowerCase().includes(query.toLowerCase())
-      );
-
-      console.log("🔍 필터링된 결과 수:", filteredResults.length);
-      console.log(
-        "📋 필터링된 결과 제목들:",
-        filteredResults.map((item: any) => item.title)
-      );
-
-      setSearchResults(filteredResults);
-      console.log("✅ 검색 결과 설정 완료");
-    }
-
-    setTimeout(() => {
-      console.log("⏰ 로딩 완료");
-      setIsLoading(false);
-      console.log("🎉 검색 프로세스 완료!");
-    }, 1000);
+    // API 검색 실행
+    fetchSearchResults(query);
   };
+
+  // 검색 실행 함수 예시 (검색어로 API 호출)
+  const fetchSearchResults = async (query: string) => {
+    setApiError(null);
+    setApiResults([]);
+    setIsLoading(true);
+    try {
+      const res = await searchService.get("/search", { params: { query } });
+      setApiResults(res.data.result);
+    } catch (err: any) {
+      if (err.response) {
+        setApiError(`${err.response.status} - ${err.response.data.error}`);
+      } else {
+        setApiError("네트워크 오류");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 예시: 검색어 입력 후 검색 실행
+  // 기존 executeSearch 함수 내에 아래 코드 추가
+  // fetchSearchResults(query);
 
   // 검색 결과 아이템 렌더링
   const renderSearchResult = ({
@@ -862,6 +842,34 @@ export default function SearchScreen() {
             <View style={styles.loadingContainer}>
               <SearchResultSkeleton />
             </View>
+          )}
+
+          {/* API 에러 메시지 */}
+          {apiError && (
+            <View style={{ padding: 16 }}>
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {apiError}
+              </Text>
+            </View>
+          )}
+
+          {/* API 검색 결과 */}
+          {!isLoading && apiResults.length > 0 && (
+            <FlatList
+              data={apiResults}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    padding: 16,
+                    borderBottomWidth: 1,
+                    borderColor: "#eee",
+                  }}>
+                  <Text style={{ fontSize: 16 }}>{item.title}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            />
           )}
 
           {/* 검색 기록 */}
