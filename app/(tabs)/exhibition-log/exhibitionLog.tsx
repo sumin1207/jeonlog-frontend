@@ -37,20 +37,25 @@ const formatTimestamp = (isoDate: string) => {
 export default function ExhibitionLogScreen() {
   const { theme } = useTheme();
   const router = useRouter();
-  const { myLogs, isLoading } = useExhibition(); 
+  const { myLogs, isLoading } = useExhibition();
   const [isLatest, setIsLatest] = useState(true);
 
   // asyncStorage에서 쓰레기 데이터 불러오는거 방지
-  const validLogs = useMemo(() => 
-    myLogs.filter(log => exhibitionData[log.id as keyof typeof exhibitionData]), 
+  const validLogs = useMemo(
+    () =>
+      myLogs.filter(
+        (log) => exhibitionData[log.id as keyof typeof exhibitionData]
+      ),
     [myLogs]
   );
 
-  
   const sortedRecords = useMemo(() => {
-    const records = [...validLogs]; 
+    const records = [...validLogs];
     if (isLatest) {
-      records.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      records.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } else {
       // TODO: 인기순 정렬
     }
@@ -74,40 +79,39 @@ export default function ExhibitionLogScreen() {
   const styles = createStyles(theme);
 
   if (isLoading) {
-      return (
-          <View style={[styles.container, styles.emptyContainer]}>
-              <ActivityIndicator size="large" color="#1c3519" />
-          </View>
-      )
+    return (
+      <View style={[styles.container, styles.emptyContainer]}>
+        <ActivityIndicator
+          size='large'
+          color='#1c3519'
+        />
+      </View>
+    );
   }
 
   const renderColumn = (columnData: Record[]) => {
-      return columnData.map((log) => {
-        const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
-        return (
-            <TouchableOpacity
-                key={log.id}
-                onPress={() => router.push({ 
-                    pathname: `/exhibition-log/${log.id}`, 
-                    params: { 'exhibition-log-id': log.id } 
-                })}
-            >
-                <ExhibitionLogCard
-                    id={log.id}
-                    image={exhibition.image}
-                    logTitle={log.title}
-                    author={{
-                        name: "user", //추후 유저 데이터로 대체 
-                        avatar: require("@/assets/images/mainIcon.png"),
-                    }}
-                    timestamp={formatTimestamp(log.createdAt)}
-                    likes={0} 
-                    hashtags={log.hashtags || ["전시기록"]}
-                />
-            </TouchableOpacity>
-        )
-    })
-  }
+    return columnData.map((log) => {
+      const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
+      return (
+        <TouchableOpacity
+          key={log.id}
+          onPress={() => router.push(`/exhibition-log/${log.id}`)}>
+          <ExhibitionLogCard
+            id={log.id}
+            image={exhibition.image}
+            logTitle={log.title}
+            author={{
+              name: "user", //추후 유저 데이터로 대체
+              avatar: require("@/assets/images/mainIcon.png"),
+            }}
+            timestamp={formatTimestamp(log.createdAt)}
+            likes={0}
+            hashtags={log.hashtags || ["전시기록"]}
+          />
+        </TouchableOpacity>
+      );
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -130,9 +134,7 @@ export default function ExhibitionLogScreen() {
       {sortedRecords.length > 0 ? (
         <ScrollView style={styles.scrollView}>
           <View style={styles.columnContainer}>
-            <View style={styles.column}>
-              {renderColumn(leftColumn)}
-            </View>
+            <View style={styles.column}>{renderColumn(leftColumn)}</View>
             <View style={[styles.column, styles.rightColumn]}>
               {renderColumn(rightColumn)}
             </View>
@@ -147,7 +149,8 @@ export default function ExhibitionLogScreen() {
   );
 }
 
-const createStyles = (theme: "light" | "dark") => StyleSheet.create({
+const createStyles = (theme: "light" | "dark") =>
+  StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
@@ -190,7 +193,7 @@ const createStyles = (theme: "light" | "dark") => StyleSheet.create({
       width: "48%",
     },
     rightColumn: {
-      marginTop: 18, 
+      marginTop: 18,
     },
     emptyContainer: {
       flex: 1,
@@ -202,100 +205,3 @@ const createStyles = (theme: "light" | "dark") => StyleSheet.create({
       color: theme === "dark" ? "#ccc" : "#666",
     },
   });
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}> 다른 시선으로 본 전시 기록들</Text>
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity onPress={() => setIsLatest(true)}>
-            <Text style={[styles.toggleText, isLatest && styles.activeToggle]}>
-              최신순
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsLatest(false)}>
-            <Text style={[styles.toggleText, !isLatest && styles.activeToggle]}>
-              인기순
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      {records.length > 0 ? (
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.columnContainer}>
-            <View style={styles.column}>
-              {leftColumn.map((item) => (
-                <TouchableOpacity
-                  key={item.exhibitionId}
-                  onPress={() => {
-                    console.log(
-                      "Navigating with exhibitionId:",
-                      item.exhibitionId
-                    );
-                    router.push({
-                      pathname: `/exhibition-log/${item.exhibitionId}`,
-                      params: { exhibitionLogId: item.exhibitionId },
-                    });
-                  }}>
-                  <ExhibitionLogCard
-                    id={item.exhibition.id}
-                    image={item.exhibition.image}
-                    logTitle={item.record.title}
-                    author={{
-                      name: "user",
-                      avatar: require("@/assets/images/mainIcon.png"),
-                    }}
-                    timestamp={formatTimestamp(item.record.createdAt)}
-                    likes={0} // Placeholder
-                    hashtags={
-                      item.record.hashtags && item.record.hashtags.length > 0
-                        ? item.record.hashtags
-                        : ["전시기록"]
-                    }
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View style={[styles.column, styles.rightColumn]}>
-              {rightColumn.map((item) => (
-                <TouchableOpacity
-                  key={item.exhibitionId}
-                  onPress={() => {
-                    console.log(
-                      "Navigating with exhibitionId:",
-                      item.exhibitionId
-                    );
-                    router.push({
-                      pathname: `/exhibition-log/${item.exhibitionId}`,
-                      params: { exhibitionLogId: item.exhibitionId },
-                    });
-                  }}>
-                  <ExhibitionLogCard
-                    id={item.exhibition.id}
-                    image={item.exhibition.image}
-                    logTitle={item.record.title}
-                    author={{
-                      name: "user",
-                      avatar: require("@/assets/images/mainIcon.png"),
-                    }}
-                    timestamp={formatTimestamp(item.record.createdAt)}
-                    likes={0} // Placeholder
-                    hashtags={
-                      item.record.hashtags && item.record.hashtags.length > 0
-                        ? item.record.hashtags
-                        : ["전시기록"]
-                    }
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </ScrollView>
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>아직 기록된 전시가 없습니다.</Text>
-        </View>
-      )}
-    </View>
-  );
-}

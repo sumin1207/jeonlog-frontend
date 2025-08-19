@@ -9,18 +9,19 @@ import {
   Alert,
   Modal,
   Image,
+  Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 // TopBar import 제거
 // import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
-import { useAuth } from "../../../components/context/AuthContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
 import { removeStoredToken } from "../../../services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 
 // 임시 회원탈퇴 함수 (나중에 실제 구현으로 교체)
 const deleteAccount = async (userId: string, accessToken?: string) => {
@@ -341,6 +342,134 @@ const getStyles = (theme: ThemeType) =>
       justifyContent: "center",
       alignItems: "center",
     },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginTop: 16,
+    },
+    loadingSubtitle: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 8,
+    },
+    section: {
+      marginBottom: 20,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 10,
+    },
+    menuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    menuItemLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    menuItemText: {
+      marginLeft: 15,
+      flex: 1,
+    },
+    menuItemTitle: {
+      fontSize: 16,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    menuItemSubtitle: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 2,
+    },
+    userSection: {
+      paddingVertical: 20,
+      paddingHorizontal: 20,
+      backgroundColor: theme === "dark" ? "#222" : "#fff",
+      borderRadius: 12,
+      marginBottom: 16,
+    },
+    userInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    avatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#EFEFEF",
+      marginRight: 16,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    userEmail: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 2,
+    },
+    loginType: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 4,
+    },
+    loginTypeText: {
+      fontSize: 12,
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginLeft: 4,
+    },
+    userId: {
+      fontSize: 12,
+      color: theme === "dark" ? "#888" : "#888",
+      marginTop: 2,
+    },
+    activitySection: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      backgroundColor: theme === "dark" ? "#222" : "#fff",
+      borderRadius: 12,
+      paddingVertical: 16,
+      marginBottom: 16,
+    },
+    activityItem: {
+      alignItems: "center",
+      flex: 1,
+    },
+    activityCount: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    activityLabel: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 4,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    // 기존 스타일 유지
     headerWrap: {
       flexDirection: "row",
       alignItems: "center",
@@ -357,124 +486,5 @@ const getStyles = (theme: ThemeType) =>
     headerIconBtn: {
       marginLeft: 16,
       padding: 4,
-    },
-    profileSection: {
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-      backgroundColor: "#fff",
-    },
-    profileInfo: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    avatar: {
-      width: 90,
-      height: 90,
-      borderRadius: 45,
-      backgroundColor: "#EFEFEF",
-      marginRight: 20,
-    },
-    profileText: {
-      flex: 1,
-    },
-    nickname: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 10,
-    },
-    stats: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-    },
-    statItem: {
-      alignItems: "center",
-    },
-    statNumber: {
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    statLabel: {
-      fontSize: 14,
-      color: "#666",
-      marginTop: 4,
-    },
-    profileButtons: {
-      flexDirection: "row",
-      marginTop: 20,
-    },
-    editProfileButton: {
-      flex: 1,
-      backgroundColor: "#EFEFEF",
-      borderRadius: 8,
-      paddingVertical: 10,
-      alignItems: "center",
-      marginRight: 8,
-    },
-    editProfileButtonText: {
-      fontWeight: "bold",
-    },
-    savedExhibitionsButton: {
-      flex: 1,
-      flexDirection: "row",
-      backgroundColor: "#EFEFEF",
-      borderRadius: 8,
-      paddingVertical: 10,
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 8,
-    },
-    savedExhibitionsButtonText: {
-      fontWeight: "bold",
-      marginLeft: 4,
-    },
-    divider: {
-      height: 8,
-      backgroundColor: "#F5F5F5",
-    },
-    recordsSection: {
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      backgroundColor: "#fff",
-    },
-    recordsHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 15,
-    },
-    recordsTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-    },
-    sortButtons: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    sortText: {
-      fontSize: 13,
-      color: "#999",
-    },
-    activeSortText: {
-      color: "#000",
-      fontWeight: "bold",
-    },
-    sortDivider: {
-      marginHorizontal: 5,
-      color: "#E0E0E0",
-    },
-    recordsGrid: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-    },
-    centeredMessageContainer: {
-      width: "100%",
-      alignItems: "center",
-      marginTop: 40,
-      paddingBottom: 40,
-    },
-    noRecordsText: {
-      fontSize: 16,
-      color: "#888",
     },
   });

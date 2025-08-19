@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ export default function MyPageSettingScreen() {
 
   // 다크모드 스타일 동적 적용
   const dynamicStyles = getStyles(theme);
+  const [visitedCount, setVisitedCount] = useState(0);
 
   React.useEffect(() => {
     // 방문한 전시 수 불러오기 (마이페이지와 동일)
