@@ -226,29 +226,26 @@ export default function MyPageScreen() {
 
   return (
     <View style={styles.container}>
-      {/* 상단 커스텀 헤더 */}
-      <View style={styles.headerWrap}>
-        {/* 로고는 필요시 추가 가능 */}
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.headerIconBtn}>
-            <Ionicons
-              name='notifications-outline'
-              size={24}
-              color='#fff'
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.headerIconBtn}
-            onPress={() => router.push("/mypage/setting")}>
-            <Ionicons
-              name='settings-outline'
-              size={24}
-              color='#fff'
-            />
-          </TouchableOpacity>
-        </View>
+      {/* 상단 우측 버튼들 - 헤더 바 없이 */}
+      <View style={styles.topButtons}>
+        <TouchableOpacity style={styles.topButton}>
+          <Ionicons
+            name='notifications-outline'
+            size={24}
+            color='#1c3519'
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.topButton}
+          onPress={() => router.push("/mypage/setting")}>
+          <Ionicons
+            name='settings-outline'
+            size={24}
+            color='#1c3519'
+          />
+        </TouchableOpacity>
       </View>
-      {/* 설정 모달 완전 제거 */}
+
       <ScrollView
         style={styles.scrollView}
         pointerEvents='auto'>
@@ -266,33 +263,41 @@ export default function MyPageScreen() {
               </View>
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>
-                  {userInfo?.name ?? "비회원"}
+                  {userInfo?.name ?? "닉네임"}
                 </Text>
-                <Text style={styles.userEmail}>{userInfo?.email ?? "-"}</Text>
-                <View style={styles.loginType}>
-                  <Ionicons
-                    name={
-                      userInfo?.loginType === "google"
-                        ? "logo-google"
-                        : "logo-github"
-                    }
-                    size={16}
-                    color='#1c3519'
-                  />
-                  <Text style={styles.loginTypeText}>
-                    {userInfo?.loginType === "google"
-                      ? "Google"
-                      : userInfo?.loginType === "naver"
-                      ? "Naver"
-                      : "Guest"}
-                    로그인
-                  </Text>
+                <View style={styles.userStats}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statCount}>0</Text>
+                    <Text style={styles.statLabel}>기록 수</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statCount}>0</Text>
+                    <Text style={styles.statLabel}>팔로워</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statCount}>0</Text>
+                    <Text style={styles.statLabel}>팔로잉</Text>
+                  </View>
                 </View>
-                <Text style={styles.userId}>ID: {userInfo?.id ?? "-"}</Text>
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity style={styles.actionButton}>
+                    <Text style={styles.actionButtonText}>홈편집</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.actionButton}>
+                    <Ionicons
+                      name='bookmark'
+                      size={16}
+                      color='#1c3519'
+                    />
+                    <Text style={styles.actionButtonText}>저장한 전시</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
         )}
+
+        {/* 전시 관리 섹션 */}
         {renderSection(
           "전시 관리",
           <View style={styles.activitySection}>
@@ -324,6 +329,76 @@ export default function MyPageScreen() {
               </Text>
               <Text style={styles.activityLabel}>방문한 전시</Text>
             </TouchableOpacity>
+          </View>
+        )}
+
+        {/* 나의 전시 기록들 섹션 */}
+        {renderSection(
+          "나의 전시 기록들",
+          <View style={styles.recordsSection}>
+            <View style={styles.recordsHeader}>
+              <View style={styles.sortOptions}>
+                <TouchableOpacity style={styles.sortOption}>
+                  <Text style={[styles.sortText, styles.sortActive]}>
+                    최신순
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sortOption}>
+                  <Text style={styles.sortText}>인기순</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.recordsGrid}>
+              {visitedExhibitions.slice(0, 2).map((exhibitionId, index) => {
+                const exhibition =
+                  exhibitionData[exhibitionId as keyof typeof exhibitionData];
+                if (!exhibition) return null;
+
+                return (
+                  <View
+                    key={exhibitionId}
+                    style={styles.recordCard}>
+                    <Image
+                      source={exhibition.image}
+                      style={styles.recordImage}
+                      resizeMode='cover'
+                    />
+                    <View style={styles.recordInfo}>
+                      <Text
+                        style={styles.recordTitle}
+                        numberOfLines={2}>
+                        {exhibition.title}
+                      </Text>
+                      <View style={styles.recordMeta}>
+                        <View style={styles.recordAuthor}>
+                          <View style={styles.authorAvatar}>
+                            <Ionicons
+                              name='person'
+                              size={12}
+                              color='#666'
+                            />
+                          </View>
+                          <Text style={styles.authorName}>사용자</Text>
+                        </View>
+                        <View style={styles.recordLikes}>
+                          <Ionicons
+                            name='heart'
+                            size={12}
+                            color='#ff6b6b'
+                          />
+                          <Text style={styles.likesCount}>0</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })}
+              {visitedExhibitions.length === 0 && (
+                <View style={styles.emptyRecords}>
+                  <Text style={styles.emptyText}>방문한 전시가 없습니다</Text>
+                </View>
+              )}
+            </View>
           </View>
         )}
       </ScrollView>
@@ -479,6 +554,9 @@ const getStyles = (theme: ThemeType) =>
       paddingTop: 35,
       paddingHorizontal: 16,
     },
+    headerLeft: {
+      flex: 1,
+    },
     headerIcons: {
       flexDirection: "row",
       alignItems: "center",
@@ -486,5 +564,177 @@ const getStyles = (theme: ThemeType) =>
     headerIconBtn: {
       marginLeft: 16,
       padding: 4,
+    },
+    socialSection: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      backgroundColor: theme === "dark" ? "#222" : "#fff",
+      borderRadius: 12,
+      paddingVertical: 16,
+      marginBottom: 16,
+    },
+    socialItem: {
+      alignItems: "center",
+      flex: 1,
+    },
+    socialCount: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    socialLabel: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 4,
+    },
+    userStats: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      marginTop: 10,
+      marginBottom: 15,
+    },
+    statItem: {
+      alignItems: "center",
+    },
+    statCount: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+    },
+    statLabel: {
+      fontSize: 12,
+      color: theme === "dark" ? "#ccc" : "#666",
+      marginTop: 4,
+    },
+    actionButtons: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      marginTop: 10,
+    },
+    actionButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#f0f0f0",
+      paddingVertical: 8,
+      paddingHorizontal: 15,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: "#ccc",
+    },
+    actionButtonText: {
+      fontSize: 14,
+      color: "#1c3519",
+      marginLeft: 5,
+    },
+    recordsSection: {
+      paddingVertical: 20,
+      paddingHorizontal: 20,
+      backgroundColor: theme === "dark" ? "#222" : "#fff",
+      borderRadius: 12,
+      marginBottom: 16,
+    },
+    recordsHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 15,
+    },
+    sortOptions: {
+      flexDirection: "row",
+      backgroundColor: "#f0f0f0",
+      borderRadius: 20,
+      padding: 3,
+    },
+    sortOption: {
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 15,
+    },
+    sortText: {
+      fontSize: 14,
+      color: "#666",
+    },
+    sortActive: {
+      color: "#1c3519",
+      fontWeight: "bold",
+    },
+    recordsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+    },
+    recordCard: {
+      width: "48%", // 2 columns
+      aspectRatio: 1.2, // Adjust as needed
+      borderRadius: 10,
+      overflow: "hidden",
+      marginBottom: 10,
+      backgroundColor: "#fff",
+      borderWidth: 1,
+      borderColor: "#eee",
+    },
+    recordImage: {
+      width: "100%",
+      height: "100%",
+    },
+    recordInfo: {
+      padding: 10,
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    recordTitle: {
+      fontSize: 14,
+      color: "#fff",
+      fontWeight: "bold",
+      marginBottom: 5,
+    },
+    recordMeta: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    recordAuthor: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    authorAvatar: {
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: "#ccc",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    authorName: {
+      fontSize: 12,
+      color: "#fff",
+      marginLeft: 5,
+    },
+    recordLikes: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    likesCount: {
+      fontSize: 12,
+      color: "#ff6b6b",
+      marginLeft: 5,
+    },
+    emptyRecords: {
+      alignItems: "center",
+      paddingVertical: 20,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: "#666",
+    },
+    topButtons: {
+      position: "absolute",
+      top: 5,
+      right: 20,
+      flexDirection: "row",
+      zIndex: 10,
+    },
+    topButton: {
+      marginLeft: 10,
+      padding: 5,
     },
   });
