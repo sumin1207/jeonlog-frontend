@@ -32,10 +32,15 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
-  const { BookmarkedExhibitions, thumbsUpExhibitions, visitedExhibitions } =
+  const { BookmarkedExhibitions, thumbsUpExhibitions, visitedExhibitions, myLogs } =
     useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
 
   const styles = getStyles(theme);
 
@@ -349,17 +354,24 @@ export default function MyPageScreen() {
               </View>
             </View>
             <View style={styles.recordsGrid}>
-              {visitedExhibitions.slice(0, 2).map((exhibitionId, index) => {
-                const exhibition =
-                  exhibitionData[exhibitionId as keyof typeof exhibitionData];
-                if (!exhibition) return null;
+              {myLogs.slice(0, 2).map((log, index) => {
+                // Retrieve exhibition data directly from exhibitionData for image and other details
+                const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
+
+                if (!exhibition) return null; // If exhibition data is not found, don't render
 
                 return (
-                  <View
-                    key={exhibitionId}
-                    style={styles.recordCard}>
+                  <TouchableOpacity
+                    key={log.id}
+                    style={styles.recordCard}
+                    onPress={() =>
+                      router.push({
+                        pathname: `/exhibition-log/${log.id}`,
+                        params: { 'exhibitionLog-id': log.id },
+                      })
+                    }>
                     <Image
-                      source={exhibition.image}
+                      source={exhibition.image} // Use image from exhibitionData
                       style={styles.recordImage}
                       resizeMode='cover'
                     />
@@ -367,8 +379,14 @@ export default function MyPageScreen() {
                       <Text
                         style={styles.recordTitle}
                         numberOfLines={2}>
-                        {exhibition.title}
+                        {log.title}
                       </Text>
+                      <View style={styles.hashtagsContainer}>
+                        {log.hashtags && log.hashtags.map((tag: string, tagIndex: number) => (
+                          <Text key={tagIndex} style={styles.hashtag}>#{tag}</Text>
+                        ))}
+                      </View>
+                      <Text style={styles.recordDate}>{formatDate(log.createdAt)}</Text>
                       <View style={styles.recordMeta}>
                         <View style={styles.recordAuthor}>
                           <View style={styles.authorAvatar}>
@@ -378,7 +396,7 @@ export default function MyPageScreen() {
                               color='#666'
                             />
                           </View>
-                          <Text style={styles.authorName}>사용자</Text>
+                          <Text style={styles.authorName}>{log.author?.name || '사용자'}</Text>
                         </View>
                         <View style={styles.recordLikes}>
                           <Ionicons
@@ -386,16 +404,16 @@ export default function MyPageScreen() {
                             size={12}
                             color='#ff6b6b'
                           />
-                          <Text style={styles.likesCount}>0</Text>
+                          <Text style={styles.likesCount}>{log.likes || 0}</Text>
                         </View>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
-              {visitedExhibitions.length === 0 && (
+              {myLogs.length === 0 && (
                 <View style={styles.emptyRecords}>
-                  <Text style={styles.emptyText}>방문한 전시가 없습니다</Text>
+                  <Text style={styles.emptyText}>작성한 전시 기록이 없습니다</Text>
                 </View>
               )}
             </View>
@@ -410,7 +428,7 @@ const getStyles = (theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffff",
     },
     centered: {
       flex: 1,
@@ -665,7 +683,7 @@ const getStyles = (theme: ThemeType) =>
     },
     recordCard: {
       width: "48%", // 2 columns
-      aspectRatio: 1.2, // Adjust as needed
+      aspectRatio: 0.75, // 3:4 ratio (height is 4/3 of width)
       borderRadius: 10,
       overflow: "hidden",
       marginBottom: 10,
@@ -676,15 +694,35 @@ const getStyles = (theme: ThemeType) =>
     recordImage: {
       width: "100%",
       height: "100%",
+      resizeMode: 'contain',
     },
     recordInfo: {
       padding: 10,
       backgroundColor: "rgba(0,0,0,0.5)",
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
     },
     recordTitle: {
       fontSize: 14,
       color: "#fff",
       fontWeight: "bold",
+      marginBottom: 5,
+    },
+    hashtagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 5,
+    },
+    hashtag: {
+      fontSize: 10,
+      color: '#ccc',
+      marginRight: 5,
+    },
+    recordDate: {
+      fontSize: 10,
+      color: '#ccc',
       marginBottom: 5,
     },
     recordMeta: {

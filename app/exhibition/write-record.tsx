@@ -16,6 +16,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
+import { useAuth } from "../../components/context/AuthContext"; // Import useAuth
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
@@ -34,6 +35,7 @@ const getExhibitionId = (
 export default function WriteRecordScreen() {
   const { theme } = useTheme();
   const { markAsVisited, addMyLog, myLogs } = useExhibition();
+  const { userInfo } = useAuth(); // Destructure userInfo
   const router = useRouter();
   const params = useLocalSearchParams();
   const exhibitionId = getExhibitionId(params.exhibitionId);
@@ -101,6 +103,9 @@ export default function WriteRecordScreen() {
       createdAt: new Date().toISOString(),
       hashtags,
       visibility,
+      image: exhibition?.image, // Add image from exhibition data
+      author: { name: userInfo?.name || "사용자", avatar: require("../../assets/images/mainIcon.png") }, // Default author
+      likes: 0, // Default likes
     };
 
       await addMyLog(exhibitionId, newRecord);
