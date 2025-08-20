@@ -47,7 +47,7 @@ const RecommendForYou = () => {
           <Text
             style={[
               styles.title,
-              { color: theme === "dark" ? "#fff" : "#1c3519" }, // ✅ 테마별 텍스트 색상
+              { color: theme === "dark" ? "#fff" : "#000000" }, // ✅ 테마별 텍스트 색상
             ]}
           >
             {item.title}
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     backgroundColor: "transparent",
     borderRadius:10,
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
