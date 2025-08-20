@@ -33,7 +33,7 @@ const getExhibitionId = (
 
 export default function WriteRecordScreen() {
   const { theme } = useTheme();
-  const { markAsVisited, addMyLog } = useExhibition();
+  const { markAsVisited, addMyLog, myLogs } = useExhibition();
   const router = useRouter();
   const params = useLocalSearchParams();
   const exhibitionId = getExhibitionId(params.exhibitionId);
@@ -47,7 +47,7 @@ export default function WriteRecordScreen() {
   const [isMenuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
-    const fetchAndLoadRecord = async () => {
+    const loadData = () => {
       if (!exhibitionId) {
         setError("전시 ID가 없습니다.");
         setLoading(false);
@@ -63,26 +63,18 @@ export default function WriteRecordScreen() {
       } else {
         setError("전시 정보를 찾을 수 없습니다.");
       }
-      setLoading(false);
 
-      try {
-        const savedRecords = await AsyncStorage.getItem("exhibition_records");
-        if (savedRecords) {
-          const records = JSON.parse(savedRecords);
-          const record = records[exhibitionId];
-          if (record) {
-            setTitle(record.title || "");
-            setContent(record.content || "");
-            setVisibility(record.visibility || "공개");
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load record:", e);
+      const existingLog = myLogs.find((log) => log.id === exhibitionId);
+      if (existingLog) {
+        setTitle(existingLog.title || "");
+        setContent(existingLog.content || "");
+        setVisibility(existingLog.visibility || "공개");
       }
+      setLoading(false);
     };
 
-    fetchAndLoadRecord();
-  }, [exhibitionId]);
+    loadData();
+  }, [exhibitionId, myLogs]);
 
   const handleSave = async () => {
     setMenuVisible(false); // Close menu before showing alert

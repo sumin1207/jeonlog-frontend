@@ -1,8 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, Alert, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../../../contexts/ThemeContext';
-import { useExhibition } from '../../../../contexts/ExhibitionContext'; // Import useExhibition
+import { useExhibition } from '../../../../contexts/ExhibitionContext';
 
 interface DeleteRecordButtonProps {
   exhibitionId: string;
@@ -14,7 +13,10 @@ interface DeleteRecordButtonProps {
 
 export default function DeleteRecordButton({ exhibitionId, onRecordDeleted, title, buttonStyle, textStyle }: DeleteRecordButtonProps) {
   const { theme } = useTheme();
-  const { toggleVisited } = useExhibition(); // Get toggleVisited from context
+  const exhibitionContext = useExhibition(); // Get the entire context object
+
+  // Log the context for debugging purposes
+  console.log('Exhibition Context in DeleteRecordButton:', exhibitionContext);
 
   const handleDelete = async () => {
     Alert.alert(
@@ -29,18 +31,17 @@ export default function DeleteRecordButton({ exhibitionId, onRecordDeleted, titl
           text: '삭제',
           onPress: async () => {
             try {
-              // Remove the exhibition from the visited list using the context function
-              toggleVisited(exhibitionId);
-
-              // Still need to delete the specific record data
-              const savedRecordsJSON = await AsyncStorage.getItem('exhibition_records');
-              let savedRecords = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
-              delete savedRecords[exhibitionId];
-              await AsyncStorage.setItem('exhibition_records', JSON.stringify(savedRecords));
-
-              onRecordDeleted(); // This reloads reviews on the visited page
-              Alert.alert('성공', '기록이 삭제되었습니다.');
+              // Access deleteMyLog from the context object
+              if (exhibitionContext && exhibitionContext.deleteMyLog) {
+                await exhibitionContext.deleteMyLog(exhibitionId);
+                onRecordDeleted();
+                Alert.alert('성공', '기록이 삭제되었습니다.');
+              } else {
+                console.error("deleteMyLog function is not available in context.");
+                Alert.alert('오류', '기록을 삭제하는 중 문제가 발생했습니다. (함수 없음)');
+              }
             } catch (error) {
+              console.error("Error deleting record:", error);
               Alert.alert('오류', '기록을 삭제하는 중 문제가 발생했습니다.');
             }
           },

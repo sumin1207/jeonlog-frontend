@@ -20,33 +20,17 @@ import DeleteRecordButton from "././DeleteRecordButton";
 
 export default function VisitedExhibitionsPage() {
   const { theme } = useTheme();
-  const { visitedExhibitions } = useExhibition();
+  const { visitedExhibitions, myLogs } = useExhibition();
   const router = useRouter();
-  const [reviews, setReviews] = useState<any>({});
-
-  const loadReviews = async () => {
-    try {
-      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
-      const savedRecords = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
-      setReviews(savedRecords);
-    } catch (error) {
-      Alert.alert("오류", "리뷰를 불러오는 중 문제가 발생했습니다.");
-    }
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      loadReviews();
-    }, [])
-  );
 
   const visitedExhibitionsData = visitedExhibitions
     .map((id) => {
       const exhibition = exhibitionData[id as keyof typeof exhibitionData];
       if (!exhibition) return null;
-      const record = reviews[id];
+      const record = myLogs.find((log) => log.id === id);
       return {
         ...exhibition,
+        id,
         review: record ? record.title : "아직 기록하지 않은 전시",
       };
     })
@@ -67,7 +51,7 @@ export default function VisitedExhibitionsPage() {
           console.log("Navigating to exhibition log with ID:", item.id);
           router.push({
             pathname: `/exhibition-log/${item.id}`,
-            params: { exhibitionLogId: item.id },
+            params: { 'exhibitionLog-id': item.id },
           });
         } else {
           console.log("Invalid exhibition ID for navigation:", item.id);
@@ -120,8 +104,9 @@ export default function VisitedExhibitionsPage() {
         />
         <DeleteRecordButton
           exhibitionId={item.id}
-          onRecordDeleted={loadReviews}
+          
           title="기록 삭제"
+          onRecordDeleted={() => console.log('Record deletion callback triggered.')}
           buttonStyle={{
             paddingVertical: 6,
             paddingHorizontal: 6,
