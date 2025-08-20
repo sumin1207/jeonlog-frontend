@@ -47,7 +47,7 @@ const HorizontalSliding = () => {
           <Text
             style={[
               styles.title,
-              { color: theme === "dark" ? "#fff" : "#1c3519" },
+              { color: theme === "dark" ? "#fff" : "#000000" },
             ]}
           >
             {item.title}

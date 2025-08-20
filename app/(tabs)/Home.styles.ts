@@ -12,12 +12,13 @@ export const style = (theme: string) =>
       flex: 1,
       paddingTop: 20,
       paddingHorizontal: 20,
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#fff"
     },
     title: {
       fontSize: 22,
       fontWeight: "bold",
       marginBottom: 10,
-      color: theme === "dark" ? "#fff" : "#1c3519",
+      color: theme === "dark" ? "#fff" : "#000000",
       textAlign: "left",
       alignSelf: "flex-start",
     },
@@ -36,6 +37,7 @@ export const style = (theme: string) =>
       marginBottom: 20,
       borderBottomWidth: 1,
       borderBottomColor: theme === "dark" ? "#333" : "#fff",
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#fff",
     },
     tab: {
       flex: 1,
