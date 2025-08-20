@@ -6,67 +6,64 @@ import {
   Dimensions,
   StyleSheet,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
-const { width } = Dimensions.get("window");
+import { useRouter } from "expo-router";
+import { exhibitionData } from "../../data/exhibitionsDataStorage"; 
 
-//임시 추천 전시
-const originalRecommendations = [
-  {
-    id: "rec-1",
-    title: "추천 1",
-    imageUrl: "https://via.placeholder.com/300x200/FF5733/FFFFFF?text=rec-1",
-  },
-  {
-    id: "rec-2",
-    title: "추천 2",
-    imageUrl: "https://via.placeholder.com/300x200/33FF57/FFFFFF?text=rec-2",
-  },
-  {
-    id: "rec-3",
-    title: "추천 3",
-    imageUrl: "https://via.placeholder.com/300x200/3357FF/FFFFFF?text=rec-3",
-  },
-  {
-    id: "rec-4",
-    title: "추천 4",
-    imageUrl: "https://via.placeholder.com/300x200/F0FF33/FFFFFF?text=4",
-  },
-  {
-    id: "rec-5",
-    title: "추천 5",
-    imageUrl:
-      "https://via.placeholder.com/300x200/FF33F0/FFFFFF?text=Exhibition+5",
-  },
-];
+const { width } = Dimensions.get("window");
+const exhibitionsArray = Object.values(exhibitionData);
 
 const RecommendForYou = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
-  const itemWidth = width * 0.8 + 20; //아이템 너비 + 마진
+  const router = useRouter(); // ✅ useRouter 훅 사용
+
+  // ✅ HorizontalSliding과 동일한 동적 사이즈 계산 로직 적용
+  const itemContentWidth = width * 0.5; // 화면 너비의 50%
+  const imageHeight = itemContentWidth * 1.336; // 이미지 비율에 따른 높이 계산
+  const itemWidth = itemContentWidth + 20; // 아이템 너비 + 좌우 마진 10*2
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      <View
+      // ✅ TouchableOpacity를 사용하여 클릭 가능하게 변경
+      <TouchableOpacity
+        onPress={() => router.push(`/exhibition/${item.id}` as any)} // ✅ 라우팅 로직 추가
         style={[
           styles.itemContainer,
-          { backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0" },
+          {
+            width: itemContentWidth, // ✅ 동적 너비 적용
+            backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff", // ✅ 테마별 배경색
+          },
         ]}
       >
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
-        <View style={styles.titleContainter}>
-          <Text style={styles.title}>{item.title}</Text>
+        {/* ✅ 이미지 소스 및 동적 높이 적용 */}
+        <Image
+          source={item.image} // ✅ exhibitionData의 image 속성 사용
+          style={[styles.image, { height: imageHeight }]} // ✅ 동적 높이 적용
+        />
+        <View style={styles.titleContainer}>
+          <Text
+            style={[
+              styles.title,
+              { color: theme === "dark" ? "#fff" : "#1c3519" }, // ✅ 테마별 텍스트 색상
+            ]}
+          >
+            {item.title}
+          </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     ),
-    [theme]
+    [theme, router, itemContentWidth, imageHeight] // ✅ 종속성 추가
   );
+
 
   return (
     <View style={styles.container}>
       <FlatList
         ref={flatListRef}
-        data={originalRecommendations}
+        data={exhibitionsArray}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         horizontal
@@ -90,10 +87,13 @@ const RecommendForYou = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 170,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
+    borderBottomColor: "#ddd",
+    borderBottomWidth:3,
+    marginBottom: 10,
   },
   flatListContent: {
     paddingHorizontal: (width - width * 0.8) / 2 - 10,
@@ -101,9 +101,8 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: width * 0.5,
     marginHorizontal: 10,
-    backgroundColor: "#e0e0e0ff",
-    borderRadius: 10,
-    overflow: "hidden",
+    backgroundColor: "transparent",
+    borderRadius:10,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -111,22 +110,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     shadowRadius: 3.84,
     elevation: 5,
+    borderColor: "#ddd",
+    
+    
   },
   image: {
-    width: "100%",
-    height: 200,
+    width: "80%",
+    height: 100,
     resizeMode: "cover",
+    borderRadius: 10,
+    borderColor: "#ddd",
+    borderWidth: 1, 
   },
+
   title: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     color: "black",
   },
-  titleContainter: {
-    ...StyleSheet.absoluteFillObject,
+  titleContainer: {
     justifyContent: "center",
     alignItems: "center",
+    height: 40,
+    marginBottom: 30,
   },
 });
 export default RecommendForYou;

@@ -35,7 +35,7 @@ const HorizontalSliding = () => {
           styles.itemContainer,
           {
             width: itemContentWidth,
-            backgroundColor: theme === "dark" ? "#2a2a2a" : "#e0e0e0",
+            backgroundColor: theme === "dark" ? "#transparent" : "#transparent",
           },
         ]}
       >
@@ -91,11 +91,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
+    borderBottomColor: "#ddd",
+    borderBottomWidth:3,
+    
   },
   
   itemContainer: {
     marginHorizontal: 10,
-    backgroundColor: "#e0e0e0ff",
+    backgroundColor: "#fff",
     borderRadius: 10,
     overflow: "hidden",
     alignItems: "center",
@@ -108,13 +111,18 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    resizeMode: "contain",
+    height: 200, // ✅ 이미지의 높이를 유지합니다.
+    resizeMode: "cover", // ✅ 이미지 비율 유지 및 채우기 (contain도 가능)
+    borderRadius: 10, // ✅ 여기에서 이미지를 둥글게 만듭니다.
+    borderWidth: 1, // 테두리 두께 (예: 1픽셀)
+    borderColor: "#ddd", // 테두리 색상 (테마에 따라 다르게 설정)
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     color: "black",
+
   },
   titleContainer: {
     height: 40,
@@ -122,6 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 30,
   },
 });
 
