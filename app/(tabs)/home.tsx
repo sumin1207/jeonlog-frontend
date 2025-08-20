@@ -15,6 +15,7 @@ import { useAuth } from "../../components/context/AuthContext";
 import { ExhibitionCardSkeleton } from "@/components/ui/Skeleton";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { style as getThemedStyle} from "./Home.styles"; // Import styles from Home.styles.ts
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -23,6 +24,7 @@ export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState("전체");
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("20-30대");
   const router = useRouter();
+  const style = getThemedStyle(theme); // Get styles based on the current theme
 
   // AuthContext 상태 확인
   useEffect(() => {
@@ -219,37 +221,37 @@ export default function HomeScreen() {
   const renderRecommendationCard = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={[
-        styles.recommendationCard,
+        style.recommendationCard,
         { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
       ]}
       onPress={() => router.push(`/exhibition/${item.id}` as any)}
       activeOpacity={0.7}>
-      <View style={styles.cardContent}>
-        <View style={styles.imagePlaceholder}>
+      <View style={style.cardContent}>
+        <View style={style.imagePlaceholder}>
           <Ionicons
             name='image-outline'
             size={40}
             color={theme === "dark" ? "#666" : "#ccc"}
           />
         </View>
-        <View style={styles.cardTextContainer}>
+        <View style={style.cardTextContainer}>
           <Text
             style={[
-              styles.cardTitle,
+              style.cardTitle,
               { color: theme === "dark" ? "#fff" : "#1c3519" },
             ]}>
             {item.title}
           </Text>
           <Text
             style={[
-              styles.cardLocation,
+              style.cardLocation,
               { color: theme === "dark" ? "#ccc" : "#666" },
             ]}>
             {item.location}
           </Text>
           <Text
             style={[
-              styles.cardDate,
+              style.cardDate,
               { color: theme === "dark" ? "#ccc" : "#666" },
             ]}>
             {item.date}
@@ -259,149 +261,18 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
-    },
-    content: {
-      flex: 1,
-      paddingTop: 20,
-      paddingHorizontal: 20,
-    },
-    title: {
-      fontSize: 22,
-      fontWeight: "condensed",
-      marginBottom: 20,
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      textAlign: "left",
-      alignSelf: "flex-start",
-    },
-    skeletonContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    skeletonItem: {
-      width: "48%",
-      marginBottom: 15,
-    },
-    // 탭 스타일
-    tabContainer: {
-      flexDirection: "row",
-      marginBottom: 20,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#e0e0e0",
-    },
-    tab: {
-      flex: 1,
-      paddingVertical: 12,
-      alignItems: "center",
-    },
-    tabText: {
-      fontSize: 16,
-      fontWeight: "500",
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-    activeTabText: {
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      fontWeight: "600",
-    },
-    activeTabIndicator: {
-      position: "absolute",
-      bottom: -1,
-      left: 0,
-      right: 0,
-      height: 2,
-      backgroundColor: "#4CAF50",
-    },
-    // 연령대 필터 스타일
-    ageFilterContainer: {
-      marginBottom: 20,
-      paddingHorizontal: 20,
-    },
-    ageFilterScrollContainer: {
-      paddingHorizontal: 0,
-    },
-    ageFilterButton: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      borderRadius: 20,
-      marginRight: 12,
-      borderWidth: 1,
-      borderColor: "#4CAF50",
-    },
-    ageFilterButtonSelected: {
-      backgroundColor: "#4CAF50",
-    },
-    ageFilterButtonUnselected: {
-      backgroundColor: "transparent",
-    },
-    ageFilterText: {
-      fontSize: 14,
-      fontWeight: "500",
-    },
-    ageFilterTextSelected: {
-      color: "#fff",
-    },
-    ageFilterTextUnselected: {
-      color: "#4CAF50",
-    },
-    // 추천 카드 스타일
-    recommendationCard: {
-      borderRadius: 12,
-      marginBottom: 12,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    cardContent: {
-      flexDirection: "row",
-      padding: 16,
-    },
-    imagePlaceholder: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      backgroundColor: theme === "dark" ? "#333" : "#f0f0f0",
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: 16,
-    },
-    cardTextContainer: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    cardTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      marginBottom: 4,
-    },
-    cardLocation: {
-      fontSize: 14,
-      marginBottom: 2,
-    },
-    cardDate: {
-      fontSize: 12,
-    },
-  });
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={style.container}>
         <TopBar />
-        <ScrollView style={styles.content}>
-          <Text style={styles.title}>요즘 뜨고 있는 전시</Text>
-          <View style={styles.skeletonContainer}>
-            <ExhibitionCardSkeleton style={styles.skeletonItem} />
-            <ExhibitionCardSkeleton style={styles.skeletonItem} />
-            <ExhibitionCardSkeleton style={styles.skeletonItem} />
-            <ExhibitionCardSkeleton style={styles.skeletonItem} />
+        <ScrollView style={style.content}>
+          <Text style={style.title}>요즘 뜨고 있는 전시</Text>
+          <View style={style.skeletonContainer}>
+            <ExhibitionCardSkeleton style={style.skeletonItem} />
+            <ExhibitionCardSkeleton style={style.skeletonItem} />
+            <ExhibitionCardSkeleton style={style.skeletonItem} />
+            <ExhibitionCardSkeleton style={style.skeletonItem} />
           </View>
         </ScrollView>
       </View>
@@ -409,62 +280,62 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={style.container}>
       <TopBar />
       <ScrollView
-        style={styles.content}
+        style={style.content}
         showsVerticalScrollIndicator={false}>
         {/* 기존 콘텐츠 */}
-        <Text style={styles.title}>요즘 뜨고 있는 전시</Text>
+        <Text style={style.title}>요즘 뜨고 있는 전시</Text>
         <HorizontalSliding />
 
-        <Text style={styles.title}>나를 위한 전시 추천</Text>
+        <Text style={style.title}>나를 위한 전시 추천</Text>
         <RecommendForYou />
 
         {/* 탭 네비게이션 */}
-        <View style={styles.tabContainer}>
+        <View style={style.tabContainer}>
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
-              style={styles.tab}
+              style={style.tab}
               onPress={() => setActiveTab(tab)}
               activeOpacity={0.7}>
               <Text
                 style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
+                  style.tabText,
+                  activeTab === tab && style.activeTabText,
                 ]}>
                 {tab}
               </Text>
-              {activeTab === tab && <View style={styles.activeTabIndicator} />}
+              {activeTab === tab && <View style={style.activeTabIndicator} />}
             </TouchableOpacity>
           ))}
         </View>
 
         {/* 연령대별 추천 탭일 때만 연령대 필터 표시 */}
         {activeTab === "연령대별 추천" && (
-          <View style={styles.ageFilterContainer}>
+          <View style={style.ageFilterContainer}>
             <FlatList
               data={ageGroups}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.ageFilterScrollContainer}
+              contentContainerStyle={style.ageFilterScrollContainer}
               renderItem={({ item: ageGroup }) => (
                 <TouchableOpacity
                   style={[
-                    styles.ageFilterButton,
+                    style.ageFilterButton,
                     selectedAgeGroup === ageGroup
-                      ? styles.ageFilterButtonSelected
-                      : styles.ageFilterButtonUnselected,
+                      ? style.ageFilterButtonSelected
+                      : style.ageFilterButtonUnselected,
                   ]}
                   onPress={() => setSelectedAgeGroup(ageGroup)}
                   activeOpacity={0.7}>
                   <Text
                     style={[
-                      styles.ageFilterText,
+                      style.ageFilterText,
                       selectedAgeGroup === ageGroup
-                        ? styles.ageFilterTextSelected
-                        : styles.ageFilterTextUnselected,
+                        ? style.ageFilterTextSelected
+                        : style.ageFilterTextUnselected,
                     ]}>
                     {ageGroup}
                   </Text>
