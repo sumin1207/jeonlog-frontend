@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useExhibition } from './ExhibitionContext';
 
 const LIKE_STORAGE_KEY = 'exhibition_user_likes';
 
@@ -16,6 +17,7 @@ const LikeContext = createContext<LikeContextType | undefined>(undefined);
 
 export const LikeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userLikes, setUserLikes] = useState<LikesByUser>({});
+  const { myLogs, updateLogLikes } = useExhibition(); // Get myLogs and updateLogLikes
 
   useEffect(() => {
     const loadLikesFromStorage = async () => {
@@ -34,12 +36,22 @@ export const LikeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const toggleLike = (logId: string) => {
     setUserLikes(prev => {
       const newLikes = { ...prev };
-      if (newLikes[logId]) {
+      const isCurrentlyLiked = newLikes[logId];
+      let newLikesCount;
+
+      if (isCurrentlyLiked) {
         delete newLikes[logId];
+        newLikesCount = (myLogs.find(log => log.id === logId)?.likes || 1) - 1; // Decrement
       } else {
         newLikes[logId] = true;
+        newLikesCount = (myLogs.find(log => log.id === logId)?.likes || 0) + 1; // Increment
       }
+
       AsyncStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(newLikes)).catch(e => console.error("Failed to save user likes", e));
+
+      // Update the likes count in ExhibitionContext
+      updateLogLikes(logId, newLikesCount);
+
       return newLikes;
     });
   };

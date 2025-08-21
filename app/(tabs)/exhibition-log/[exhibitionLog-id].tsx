@@ -22,6 +22,7 @@ import Skeleton from "@/components/ui/Skeleton";
 import LikeButton from "./like/LikeButton";
 import CountLike from "./like/countLike";
 import { useLikes } from "@/contexts/LikeContext";
+import { useExhibition } from "@/contexts/ExhibitionContext";
 import { Ionicons } from "@expo/vector-icons";
 
 interface Author {
@@ -198,15 +199,14 @@ const createStyles = (theme: "light" | "dark") =>
 
 export default function ExhibitionLogDetailScreen() {
   const params = useLocalSearchParams();
+  const exhibitionLogId = params["exhibitionLog-id"];
   const router = useRouter();
-  const exhibitionLogId = Array.isArray(params["exhibition-log-id"])
-    ? params["exhibition-log-id"][0]
-    : params["exhibition-log-id"];
 
   console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
   const { theme } = useTheme();
   const styles = createStyles(theme);
   const { userLikes } = useLikes();
+  const { myLogs, isLoading: isExhibitionLoading } = useExhibition();
 
   const [record, setRecord] = useState<Record | null>(null);
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
@@ -217,6 +217,9 @@ export default function ExhibitionLogDetailScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
+    if (isExhibitionLoading) {
+      return;
+    }
     setIsLoading(true);
     try {
       if (!exhibitionLogId) {
@@ -227,16 +230,18 @@ export default function ExhibitionLogDetailScreen() {
         return;
       }
       const id = exhibitionLogId as string;
-      const recordsJSON = await AsyncStorage.getItem("exhibition_records");
-      const records = recordsJSON ? JSON.parse(recordsJSON) : {};
-      const currentRecord = records[id] || null;
+
+      const currentRecord = myLogs.find((log) => log.id === id) || null;
       setRecord(currentRecord);
+
+      if (!currentRecord) {
+        setError("해당 ID의 전시 기록을 찾을 수 없습니다.");
+      }
 
       if (currentRecord && currentRecord.author) {
         setAuthor(currentRecord.author);
       } else {
         setAuthor({
-          //임시 유저 데이터
           name: "userId",
           avatar: require("@/assets/images/mainIcon.png"),
         });
@@ -251,11 +256,11 @@ export default function ExhibitionLogDetailScreen() {
       setComments(allComments[id] || []);
     } catch (error) {
       console.error("Error loading data:", error);
-      setError("데이터 로딩 중 오류가 발생했습니다."); // Set error state on catch
+      setError("데이터 로딩 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
-  }, [exhibitionLogId]);
+  }, [exhibitionLogId, myLogs, isExhibitionLoading]);
 
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
@@ -300,7 +305,11 @@ export default function ExhibitionLogDetailScreen() {
     </View>
   );
 
-  if (!record && !exhibition) {
+  if (isLoading || isExhibitionLoading) {
+    return renderLoading();
+  }
+
+  if (error || !record) {
     return (
       <View style={styles.errorContainer}>
         <Pressable
@@ -312,7 +321,9 @@ export default function ExhibitionLogDetailScreen() {
             color='#1c3519'
           />
         </Pressable>
-        <Text style={styles.errorText}>전시 기록을 찾을 수 없습니다.</Text>
+        <Text style={styles.errorText}>
+          {error || "전시 기록을 찾을 수 없습니다."}
+        </Text>
       </View>
     );
   }

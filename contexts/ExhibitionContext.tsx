@@ -24,6 +24,8 @@ interface ExhibitionContextType {
   toggleVisited: (exhibitionId: string) => void;
   markAsVisited: (exhibitionId: string) => void;
   addMyLog: (exhibitionId: string, logData: any) => Promise<void>; // Function to add a new log
+  deleteMyLog: (exhibitionId: string) => Promise<void>; // Function to delete a log
+  updateLogLikes: (exhibitionId: string, newLikesCount: number) => Promise<void>; // Function to update likes count for a log
   isBookmarked: (exhibitionId: string) => boolean;
   isThumbsUp: (exhibitionId: string) => boolean;
   isVisited: (exhibitionId: string) => boolean;
@@ -178,6 +180,49 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     }
   };
 
+  const deleteMyLog = async (exhibitionId: string) => {
+    setState((prev) => {
+      const newVisitedExhibitions = prev.visitedExhibitions.filter(
+        (id) => id !== exhibitionId
+      );
+      const newMyLogs = prev.myLogs.filter((log) => log.id !== exhibitionId);
+      return {
+        ...prev,
+        visitedExhibitions: newVisitedExhibitions,
+        myLogs: newMyLogs,
+      };
+    });
+
+    try {
+      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
+      const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
+      delete records[exhibitionId];
+      await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
+    } catch (e) {
+      console.error("Failed to delete log from AsyncStorage", e);
+    }
+  };
+
+  const updateLogLikes = async (exhibitionId: string, newLikesCount: number) => {
+    setState((prev) => {
+      const updatedMyLogs = prev.myLogs.map((log) =>
+        log.id === exhibitionId ? { ...log, likes: newLikesCount } : log
+      );
+      return { ...prev, myLogs: updatedMyLogs };
+    });
+
+    try {
+      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
+      const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
+      if (records[exhibitionId]) {
+        records[exhibitionId].likes = newLikesCount;
+        await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
+      }
+    } catch (e) {
+      console.error("Failed to update log likes in AsyncStorage", e);
+    }
+  };
+
   const isBookmarked = (exhibitionId: string) => {
     return state.BookmarkedExhibitions.includes(exhibitionId);
   };
@@ -206,6 +251,8 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
         toggleVisited,
         markAsVisited,
         addMyLog,
+        deleteMyLog,
+        updateLogLikes,
         isBookmarked,
         isThumbsUp,
         isVisited,

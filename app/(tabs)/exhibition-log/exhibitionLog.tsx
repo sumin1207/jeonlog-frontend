@@ -40,17 +40,8 @@ export default function ExhibitionLogScreen() {
   const { myLogs, isLoading } = useExhibition();
   const [isLatest, setIsLatest] = useState(true);
 
-  // asyncStorage에서 쓰레기 데이터 불러오는거 방지
-  const validLogs = useMemo(
-    () =>
-      myLogs.filter(
-        (log) => exhibitionData[log.id as keyof typeof exhibitionData]
-      ),
-    [myLogs]
-  );
-
   const sortedRecords = useMemo(() => {
-    const records = [...validLogs];
+    const records = [...myLogs];
     if (isLatest) {
       records.sort(
         (a, b) =>
@@ -60,7 +51,7 @@ export default function ExhibitionLogScreen() {
       // TODO: 인기순 정렬
     }
     return records;
-  }, [validLogs, isLatest]);
+  }, [myLogs, isLatest]);
 
   // 좌우 구분 두줄로 출력
   const { leftColumn, rightColumn } = useMemo(() => {
