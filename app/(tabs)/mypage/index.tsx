@@ -310,41 +310,6 @@ export default function MyPageScreen() {
           </View>
         )}
 
-        {/* 전시 관리 섹션 */}
-        {renderSection(
-          "전시 관리",
-          <View style={styles.activitySection}>
-            <TouchableOpacity
-              style={styles.activityItem}
-              onPress={() =>
-                router.push("/(tabs)/mypage/exhibition/Bookmarked")
-              }>
-              <Text style={styles.activityCount}>
-                {BookmarkedExhibitions.length}
-              </Text>
-              <Text style={styles.activityLabel}>찜한 전시</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.activityItem}
-              onPress={() =>
-                router.push("/(tabs)/mypage/exhibition/thumbs-up")
-              }>
-              <Text style={styles.activityCount}>
-                {thumbsUpExhibitions.length}
-              </Text>
-              <Text style={styles.activityLabel}>좋아요 전시</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.activityItem}
-              onPress={() => router.push("/(tabs)/mypage/exhibition/visited")}>
-              <Text style={styles.activityCount}>
-                {visitedExhibitions.length}
-              </Text>
-              <Text style={styles.activityLabel}>방문한 전시</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
         {/* 나의 전시 기록들 섹션 */}
         {renderSection(
           "나의 전시 기록들",
@@ -373,7 +338,9 @@ export default function MyPageScreen() {
                   <TouchableOpacity
                     key={log.id}
                     style={styles.recordCard}
-                    onPress={() => router.push(`/exhibition-log/${log.id}`)}>
+                    onPress={() => {
+                      router.push(`/exhibition-log/${log.id}?from=mypage`);
+                    }}>
                     <Image
                       source={exhibition.image} // Use image from exhibitionData
                       style={styles.recordImage}

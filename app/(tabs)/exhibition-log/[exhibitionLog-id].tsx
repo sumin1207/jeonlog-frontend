@@ -12,6 +12,7 @@ import {
   Alert,
   InteractionManager,
   Pressable,
+  BackHandler,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -200,6 +201,7 @@ const createStyles = (theme: "light" | "dark") =>
 export default function ExhibitionLogDetailScreen() {
   const params = useLocalSearchParams();
   const exhibitionLogId = params["exhibitionLog-id"];
+  const from = params["from"];
   const router = useRouter();
 
   console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
@@ -268,6 +270,24 @@ export default function ExhibitionLogDetailScreen() {
     });
     return () => task.cancel();
   }, [loadData]);
+
+  // 하드웨어 뒤로가기 버튼 제어
+  useEffect(() => {
+    const backAction = () => {
+      if (from === "mypage") {
+        router.push("/(tabs)/mypage");
+        return true; // 기본 동작 방지
+      } else {
+        return false; // 기본 동작 허용 (router.back())
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    return () => backHandler.remove();
+  }, [from, router]);
 
   const handleAddComment = async () => {
     if (newComment.trim() === "") return;
@@ -350,7 +370,21 @@ export default function ExhibitionLogDetailScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
-            <BackButton color={theme === "dark" ? "#FFFFFF" : "#000000"} />
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => {
+                if (from === "mypage") {
+                  router.push("/(tabs)/mypage");
+                } else {
+                  router.back();
+                }
+              }}>
+              <Ionicons
+                name='arrow-back'
+                size={28}
+                color={theme === "dark" ? "#FFFFFF" : "#000000"}
+              />
+            </TouchableOpacity>
             <Text
               style={styles.headerTitle}
               numberOfLines={1}>
