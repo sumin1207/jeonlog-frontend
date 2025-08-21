@@ -32,14 +32,22 @@ export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
-  const { BookmarkedExhibitions, thumbsUpExhibitions, visitedExhibitions, myLogs } =
-    useExhibition();
+  const {
+    BookmarkedExhibitions,
+    thumbsUpExhibitions,
+    visitedExhibitions,
+    myLogs,
+  } = useExhibition();
   const [visitedCount, setVisitedCount] = useState(0);
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   const styles = getStyles(theme);
@@ -356,7 +364,8 @@ export default function MyPageScreen() {
             <View style={styles.recordsGrid}>
               {myLogs.slice(0, 2).map((log, index) => {
                 // Retrieve exhibition data directly from exhibitionData for image and other details
-                const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
+                const exhibition =
+                  exhibitionData[log.id as keyof typeof exhibitionData];
 
                 if (!exhibition) return null; // If exhibition data is not found, don't render
 
@@ -364,12 +373,7 @@ export default function MyPageScreen() {
                   <TouchableOpacity
                     key={log.id}
                     style={styles.recordCard}
-                    onPress={() =>
-                      router.push({
-                        pathname: `/exhibition-log/${log.id}`,
-                        params: { 'exhibitionLog-id': log.id },
-                      })
-                    }>
+                    onPress={() => router.push(`/exhibition-log/${log.id}`)}>
                     <Image
                       source={exhibition.image} // Use image from exhibitionData
                       style={styles.recordImage}
@@ -382,11 +386,18 @@ export default function MyPageScreen() {
                         {log.title}
                       </Text>
                       <View style={styles.hashtagsContainer}>
-                        {log.hashtags && log.hashtags.map((tag: string, tagIndex: number) => (
-                          <Text key={tagIndex} style={styles.hashtag}>#{tag}</Text>
-                        ))}
+                        {log.hashtags &&
+                          log.hashtags.map((tag: string, tagIndex: number) => (
+                            <Text
+                              key={tagIndex}
+                              style={styles.hashtag}>
+                              #{tag}
+                            </Text>
+                          ))}
                       </View>
-                      <Text style={styles.recordDate}>{formatDate(log.createdAt)}</Text>
+                      <Text style={styles.recordDate}>
+                        {formatDate(log.createdAt)}
+                      </Text>
                       <View style={styles.recordMeta}>
                         <View style={styles.recordAuthor}>
                           <View style={styles.authorAvatar}>
@@ -396,7 +407,9 @@ export default function MyPageScreen() {
                               color='#666'
                             />
                           </View>
-                          <Text style={styles.authorName}>{log.author?.name || '사용자'}</Text>
+                          <Text style={styles.authorName}>
+                            {log.author?.name || "사용자"}
+                          </Text>
                         </View>
                         <View style={styles.recordLikes}>
                           <Ionicons
@@ -404,7 +417,9 @@ export default function MyPageScreen() {
                             size={12}
                             color='#ff6b6b'
                           />
-                          <Text style={styles.likesCount}>{log.likes || 0}</Text>
+                          <Text style={styles.likesCount}>
+                            {log.likes || 0}
+                          </Text>
                         </View>
                       </View>
                     </View>
@@ -413,7 +428,9 @@ export default function MyPageScreen() {
               })}
               {myLogs.length === 0 && (
                 <View style={styles.emptyRecords}>
-                  <Text style={styles.emptyText}>작성한 전시 기록이 없습니다</Text>
+                  <Text style={styles.emptyText}>
+                    작성한 전시 기록이 없습니다
+                  </Text>
                 </View>
               )}
             </View>
@@ -694,12 +711,12 @@ const getStyles = (theme: ThemeType) =>
     recordImage: {
       width: "100%",
       height: "100%",
-      resizeMode: 'contain',
+      resizeMode: "contain",
     },
     recordInfo: {
       padding: 10,
       backgroundColor: "rgba(0,0,0,0.5)",
-      position: 'absolute',
+      position: "absolute",
       bottom: 0,
       left: 0,
       right: 0,
@@ -711,18 +728,18 @@ const getStyles = (theme: ThemeType) =>
       marginBottom: 5,
     },
     hashtagsContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
+      flexDirection: "row",
+      flexWrap: "wrap",
       marginBottom: 5,
     },
     hashtag: {
       fontSize: 10,
-      color: '#ccc',
+      color: "#ccc",
       marginRight: 5,
     },
     recordDate: {
       fontSize: 10,
-      color: '#ccc',
+      color: "#ccc",
       marginBottom: 5,
     },
     recordMeta: {
