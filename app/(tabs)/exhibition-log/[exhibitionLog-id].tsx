@@ -78,12 +78,17 @@ const createStyles = (theme: "light" | "dark") =>
       paddingHorizontal: 16,
       marginBottom: 16,
     },
+    backButton: {
+      padding: 8,
+      marginLeft: -8,
+      zIndex: 10,
+    },
     postTitle: {
       fontSize: 24,
       fontWeight: "bold",
       color: theme === "dark" ? "#FFFFFF" : "#000000",
       marginBottom: 16,
-      marginTop: 50, //뒤로가기 버튼과 마진 
+      marginTop: 50, //뒤로가기 버튼과 마진
     },
     authorContainer: {
       flexDirection: "row",
@@ -194,9 +199,9 @@ const createStyles = (theme: "light" | "dark") =>
 export default function ExhibitionLogDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const exhibitionLogId = Array.isArray(params['exhibition-log-id'])
-    ? params['exhibition-log-id'][0]
-    : params['exhibition-log-id'];
+  const exhibitionLogId = Array.isArray(params["exhibition-log-id"])
+    ? params["exhibition-log-id"][0]
+    : params["exhibition-log-id"];
 
   console.log("ExhibitionLogDetailScreen received ID:", exhibitionLogId);
   const { theme } = useTheme();
@@ -209,7 +214,7 @@ export default function ExhibitionLogDetailScreen() {
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -218,7 +223,7 @@ export default function ExhibitionLogDetailScreen() {
         setError(
           `오류: 전시 기록 ID를 찾을 수 없습니다. ID: ${exhibitionLogId}`
         );
-        setIsLoading(false); 
+        setIsLoading(false);
         return;
       }
       const id = exhibitionLogId as string;
@@ -281,8 +286,11 @@ export default function ExhibitionLogDetailScreen() {
     <View style={styles.loadingContainer}>
       <Skeleton style={{ width: "70%", height: 24, marginBottom: 20 }} />
       <View
-        style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}
-      >
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 16,
+        }}>
         <Skeleton style={{ width: 40, height: 40, borderRadius: 20 }} />
         <Skeleton style={{ width: 100, height: 20, marginLeft: 12 }} />
       </View>
@@ -295,8 +303,14 @@ export default function ExhibitionLogDetailScreen() {
   if (!record && !exhibition) {
     return (
       <View style={styles.errorContainer}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back-circle" size={40} color="#1c3519" />
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backButton}>
+          <Ionicons
+            name='arrow-back-circle'
+            size={40}
+            color='#1c3519'
+          />
         </Pressable>
         <Text style={styles.errorText}>전시 기록을 찾을 수 없습니다.</Text>
       </View>
@@ -322,12 +336,13 @@ export default function ExhibitionLogDetailScreen() {
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-      >
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
             <BackButton color={theme === "dark" ? "#FFFFFF" : "#000000"} />
-            <Text style={styles.headerTitle} numberOfLines={1}>
+            <Text
+              style={styles.headerTitle}
+              numberOfLines={1}>
               {String(record?.title)}
             </Text>
             <View style={styles.headerPlaceholder} />
@@ -335,7 +350,10 @@ export default function ExhibitionLogDetailScreen() {
           <View style={styles.postContainer}>
             {author && (
               <View style={styles.authorContainer}>
-                <Image source={author.avatar} style={styles.authorAvatar} />
+                <Image
+                  source={author.avatar}
+                  style={styles.authorAvatar}
+                />
                 <Text style={styles.authorName}>{author.name}</Text>
               </View>
             )}
@@ -346,7 +364,7 @@ export default function ExhibitionLogDetailScreen() {
               <Image
                 source={exhibition.image}
                 style={styles.image}
-                resizeMode="cover"
+                resizeMode='cover'
               />
             )}
           </View>
@@ -361,7 +379,9 @@ export default function ExhibitionLogDetailScreen() {
           <View style={styles.commentsSection}>
             <Text style={styles.commentsTitle}>댓글 {comments.length}개</Text>
             {comments.map((comment, index) => (
-              <View key={index} style={styles.comment}>
+              <View
+                key={index}
+                style={styles.comment}>
                 <Image
                   source={require("@/assets/images/mainIcon.png")}
                   style={styles.commentAvatar}
@@ -380,15 +400,16 @@ export default function ExhibitionLogDetailScreen() {
         <View style={styles.commentInputContainer}>
           <TextInput
             style={styles.commentInput}
-            placeholder="댓글 달기..."
+            placeholder='댓글 달기...'
             placeholderTextColor={theme === "dark" ? "#8E8E8E" : "#A9A9A9"}
             value={newComment}
             onChangeText={setNewComment}
           />
-          <TouchableOpacity onPress={handleAddComment} disabled={!newComment}>
+          <TouchableOpacity
+            onPress={handleAddComment}
+            disabled={!newComment}>
             <Text
-              style={[styles.postButton, { opacity: newComment ? 1 : 0.5 }]}
-            >
+              style={[styles.postButton, { opacity: newComment ? 1 : 0.5 }]}>
               게시
             </Text>
           </TouchableOpacity>
