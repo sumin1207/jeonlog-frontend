@@ -60,6 +60,33 @@ export default function MuseumDetailScreen() {
       subway:
         "4호선\n경의중앙선(문산-용문)\n이촌역 2번 출구 방향 '박물관 나들길' <=> '박물관 서문'\n이촌역 2번출구 <=> 박물관 서문",
     },
+    마이아트뮤지엄: {
+      name: "마이아트뮤지엄",
+      headerImage: require("../../../assets/images/museumBackground/myArtMuseumBg.jpg"), //수정
+      museumEmblem: require("../../../assets/images/museumEmblem/myArtMuseumEmblem.png"),
+      address: "서울특별시 강남구 테헤란로 518 섬유센터빌딩 B1 (대치동 994-31)",
+      latitude: 37.507017, 
+      longitude: 127.063147,
+      phone: "02-567-8878",
+      website: "http://www.myartmuseum.co.kr",
+      hours: "월~일 10:00 - 19:40 (입장 마감 19:00)",
+      closedDays: "설날, 추석 당일 휴관 / 그 외 공휴일 정상 운영",
+      entrance:
+        "성인 22,000원, 청소년 18,000원, 어린이 14,000원\n(전시에 따라 다름, 증빙 시 4세 미만 무료) / 단체(20인 이상) 별도 할인",
+      description:
+        "서울 강남구 삼성역 4번 출구 도보 3분, 도심 속 대형 복합 미술관 겸 복합문화공간. 다양한 서양 명화·아트·디자인·장식·사진전으로 계절마다 새로운 콘텐츠와 편의시설을 즐길 수 있음.",
+      parking: "건물 내 지하주차장(유료), 인근 공영주차장 이용 가능",
+      parkingFee: "분당 2,000~3,000원 (운영 정책에 따라 변동, 건물 주차장 기준)",
+      subway: "2호선 삼성역 4번 출구 도보 3분",
+      exhibitions: [
+        {
+          id: "11",
+          title: "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
+          date: "2025.08.01 - 2025.11.30",
+          image: require("../../../assets/images/exhibitionPoster/exhibition11.jpg"),
+        },
+      ],
+    },
     "DDP 뮤지엄": {
       name: "DDP 뮤지엄",
       headerImage: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
@@ -150,6 +177,32 @@ export default function MuseumDetailScreen() {
         },
       ],
     },
+    모다갤러리: {
+    name: "모다갤러리",
+    headerImage: undefined,
+    museumEmblem: require("../../../assets/images/museumEmblem/modaEmblem.png"),
+    address: "서울특별시 용산구 녹사평대로 132 3, 4층 (이태원동)",
+    latitude: 37.534013, 
+    longitude: 126.994605,
+    phone: "0507-1484-2511안내", 
+    website: undefined,
+    hours: "화요일~일요일 10:30 - 19:00 (입장 마감 18:30), 월요일 휴관",
+    closedDays: "매주 월요일 휴관 및 4월 26일(2025년 기준)",
+    entrance: "성인 15,000원 / 소인 11,000원 / 국가유공자·경로우대·장애인 7,500원",
+    description:
+      "모다갤러리는 서울 이태원 지역에 위치한 현대미술 갤러리로, 국내외 거장들의 다양한 현대미술 작품을 선보입니다. 예술적 교류의 장이자 문화 체험 공간입니다.",
+    parking: "전용 주차장 없음, 대중교통 이용 권장",
+    parkingFee: undefined,
+    subway: "6호선 이태원역 인근",
+    exhibitions: [
+      {
+        id: "12",
+        title: "미셸 앙리:VIVID",
+        date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
+        image: require("../../../assets/images/exhibitionPoster/exhibition12.gif"),
+      },
+    ],
+  },
   };
 
   const museum = museumData[name as keyof typeof museumData];

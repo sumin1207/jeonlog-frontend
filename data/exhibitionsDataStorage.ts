@@ -151,7 +151,7 @@ export const exhibitionData = {
     title: "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
     location: "마이아트뮤지엄",
     address: "서울특별시 강남구 테헤란로 518 섬유센터빌딩 B1 (대치동 994-31)",
-    date: "2025.8.1 - 11.30 (10.6 추석 당일만 휴관 / 연중무휴)",
+    date: "2025.8.1 - 2025.11.30 (10.6 추석 당일만 휴관 / 연중무휴)",
     time: "월-일 10:00 - 19:40 (입장마감 19:00)",
     price: "일반: 20,000원, 청소년: 15,000원, 어린이: 13,000원(정상가 기준)",
     category: "전시",
@@ -164,6 +164,29 @@ export const exhibitionData = {
       require("../assets/images/exhibitionPoster/exhibition11_explain1.jpg"),
       require("../assets/images/exhibitionPoster/exhibition11_explain2.jpg"),
       require("../assets/images/exhibitionPoster/exhibition11_explain3.jpg"),
+    ],
+    sponsor: "마이아트뮤지엄",
+    phone: "02-567-8878",
+    email: "mamu@myartmuseum.kr",
+    website: "http://www.myartmuseum.co.kr/",
+  },
+  "12": {
+    id: "12",
+    title: "미셸 앙리:VIVID",
+    location: "마이아트뮤지엄",
+    address: "서울 용산구 녹사평대로 132 3층, 4층 (이태원동 34-158)",
+    date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
+    time: "월-일 10:30 - 19:00 (입장마감 18:30)",
+    price: "대인: 15.000원, 소인: 11,000원, 경로우대: 7,500",
+    category: "전시",
+    description: "내면을 오롯이 그림으로 나타낸 미셸 앙리의 강렬한 표현",
+    explanation:
+      "프랑스를 대표하는 저명한 현대 화가 미셸 앙리의 주요 회화 약 100여 점을 만나볼 수 있는 전시. 화려하고 감각적인 색채, 부드럽고 유연한 붓질로 자연과 일상을 따뜻하게 담아낸 작품을 통해, 미셸 앙리의 시선을 오롯이 느낄 수 있다. 전시는 ‘VIVID’라는 키워드 아래 색채적 깊이와 감성을 공간적으로 풀어내며 관람객에게 몰입감 있는 미술 경험을 제공한다. 오디오 도슨트(손호영 참여), 키즈 프로그램, 전시 연계 굿즈도 마련되어 있다.",
+    image: require("../assets/images/exhibitionPoster/exhibition12.gif"),
+    explanationImages: [
+      //설명 포스터 이미지 삽입
+      require("../assets/images/exhibitionPoster/exhibition12_explain.jpg"),
+      
     ],
     sponsor: "마이아트뮤지엄",
     phone: "02-567-8878",
