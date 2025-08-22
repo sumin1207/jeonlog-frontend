@@ -1,14 +1,9 @@
 import React, { useState, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  Animated,
-} from "react-native";
+import { View, Text, Image, Pressable, Animated } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { TopBarStyles } from "../../design-system/styles/TopBarStyles";
+import { Colors } from "../../design-system/theme";
 
 interface TopBarProps {
   title?: string;
@@ -72,30 +67,30 @@ export default function TopBar({ title, right }: TopBarProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
+    <View style={TopBarStyles.container}>
+      <View style={TopBarStyles.logoContainer}>
         <Pressable onPress={handleLogoPress}>
           <Image
             source={require("../../assets/images/topBar.png")}
-            style={styles.logoImage}
+            style={TopBarStyles.logoImage}
             resizeMode='contain'
           />
         </Pressable>
       </View>
-      <View style={styles.rightContainer}>
+      <View style={TopBarStyles.rightContainer}>
         {right ? (
           right
         ) : (
           <Animated.View
             style={[
-              styles.searchButtonContainer,
+              TopBarStyles.searchButtonContainer,
               {
                 transform: [{ scale: searchButtonScale }],
                 opacity: searchButtonOpacity,
               },
             ]}>
             <Pressable
-              style={styles.searchButton}
+              style={TopBarStyles.searchButton}
               onPress={handleSearchPress}>
               <Animated.View
                 style={{
@@ -111,7 +106,11 @@ export default function TopBar({ title, right }: TopBarProps) {
                 <Ionicons
                   name='search-outline'
                   size={24}
-                  color={isSearchPressed ? "#4CAF50" : "white"}
+                  color={
+                    isSearchPressed
+                      ? Colors.secondary.main
+                      : Colors.primary.contrast
+                  }
                 />
               </Animated.View>
             </Pressable>
@@ -121,40 +120,3 @@ export default function TopBar({ title, right }: TopBarProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 80,
-    backgroundColor: "#1c3519",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 20,
-  },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: -30,
-  },
-  logoImage: {
-    width: 200,
-    height: 50,
-  },
-  rightContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  searchButtonContainer: {
-    borderRadius: 20,
-    marginRight: 20,
-    overflow: "hidden",
-  },
-  searchButton: {
-    padding: 8,
-  },
-  title: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-});

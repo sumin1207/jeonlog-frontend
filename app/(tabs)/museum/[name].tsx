@@ -50,12 +50,6 @@ export default function MuseumDetailScreen() {
           date: "2025.06.17 - 2025.08.10",
           image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
         },
-        {
-          id: "5",
-          title: "한국미술 100년",
-          date: "2024.04.01 - 2024.06.30",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
       ],
       subway:
         "4호선\n경의중앙선(문산-용문)\n이촌역 2번 출구 방향 '박물관 나들길' <=> '박물관 서문'\n이촌역 2번출구 <=> 박물관 서문",
@@ -65,7 +59,7 @@ export default function MuseumDetailScreen() {
       headerImage: require("../../../assets/images/museumBackground/myArtMuseumBg.jpg"), //수정
       museumEmblem: require("../../../assets/images/museumEmblem/myArtMuseumEmblem.png"),
       address: "서울특별시 강남구 테헤란로 518 섬유센터빌딩 B1 (대치동 994-31)",
-      latitude: 37.507017, 
+      latitude: 37.507017,
       longitude: 127.063147,
       phone: "02-567-8878",
       website: "http://www.myartmuseum.co.kr",
@@ -76,12 +70,14 @@ export default function MuseumDetailScreen() {
       description:
         "서울 강남구 삼성역 4번 출구 도보 3분, 도심 속 대형 복합 미술관 겸 복합문화공간. 다양한 서양 명화·아트·디자인·장식·사진전으로 계절마다 새로운 콘텐츠와 편의시설을 즐길 수 있음.",
       parking: "건물 내 지하주차장(유료), 인근 공영주차장 이용 가능",
-      parkingFee: "분당 2,000~3,000원 (운영 정책에 따라 변동, 건물 주차장 기준)",
+      parkingFee:
+        "분당 2,000~3,000원 (운영 정책에 따라 변동, 건물 주차장 기준)",
       subway: "2호선 삼성역 4번 출구 도보 3분",
       exhibitions: [
         {
           id: "11",
-          title: "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
+          title:
+            "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
           date: "2025.08.01 - 2025.11.30",
           image: require("../../../assets/images/exhibitionPoster/exhibition11.jpg"),
         },
@@ -111,98 +107,36 @@ export default function MuseumDetailScreen() {
           date: "2025.08.01 - 2025.09.30",
           image: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
         },
-        {
-          id: "6",
-          title: "디자인 특별전",
-          date: "2025.10.01 - 2025.12.31",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
       ],
     },
-    MMCA: {
-      name: "국립현대미술관",
-      headerImage: require("../../../assets/images/exhibitionPoster/exhibition7.png"),
-      museumEmblem: undefined,
-      address: "서울특별시 종로구 삼청로 30",
-      latitude: 37.586316,
-      longitude: 126.983011,
-      phone: "02-3456-7890",
-      website: "www.mmca.go.kr",
-      hours: "화~일 10:00-18:00 (월요일 휴관)",
-      entrance: "일반 4,000원, 학생 2,000원",
-      closedDays: undefined,
-      description:
-        "한국 현대미술의 메카로, 국내외 현대미술 작품을 수집·연구·전시하며 한국 현대미술의 발전에 기여하고 있습니다.",
-      parking: undefined,
-      parkingFee: undefined,
-      subway: undefined,
-      exhibitions: [
-        {
-          id: "4",
-          title: "현대미술 특별전",
-          date: "2024.01.20 - 2024.05.20",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
-        {
-          id: "7",
-          title: "현대조각전",
-          date: "2025.03.01 - 2025.06.30",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
-      ],
-    },
-    서울시립미술관: {
-      name: "서울시립미술관",
-      headerImage: require("../../../assets/images/exhibitionPoster/exhibition8.png"),
-      museumEmblem: undefined,
-      address: "서울특별시 중구 덕수궁길 61",
-      latitude: 37.565926,
-      longitude: 126.975229,
-      phone: "02-2345-6789",
-      website: "www.sema.seoul.go.kr",
-      hours: "화~일 10:00-20:00 (월요일 휴관)",
-      entrance: "일반 3,000원, 학생 1,500원",
-      closedDays: undefined,
-      description:
-        "서울시가 운영하는 대표적인 시립미술관으로, 시민과 가장 가까운 곳에서 다양한 현대미술을 선보이고 있습니다.",
-      parking: undefined,
-      parkingFee: undefined,
-      subway: undefined,
-      exhibitions: [
-        {
-          id: "8",
-          title: "반 고흐 생애전",
-          date: "2024.03.01 - 2024.05.15",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
-      ],
-    },
+
     모다갤러리: {
-    name: "모다갤러리",
-    headerImage: undefined,
-    museumEmblem: require("../../../assets/images/museumEmblem/modaEmblem.png"),
-    address: "서울특별시 용산구 녹사평대로 132 3, 4층 (이태원동)",
-    latitude: 37.534013, 
-    longitude: 126.994605,
-    phone: "0507-1484-2511안내", 
-    website: undefined,
-    hours: "화요일~일요일 10:30 - 19:00 (입장 마감 18:30), 월요일 휴관",
-    closedDays: "매주 월요일 휴관 및 4월 26일(2025년 기준)",
-    entrance: "성인 15,000원 / 소인 11,000원 / 국가유공자·경로우대·장애인 7,500원",
-    description:
-      "모다갤러리는 서울 이태원 지역에 위치한 현대미술 갤러리로, 국내외 거장들의 다양한 현대미술 작품을 선보입니다. 예술적 교류의 장이자 문화 체험 공간입니다.",
-    parking: "전용 주차장 없음, 대중교통 이용 권장",
-    parkingFee: undefined,
-    subway: "6호선 이태원역 인근",
-    exhibitions: [
-      {
-        id: "12",
-        title: "미셸 앙리:VIVID",
-        date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
-        image: require("../../../assets/images/exhibitionPoster/exhibition12.gif"),
-      },
-    ],
-  },
+      name: "모다갤러리",
+      headerImage: undefined,
+      museumEmblem: require("../../../assets/images/museumEmblem/modaEmblem.png"),
+      address: "서울특별시 용산구 녹사평대로 132 3, 4층 (이태원동)",
+      latitude: 37.534013,
+      longitude: 126.994605,
+      phone: "0507-1484-2511안내",
+      website: undefined,
+      hours: "화요일~일요일 10:30 - 19:00 (입장 마감 18:30), 월요일 휴관",
+      closedDays: "매주 월요일 휴관 및 4월 26일(2025년 기준)",
+      entrance:
+        "성인 15,000원 / 소인 11,000원 / 국가유공자·경로우대·장애인 7,500원",
+      description:
+        "모다갤러리는 서울 이태원 지역에 위치한 현대미술 갤러리로, 국내외 거장들의 다양한 현대미술 작품을 선보입니다. 예술적 교류의 장이자 문화 체험 공간입니다.",
+      parking: "전용 주차장 없음, 대중교통 이용 권장",
+      parkingFee: undefined,
+      subway: "6호선 이태원역 인근",
+      exhibitions: [
+        {
+          id: "12",
+          title: "미셸 앙리:VIVID",
+          date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
+          image: require("../../../assets/images/exhibitionPoster/exhibition12.gif"),
+        },
+      ],
+    },
   };
 
   const museum = museumData[name as keyof typeof museumData];

@@ -15,7 +15,8 @@ import { useAuth } from "../../components/context/AuthContext";
 import { ExhibitionCardSkeleton } from "@/components/ui/Skeleton";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { style as getThemedStyle} from "./Home.styles"; // Import styles from Home.styles.ts
+import { style as getThemedStyle } from "./Home.styles"; // Import styles from Home.styles.ts
+import { Colors } from "@/design-system/theme";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -100,14 +101,14 @@ export default function HomeScreen() {
             location: "전시장 G",
             date: "2025.07.01~09.30",
           },
+        ],
+        "20-30대": [
           {
             id: "8",
             title: "추천 8",
             location: "전시장 H",
             date: "2025.08.01~10.31",
           },
-        ],
-        "20-30대": [
           {
             id: "9",
             title: "추천 9",
@@ -120,80 +121,80 @@ export default function HomeScreen() {
             location: "전시장 J",
             date: "2025.10.01~12.31",
           },
+        ],
+        "40-50대": [
           {
             id: "11",
             title: "추천 11",
             location: "전시장 K",
-            date: "2025.11.01~2026.01.31",
+            date: "2026.01.01~03.31",
           },
           {
             id: "12",
             title: "추천 12",
             location: "전시장 L",
-            date: "2025.12.01~2026.02.28",
+            date: "2026.02.01~04.30",
           },
-        ],
-        "40-50대": [
           {
             id: "13",
             title: "추천 13",
             location: "전시장 M",
-            date: "2026.01.01~03.31",
+            date: "2026.03.01~05.31",
           },
+        ],
+        "60대 이상": [
           {
             id: "14",
             title: "추천 14",
             location: "전시장 N",
-            date: "2026.02.01~04.30",
+            date: "2026.04.01~06.30",
           },
           {
             id: "15",
             title: "추천 15",
             location: "전시장 O",
-            date: "2026.03.01~05.31",
+            date: "2026.05.01~07.31",
           },
           {
             id: "16",
             title: "추천 16",
             location: "전시장 P",
-            date: "2026.04.01~06.30",
-          },
-        ],
-        "60대 이상": [
-          {
-            id: "17",
-            title: "추천 17",
-            location: "전시장 Q",
-            date: "2026.05.01~07.31",
-          },
-          {
-            id: "18",
-            title: "추천 18",
-            location: "전시장 R",
             date: "2026.06.01~08.31",
-          },
-          {
-            id: "19",
-            title: "추천 19",
-            location: "전시장 S",
-            date: "2026.07.01~09.30",
-          },
-          {
-            id: "20",
-            title: "추천 20",
-            location: "전시장 T",
-            date: "2026.08.01~10.31",
           },
         ],
       };
-      return ageData[selectedAgeGroup] || ageData["20-30대"];
+      return ageData[selectedAgeGroup] || [];
     } else if (activeTab === "성별 추천") {
       return [
+        {
+          id: "17",
+          title: "추천 17",
+          location: "전시장 Q",
+          date: "2026.07.01~09.30",
+        },
+        {
+          id: "18",
+          title: "추천 18",
+          location: "전시장 R",
+          date: "2026.08.01~10.31",
+        },
+        {
+          id: "19",
+          title: "추천 19",
+          location: "전시장 S",
+          date: "2026.09.01~11.30",
+        },
+        {
+          id: "20",
+          title: "추천 20",
+          location: "전시장 T",
+          date: "2026.10.01~12.31",
+        },
         {
           id: "21",
           title: "추천 21",
           location: "전시장 U",
-          date: "2026.09.01~11.30",
+          date: "2026.11.01~2027.01.31",
         },
         {
           id: "22",
@@ -222,7 +223,12 @@ export default function HomeScreen() {
     <TouchableOpacity
       style={[
         style.recommendationCard,
-        { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
+        {
+          backgroundColor:
+            theme === "dark"
+              ? Colors.background.cardDark
+              : Colors.background.card,
+        },
       ]}
       onPress={() => router.push(`/exhibition/${item.id}` as any)}
       activeOpacity={0.7}>
@@ -231,28 +237,45 @@ export default function HomeScreen() {
           <Ionicons
             name='image-outline'
             size={40}
-            color={theme === "dark" ? "#666" : "#ccc"}
+            color={
+              theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray300
+            }
           />
         </View>
         <View style={style.cardTextContainer}>
           <Text
             style={[
               style.cardTitle,
-              { color: theme === "dark" ? "#fff" : "#1c3519" },
+              {
+                color:
+                  theme === "dark"
+                    ? Colors.text.dark.primary
+                    : Colors.text.primary,
+              },
             ]}>
             {item.title}
           </Text>
           <Text
             style={[
               style.cardLocation,
-              { color: theme === "dark" ? "#ccc" : "#666" },
+              {
+                color:
+                  theme === "dark"
+                    ? Colors.text.dark.secondary
+                    : Colors.text.secondary,
+              },
             ]}>
             {item.location}
           </Text>
           <Text
             style={[
               style.cardDate,
-              { color: theme === "dark" ? "#ccc" : "#666" },
+              {
+                color:
+                  theme === "dark"
+                    ? Colors.text.dark.secondary
+                    : Colors.text.secondary,
+              },
             ]}>
             {item.date}
           </Text>
@@ -260,7 +283,6 @@ export default function HomeScreen() {
       </View>
     </TouchableOpacity>
   );
-
 
   if (loading) {
     return (

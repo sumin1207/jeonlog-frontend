@@ -49,46 +49,42 @@ export default function VisitedExhibitionsPage() {
       onPress={() => {
         if (item.id && typeof item.id === "string") {
           console.log("Navigating to exhibition log with ID:", item.id);
-          router.push({
-            pathname: `/exhibition-log/${item.id}`,
-            params: { 'exhibitionLog-id': item.id },
-          });
+          router.push(`/exhibition-log/${item.id}`);
         } else {
           console.log("Invalid exhibition ID for navigation:", item.id);
         }
-      }}
-    >
-      <Image source={item.image} style={styles.exhibitionImage} />
+      }}>
+      <Image
+        source={item.image}
+        style={styles.exhibitionImage}
+      />
       <View style={styles.exhibitionInfo}>
         <Text
           style={[
             styles.exhibitionTitle,
             { color: theme === "dark" ? "#ffffff" : "#000000" },
           ]}
-          numberOfLines={1}
-        >
+          numberOfLines={1}>
           {item.title}
         </Text>
         <Text
           style={[
             styles.exhibitionLocation,
             { color: theme === "dark" ? "#cccccc" : "#555555" },
-          ]}
-        >
+          ]}>
           {item.location}
         </Text>
         <Text
           style={[
             styles.reviewText,
             { color: theme === "dark" ? "#cccccc" : "#666" },
-          ]}
-        >
+          ]}>
           💬 "{item.review}"
         </Text>
       </View>
       <View>
         <WriteRecordButton
-          title="기록 수정"
+          title='기록 수정'
           onPress={() =>
             router.push({
               pathname: "/exhibition/write-record",
@@ -104,9 +100,10 @@ export default function VisitedExhibitionsPage() {
         />
         <DeleteRecordButton
           exhibitionId={item.id}
-          
-          title="기록 삭제"
-          onRecordDeleted={() => console.log('Record deletion callback triggered.')}
+          title='기록 삭제'
+          onRecordDeleted={() =>
+            console.log("Record deletion callback triggered.")
+          }
           buttonStyle={{
             paddingVertical: 6,
             paddingHorizontal: 6,
@@ -124,17 +121,17 @@ export default function VisitedExhibitionsPage() {
       style={[
         styles.container,
         { backgroundColor: theme === "dark" ? "#121212" : "#f8f8f8" },
-      ]}
-    >
+      ]}>
       <View
         style={[
           styles.header,
           { backgroundColor: theme === "dark" ? "#121212" : "#ffffff" },
-        ]}
-      >
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        ]}>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backButton}>
           <Ionicons
-            name="arrow-back"
+            name='arrow-back'
             size={24}
             color={theme === "dark" ? "white" : "black"}
           />
@@ -143,8 +140,7 @@ export default function VisitedExhibitionsPage() {
           style={[
             styles.headerTitle,
             { color: theme === "dark" ? "white" : "black" },
-          ]}
-        >
+          ]}>
           방문한 전시 ({visitedExhibitionsData.length}개)
         </Text>
         <View style={{ width: 24 }} />
@@ -153,7 +149,7 @@ export default function VisitedExhibitionsPage() {
         <FlatList
           data={visitedExhibitionsData}
           renderItem={renderExhibitionItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item?.id || ""}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContentContainer}
         />
@@ -163,16 +159,14 @@ export default function VisitedExhibitionsPage() {
             style={[
               styles.emptyText,
               { color: theme === "dark" ? "#cccccc" : "#666666" },
-            ]}
-          >
+            ]}>
             아직 방문한 전시가 없습니다.
           </Text>
           <Text
             style={[
               styles.emptySubText,
               { color: theme === "dark" ? "#999" : "#999" },
-            ]}
-          >
+            ]}>
             전시를 관람하고 방문 기록을 남겨보세요!
           </Text>
         </View>

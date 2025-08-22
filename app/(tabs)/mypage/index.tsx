@@ -1,45 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator,
-  Alert,
-  Modal,
   Image,
-  Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-// TopBar import 제거
-// import TopBar from "../../../components/ui/TopBar";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
-import { clearLocalUserData } from "../../../services/userService";
-import { removeStoredToken } from "../../../services/authService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
-
-// 임시 회원탈퇴 함수 (나중에 실제 구현으로 교체)
-const deleteAccount = async (userId: string, accessToken?: string) => {
-  return { success: true, message: "회원탈퇴 완료" };
-};
 
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
-  const {
-    BookmarkedExhibitions,
-    thumbsUpExhibitions,
-    visitedExhibitions,
-    myLogs,
-  } = useExhibition();
-  const [visitedCount, setVisitedCount] = useState(0);
-  const [settingsVisible, setSettingsVisible] = useState(false);
+  const { myLogs } = useExhibition();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -52,39 +31,6 @@ export default function MyPageScreen() {
 
   const styles = getStyles(theme);
 
-  // 방문한 기록 카운트 통일
-  const validVisitedCount = visitedExhibitions.filter(
-    (id) => exhibitionData[id as keyof typeof exhibitionData]
-  ).length;
-
-  const handleGuestAction = () => {
-    Alert.alert(
-      "로그인 필요",
-      "로그인이 필요한 기능입니다. 로그인 페이지로 이동하시겠습니까?",
-      [
-        { text: "취소", style: "cancel" },
-        { text: "로그인", onPress: () => router.push("/") },
-      ]
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <Ionicons
-            name='reload'
-            size={60}
-            color='#1c3519'
-          />
-          <Text style={styles.loadingTitle}>로그인 상태 확인 중...</Text>
-          <Text style={styles.loadingSubtitle}>잠시만 기다려주세요</Text>
-        </View>
-      </View>
-    );
-  }
-
-  // 로그인하지 않은 경우 로그인 화면으로 이동
   // if (!isLoggedIn || !userInfo) {
   //   console.log(
   //     "🔍 MyPage: 로그인 필요 - isLoggedIn:",
@@ -117,124 +63,11 @@ export default function MyPageScreen() {
 
   console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
-  const handleLogout = async () => {
-    Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
-      { text: "취소", style: "cancel" },
-      {
-        text: "로그아웃",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            // 저장된 JWT 토큰 제거
-            await removeStoredToken();
-            // 로컬 사용자 데이터 정리
-            clearLocalUserData();
-            // AuthContext 로그아웃
-            logout();
-            router.replace("/");
-          } catch (error) {
-            console.error("로그아웃 에러:", error);
-            // 에러가 발생해도 로그아웃 처리
-            logout();
-            router.replace("/");
-          }
-        },
-      },
-    ]);
-  };
-
-  const handleDeleteAccount = async () => {
-    Alert.alert(
-      "회원탈퇴",
-      "정말 회원탈퇴를 하시겠습니까?\n이 작업은 되돌릴 수 없습니다.",
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "탈퇴",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              if (userInfo?.id) {
-                const response = await deleteAccount(
-                  userInfo.id,
-                  userInfo.accessToken
-                );
-
-                if (response.success) {
-                  clearLocalUserData();
-                  logout();
-                  Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
-                    {
-                      text: "확인",
-                      onPress: () => router.replace("/"),
-                    },
-                  ]);
-                } else {
-                  Alert.alert(
-                    "회원탈퇴 실패",
-                    response.message || "회원탈퇴 중 오류가 발생했습니다.",
-                    [{ text: "확인" }]
-                  );
-                }
-              } else {
-                clearLocalUserData();
-                logout();
-                Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
-                  {
-                    text: "확인",
-                    onPress: () => router.replace("/"),
-                  },
-                ]);
-              }
-            } catch (error) {
-              console.error("회원탈퇴 에러:", error);
-              Alert.alert("회원탈퇴 실패", "회원탈퇴 중 오류가 발생했습니다.", [
-                { text: "확인" },
-              ]);
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const renderSection = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       {children}
     </View>
-  );
-
-  const renderMenuItem = (
-    icon: string,
-    title: string,
-    subtitle?: string,
-    onPress?: () => void,
-    showArrow: boolean = true
-  ) => (
-    <Pressable
-      style={styles.menuItem}
-      onPress={onPress}
-      disabled={!onPress}>
-      <View style={styles.menuItemLeft}>
-        <Ionicons
-          name={icon as any}
-          size={24}
-          color='#1c3519'
-        />
-        <View style={styles.menuItemText}>
-          <Text style={styles.menuItemTitle}>{title}</Text>
-          {subtitle && <Text style={styles.menuItemSubtitle}>{subtitle}</Text>}
-        </View>
-      </View>
-      {showArrow && (
-        <Ionicons
-          name='chevron-forward'
-          size={20}
-          color='#ccc'
-        />
-      )}
-    </Pressable>
   );
 
   return (
@@ -294,15 +127,19 @@ export default function MyPageScreen() {
                 </View>
                 <View style={styles.actionButtons}>
                   <TouchableOpacity style={styles.actionButton}>
-                    <Text style={styles.actionButtonText}>홈편집</Text>
+                    <Text style={styles.actionButtonText}>프로필 수정</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionButton}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() =>
+                      router.push("/(tabs)/mypage/exhibition/Bookmarked")
+                    }>
                     <Ionicons
                       name='bookmark'
                       size={16}
                       color='#1c3519'
                     />
-                    <Text style={styles.actionButtonText}>저장한 전시</Text>
+                    <Text style={styles.actionButtonText}>북마크한 전시</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -328,11 +165,10 @@ export default function MyPageScreen() {
             </View>
             <View style={styles.recordsGrid}>
               {myLogs.slice(0, 2).map((log, index) => {
-                // Retrieve exhibition data directly from exhibitionData for image and other details
                 const exhibition =
                   exhibitionData[log.id as keyof typeof exhibitionData];
 
-                if (!exhibition) return null; // If exhibition data is not found, don't render
+                if (!exhibition) return null;
 
                 return (
                   <TouchableOpacity
@@ -342,7 +178,7 @@ export default function MyPageScreen() {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
                     }}>
                     <Image
-                      source={exhibition.image} // Use image from exhibitionData
+                      source={exhibition.image}
                       style={styles.recordImage}
                       resizeMode='cover'
                     />
@@ -546,7 +382,6 @@ const getStyles = (theme: ThemeType) =>
     scrollView: {
       flex: 1,
     },
-    // 기존 스타일 유지
     headerWrap: {
       flexDirection: "row",
       alignItems: "center",
@@ -666,8 +501,8 @@ const getStyles = (theme: ThemeType) =>
       justifyContent: "space-between",
     },
     recordCard: {
-      width: "48%", // 2 columns
-      aspectRatio: 0.75, // 3:4 ratio (height is 4/3 of width)
+      width: "48%",
+      aspectRatio: 0.75,
       borderRadius: 10,
       overflow: "hidden",
       marginBottom: 10,

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, Animated } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
+import { createSkeletonStyles } from "../../design-system/styles/SkeletonStyles";
 
 interface SkeletonProps {
   width?: number | string;
@@ -23,6 +24,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   style,
 }) => {
   const { theme } = useTheme();
+  const styles = createSkeletonStyles(theme);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -53,11 +55,11 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   return (
     <Animated.View
       style={[
+        styles.skeleton,
         {
           width,
           height,
           borderRadius,
-          backgroundColor: theme === "dark" ? "#333" : "#e0e0e0",
           opacity,
         },
         style,
@@ -73,6 +75,7 @@ export const ExhibitionCardSkeleton: React.FC<SkeletonCardProps> = ({
   style,
 }) => {
   const { theme } = useTheme();
+  const styles = createSkeletonStyles(theme);
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -103,41 +106,20 @@ export const ExhibitionCardSkeleton: React.FC<SkeletonCardProps> = ({
   return (
     <Animated.View
       style={[
-        styles.cardSkeleton,
+        styles.exhibitionCard,
         {
           width,
           height,
-          backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
           opacity,
         },
         style,
       ]}>
-      <View style={styles.cardContent}>
-        {/* 이미지 스켈레톤 */}
-        <Skeleton
-          width={80}
-          height={80}
-          borderRadius={8}
-          style={styles.imageSkeleton}
-        />
-
-        {/* 텍스트 스켈레톤들 */}
-        <View style={styles.textContainer}>
-          <Skeleton
-            width='70%'
-            height={18}
-            style={styles.titleSkeleton}
-          />
-          <Skeleton
-            width='50%'
-            height={14}
-            style={styles.subtitleSkeleton}
-          />
-          <Skeleton
-            width='60%'
-            height={14}
-            style={styles.subtitleSkeleton}
-          />
+      <View style={{ flexDirection: "row" }}>
+        <Animated.View style={[styles.imagePlaceholder, { opacity }]} />
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Animated.View style={[styles.titleSkeleton, { opacity }]} />
+          <Animated.View style={[styles.subtitleSkeleton, { opacity }]} />
+          <Animated.View style={[styles.smallTextSkeleton, { opacity }]} />
         </View>
       </View>
     </Animated.View>
@@ -146,145 +128,72 @@ export const ExhibitionCardSkeleton: React.FC<SkeletonCardProps> = ({
 
 // 검색 결과 스켈레톤
 export const SearchResultSkeleton: React.FC = () => {
+  const { theme } = useTheme();
+  const styles = createSkeletonStyles(theme);
+
   return (
-    <View style={styles.searchResultContainer}>
-      <ExhibitionCardSkeleton style={styles.searchResultItem} />
-      <ExhibitionCardSkeleton style={styles.searchResultItem} />
-      <ExhibitionCardSkeleton style={styles.searchResultItem} />
-      <ExhibitionCardSkeleton style={styles.searchResultItem} />
+    <View style={{ paddingHorizontal: 20 }}>
+      {[1, 2, 3].map((index) => (
+        <View
+          key={index}
+          style={{ marginBottom: 12 }}>
+          <ExhibitionCardSkeleton height={100} />
+        </View>
+      ))}
     </View>
   );
 };
 
 // 전시 상세 스켈레톤
 export const ExhibitionDetailSkeleton: React.FC = () => {
+  const { theme } = useTheme();
+  const styles = createSkeletonStyles(theme);
+
   return (
-    <View style={styles.detailContainer}>
+    <View style={{ padding: 20 }}>
       {/* 포스터 스켈레톤 */}
-      <Skeleton
-        width='100%'
-        height={300}
-        borderRadius={12}
-        style={styles.posterSkeleton}
+      <Animated.View
+        style={[
+          styles.skeleton,
+          {
+            width: "100%",
+            height: 400,
+            borderRadius: 8,
+            marginBottom: 20,
+          },
+        ]}
       />
 
       {/* 제목 스켈레톤 */}
-      <Skeleton
-        width='80%'
-        height={24}
-        style={styles.titleSkeleton}
-      />
-      <Skeleton
-        width='60%'
-        height={16}
-        style={styles.subtitleSkeleton}
-      />
-
-      {/* 정보 스켈레톤들 */}
-      <View style={styles.infoContainer}>
-        <Skeleton
-          width='100%'
-          height={16}
-          style={styles.infoSkeleton}
-        />
-        <Skeleton
-          width='90%'
-          height={16}
-          style={styles.infoSkeleton}
-        />
-        <Skeleton
-          width='95%'
-          height={16}
-          style={styles.infoSkeleton}
-        />
-        <Skeleton
-          width='85%'
-          height={16}
-          style={styles.infoSkeleton}
-        />
+      <View style={{ marginBottom: 20 }}>
+        <Animated.View style={[styles.titleSkeleton, { opacity: 0.7 }]} />
+        <Animated.View style={[styles.subtitleSkeleton, { opacity: 0.7 }]} />
       </View>
 
-      {/* 설명 스켈레톤들 */}
-      <View style={styles.descriptionContainer}>
-        <Skeleton
-          width='100%'
-          height={16}
-          style={styles.descriptionSkeleton}
-        />
-        <Skeleton
-          width='95%'
-          height={16}
-          style={styles.descriptionSkeleton}
-        />
-        <Skeleton
-          width='90%'
-          height={16}
-          style={styles.descriptionSkeleton}
-        />
-        <Skeleton
-          width='85%'
-          height={16}
-          style={styles.descriptionSkeleton}
-        />
+      {/* 정보 스켈레톤 */}
+      <View style={{ marginTop: 20 }}>
+        {[1, 2, 3, 4].map((index) => (
+          <Animated.View
+            key={index}
+            style={[styles.textSkeleton, { opacity: 0.7, marginBottom: 8 }]}
+          />
+        ))}
+      </View>
+
+      {/* 설명 스켈레톤 */}
+      <View style={{ marginTop: 20 }}>
+        {[1, 2, 3, 4].map((index) => (
+          <Animated.View
+            key={index}
+            style={[
+              styles.descriptionSkeleton,
+              { opacity: 0.7, marginBottom: 6 },
+            ]}
+          />
+        ))}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  cardSkeleton: {
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: 12,
-  },
-  cardContent: {
-    flexDirection: "row",
-    padding: 16,
-  },
-  imageSkeleton: {
-    marginRight: 16,
-  },
-  textContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  titleSkeleton: {
-    marginBottom: 8,
-  },
-  subtitleSkeleton: {
-    marginBottom: 4,
-  },
-  searchResultContainer: {
-    paddingHorizontal: 20,
-  },
-  searchResultItem: {
-    marginBottom: 12,
-  },
-  detailContainer: {
-    padding: 20,
-  },
-  posterSkeleton: {
-    marginBottom: 20,
-  },
-  infoContainer: {
-    marginTop: 20,
-  },
-  infoSkeleton: {
-    marginBottom: 8,
-  },
-  descriptionContainer: {
-    marginTop: 20,
-  },
-  descriptionSkeleton: {
-    marginBottom: 6,
-  },
-});
 
 export default Skeleton;

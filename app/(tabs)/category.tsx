@@ -96,7 +96,7 @@ export default function CategoryScreen() {
       paddingHorizontal: 20,
       marginBottom: 12,
       borderRadius: 12,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#ffffffff",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#ffffff",
       borderWidth: 1,
       borderColor: theme === "dark" ? "#333" : "#e0e0e0",
       minHeight: 60,

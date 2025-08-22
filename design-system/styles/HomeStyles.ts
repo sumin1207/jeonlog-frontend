@@ -5,9 +5,9 @@ import {
   Typography,
   BorderRadius,
   getThemeColors,
-} from "../../design-system/theme";
+} from "../theme";
 
-export const style = (theme: string) => {
+export const createHomeStyles = (theme: string) => {
   const themeColors = getThemeColors(theme as "light" | "dark");
 
   return StyleSheet.create({

@@ -5,7 +5,7 @@ import { CommonActions } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import Colors from "@/constants/Colors";
+import { Colors } from "@/design-system/theme";
 import { useColorScheme } from "@/components/hooks/useColorScheme";
 import { useClientOnlyValue } from "@/components/hooks/useClientOnlyValue";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -31,12 +31,17 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#1c3519",
-        tabBarInactiveTintColor: theme === "dark" ? "#666" : "gray",
+        tabBarActiveTintColor: Colors.primary.main,
+        tabBarInactiveTintColor:
+          theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray500,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-          borderTopColor: theme === "dark" ? "#3a3a3a" : "#e0e0e0",
+          backgroundColor:
+            theme === "dark"
+              ? Colors.background.cardDark
+              : Colors.background.card,
+          borderTopColor:
+            theme === "dark" ? Colors.neutral.gray800 : Colors.neutral.gray300,
         },
       }}
       initialRouteName='home'>
