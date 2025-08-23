@@ -2,47 +2,53 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { ExternalLink } from './ExternalLink';
-import { MonoText } from './StyledText';
-import { Text, View } from './Themed';
-
-import Colors from '@/constants/Colors';
+import { Container } from '@/design-system/layouts/Container';
+import { Text } from '@/design-system/components/Text';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Colors } from '@/design-system/theme/colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
+  const { theme } = useTheme();
+
   return (
-    <View>
-      <View style={styles.getStartedContainer}>
+    <Container>
+      <Container style={styles.getStartedContainer}>
         <Text
-          style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
+          style={[
+            styles.getStartedText,
+            { color: theme === 'light' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)' },
+          ]}>
           Open up the code for this screen:
         </Text>
 
-        <View
-          style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-          darkColor="rgba(255,255,255,0.05)"
-          lightColor="rgba(0,0,0,0.05)">
-          <MonoText>{path}</MonoText>
-        </View>
+        <Container
+          style={[
+            styles.codeHighlightContainer,
+            styles.homeScreenFilename,
+            { backgroundColor: theme === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' },
+          ]}>
+          <Text style={styles.monoText}>{path}</Text>
+        </Container>
 
         <Text
-          style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
+          style={[
+            styles.getStartedText,
+            { color: theme === 'light' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)' },
+          ]}>
           Change any of the text, save the file, and your app will automatically update.
         </Text>
-      </View>
+      </Container>
 
-      <View style={styles.helpContainer}>
+      <Container style={styles.helpContainer}>
         <ExternalLink
           style={styles.helpLink}
           href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">
-          <Text style={styles.helpLinkText} lightColor={Colors.light.tint}>
+          <Text style={[styles.helpLinkText, { color: Colors.primary.main }]}>
             Tap here if your app doesn't automatically update after making changes
           </Text>
         </ExternalLink>
-      </View>
-    </View>
+      </Container>
+    </Container>
   );
 }
 
@@ -73,5 +79,8 @@ const styles = StyleSheet.create({
   },
   helpLinkText: {
     textAlign: 'center',
+  },
+  monoText: {
+    fontFamily: 'SpaceMono-Regular',
   },
 });
