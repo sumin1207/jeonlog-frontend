@@ -21,6 +21,37 @@ export default function MyPageScreen() {
   const { myLogs } = useExhibition();
 
   const styles = getStyles(theme);
+  // if (!isLoggedIn || !userInfo) {
+  //   console.log(
+  //     "🔍 MyPage: 로그인 필요 - isLoggedIn:",
+  //     isLoggedIn,
+  //     "userInfo:",
+  //     userInfo
+  //   );
+  //   return (
+  //     <View style={styles.container}>
+  //       <TopBar title='마이페이지' />
+  //       <View style={styles.loginRequiredContainer}>
+  //         <Ionicons
+  //           name='person-circle-outline'
+  //           size={80}
+  //           color='#ccc'
+  //         />
+  //         <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
+  //         <Text style={styles.loginRequiredSubtitle}>
+  //           마이페이지를 이용하려면 로그인해주세요
+  //         </Text>
+  //         <TouchableOpacity
+  //           style={styles.loginButton}
+  //           onPress={() => router.push("/")}>
+  //           <Text style={styles.loginButtonText}>로그인 하러가기</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   );
+  // }
+
+  console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
   return (
     <View style={styles.container}>
