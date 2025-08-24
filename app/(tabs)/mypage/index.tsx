@@ -25,9 +25,10 @@ export default function MyPageScreen() {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${year}.${String(month).padStart(2, "0")}.${String(
-      day
-    ).padStart(2, "0")}`;
+    return `${year}.${String(month).padStart(2, "0")}.${String(day).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const styles = getStyles(theme);
@@ -76,37 +77,24 @@ export default function MyPageScreen() {
       {/* 상단 우측 버튼들 - 헤더 바 없이 */}
       <View style={styles.topButtons}>
         <TouchableOpacity style={styles.topButton}>
-          <Ionicons
-            name='notifications-outline'
-            size={24}
-            color='#1c3519'
-          />
+          <Ionicons name="notifications-outline" size={24} color="#1c3519" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.topButton}
-          onPress={() => router.push("/mypage/setting")}>
-          <Ionicons
-            name='settings-outline'
-            size={24}
-            color='#1c3519'
-          />
+          onPress={() => router.push("/mypage/setting")}
+        >
+          <Ionicons name="settings-outline" size={24} color="#1c3519" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        pointerEvents='auto'>
+      <ScrollView style={styles.scrollView} pointerEvents="auto">
         {/* 사용자 정보 섹션 */}
         {renderSection(
           "사용자 정보",
           <View style={styles.userSection}>
             <View style={styles.userInfo}>
               <View style={styles.avatar}>
-                <Ionicons
-                  name='person'
-                  size={40}
-                  color='#fff'
-                />
+                <Ionicons name="person" size={40} color="#fff" />
               </View>
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>
@@ -134,12 +122,9 @@ export default function MyPageScreen() {
                     style={styles.actionButton}
                     onPress={() =>
                       router.push("/(tabs)/mypage/exhibition/Bookmarked")
-                    }>
-                    <Ionicons
-                      name='bookmark'
-                      size={16}
-                      color='#1c3519'
-                    />
+                    }
+                  >
+                    <Ionicons name="bookmark" size={16} color="#1c3519" />
                     <Text style={styles.actionButtonText}>북마크한 전시</Text>
                   </TouchableOpacity>
                 </View>
@@ -152,18 +137,7 @@ export default function MyPageScreen() {
         {renderSection(
           "나의 전시 기록들",
           <View style={styles.recordsSection}>
-            <View style={styles.recordsHeader}>
-              <View style={styles.sortOptions}>
-                <TouchableOpacity style={styles.sortOption}>
-                  <Text style={[styles.sortText, styles.sortActive]}>
-                    최신순
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.sortOption}>
-                  <Text style={styles.sortText}>인기순</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <View style={styles.recordsHeader}></View>
             <View style={styles.recordsGrid}>
               {myLogs.slice(0, 2).map((log, index) => {
                 const exhibition =
@@ -177,51 +151,17 @@ export default function MyPageScreen() {
                     style={{ width: "48%" }}
                     onPress={() => {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
-                    }}>
+                    }}
+                  >
                     <View style={styles.card}>
                       <Image
                         source={exhibition.image}
                         style={styles.mainImage}
                       />
                       <View style={styles.contentContainer}>
-                        <View style={styles.hashtagsContainer}>
-                          {log.hashtags.map((tag, index) => (
-                            <Text
-                              key={index}
-                              style={styles.hashtag}>
-                              #{tag}
-                            </Text>
-                          ))}
-                        </View>
-                        <View style={styles.authorAndLikesContainer}>
-                          <View style={styles.authorContainer}>
-                            <View style={styles.logAvatar}>
-                              <Ionicons
-                                name='person'
-                                size={16}
-                                color='#fff'
-                              />
-                            </View>
-                            <View style={styles.authorTextContainer}>
-                              <Text style={styles.authorName}>
-                                {log.author?.name || "사용자"}
-                              </Text>
-                              <Text style={styles.timestamp}>
-                                {formatDate(log.createdAt)}
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={styles.likesContainer}>
-                            <Ionicons
-                              name='heart'
-                              size={19}
-                              color='#ff6b6b'
-                            />
-                            <Text style={{ marginLeft: 4, color: "#ff6b6b" }}>
-                              {log.likes || 0}
-                            </Text>
-                          </View>
-                        </View>
+                        <Text style={styles.authorName}>
+                          {exhibition.title}
+                        </Text>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -543,6 +483,7 @@ const getStyles = (theme: ThemeType) =>
       paddingTop: 12,
       paddingBottom: 12,
       paddingHorizontal: 8,
+      alignItems: "center",
     },
     authorAndLikesContainer: {
       flexDirection: "row",
