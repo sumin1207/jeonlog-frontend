@@ -41,7 +41,7 @@ export default function MyPageScreen() {
 
       <ScrollView style={styles.scrollView}>
         <View style={styles.profileSection}>
-          <View style={styles.avatar}>{/* 아바타 이미지 또는 아이콘 */}</View>
+          <View style={styles.avatar}>{/* 프로필 이미지 또는 아이콘 */}</View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>
               {userInfo?.name ?? "석준's 전시라이프"}
@@ -234,5 +234,34 @@ const getStyles = (theme: ThemeType) =>
     emptyText: {
       fontSize: 16,
       color: "#888",
+    },
+    loginRequiredContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 20,
+    },
+    loginRequiredTitle: {
+      fontSize: 22,
+      fontWeight: "bold",
+      marginTop: 20,
+      marginBottom: 10,
+    },
+    loginRequiredSubtitle: {
+      fontSize: 16,
+      color: "#666",
+      textAlign: "center",
+      marginBottom: 30,
+    },
+    loginButton: {
+      backgroundColor: "#1e90ff",
+      paddingVertical: 15,
+      paddingHorizontal: 40,
+      borderRadius: 8,
+    },
+    loginButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
     },
   });
