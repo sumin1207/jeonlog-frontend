@@ -41,8 +41,8 @@ export const exhibitionData = {
     website: "www.ddpmuseum.com",
   },
 
-  "6": {
-    id: "6",
+  "3": {
+    id: "3",
     title: "어른이 보호구역",
     subtitle: "DDP SHOWROOM: 어른이 보호구역",
     location: "동대문디자인플라자(DDP) 디자인랩 1층 DDP 쇼룸 스테이지",
@@ -61,8 +61,8 @@ export const exhibitionData = {
     website: "www.museum.go.kr",
   },
 
-  "7": {
-    id: "7",
+  "4": {
+    id: "4",
     title: "프래그런스 위드 플래닛",
     subtitle:
       "프래그런스 위드 플래닛(FRAGRANCE WITH PLANET)스토리텔링 팝업 전시",
@@ -81,8 +81,8 @@ export const exhibitionData = {
     phone: "02-2153-0770",
     website: "https://btheb.sba.kr/",
   },
-  "8": {
-    id: "8",
+  "5": {
+    id: "5",
     title: "What’s your favorite chair",
     subtitle:
       "전시 <What’s your favorite chair> DDP 매거진 라이브러리 x 매거진<C>",
@@ -103,8 +103,8 @@ export const exhibitionData = {
     phone: "02-2153-0000",
     website: "https://ddp.or.kr/index.html?menuno=240",
   },
-  "9": {
-    id: "9",
+  "6": {
+    id: "6",
     title: "시대의 언어",
     subtitle: "시대의 언어",
     location: "동대문디자인플라자(DDP)뮤지엄 3층 둘레길갤러리",
@@ -122,8 +122,8 @@ export const exhibitionData = {
     phone: "02-2153-0000",
     website: "ddp.or.kr",
   },
-  "10": {
-    id: "10",
+  "7": {
+    id: "7",
     title: "DDP 디자인 쇼윈도: 2024 ddp 디자인론칭페어",
     subtitle: "DDP 디자인 쇼윈도: 2024 ddp 디자인론칭페어",
     location: "국립중앙박물관",
@@ -146,8 +146,8 @@ export const exhibitionData = {
     website: "ddp.or.kr",
   },
 
-  "11": {
-    id: "11",
+  "8": {
+    id: "8",
     title: "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
     location: "마이아트뮤지엄",
     address: "서울특별시 강남구 테헤란로 518 섬유센터빌딩 B1 (대치동 994-31)",
@@ -170,8 +170,8 @@ export const exhibitionData = {
     email: "mamu@myartmuseum.kr",
     website: "http://www.myartmuseum.co.kr/",
   },
-  "12": {
-    id: "12",
+  "9": {
+    id: "9",
     title: "미셸 앙리:VIVID",
     location: "마이아트뮤지엄",
     address: "서울 용산구 녹사평대로 132 3층, 4층 (이태원동 34-158)",
@@ -186,7 +186,6 @@ export const exhibitionData = {
     explanationImages: [
       //설명 포스터 이미지 삽입
       require("../assets/images/exhibitionPoster/exhibition12_explain.jpg"),
-      
     ],
     sponsor: "마이아트뮤지엄",
     phone: "02-567-8878",
