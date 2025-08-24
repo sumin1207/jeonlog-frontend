@@ -42,21 +42,15 @@ export const LikeProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   const toggleLike = (logId: string) => {
-    let newLikesCount;
-    const isCurrentlyLiked = userLikes[logId];
-    const log = myLogs.find((log) => log.id === logId);
-    const currentLikes = log ? log.likes : 0;
+    const isCurrentlyLiked = !!userLikes[logId]; // 현재 사용자가 좋아요를 눌렀는지 확인
 
-    if (isCurrentlyLiked) {
-      newLikesCount = currentLikes - 1;
-    } else {
-      newLikesCount = currentLikes + 1;
-    }
+    // ExhibitionContext에 전달할 액션 결정
+    const action = isCurrentlyLiked ? 'decrement' : 'increment';
 
-    // Update the likes count in ExhibitionContext first
-    toggleLogLikes(logId, newLikesCount);
+    // ExhibitionContext에 좋아요 수 변경 요청
+    toggleLogLikes(logId, action);
 
-    // Then, update the local state for immediate UI feedback
+    // 사용자 로컬 좋아요 상태 업데이트 (UI 즉시 반영 및 AsyncStorage 저장)
     setUserLikes((prev) => {
       const newLikes = { ...prev };
       if (isCurrentlyLiked) {
@@ -65,7 +59,7 @@ export const LikeProvider: React.FC<{ children: ReactNode }> = ({
         newLikes[logId] = true;
       }
       AsyncStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(newLikes)).catch(
-        (e) => console.error("Failed to save user likes", e)
+        (e) => console.error("사용자 좋아요 저장 실패", e)
       );
       return newLikes;
     });
