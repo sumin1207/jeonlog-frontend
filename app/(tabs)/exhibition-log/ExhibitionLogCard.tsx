@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import LikeButton from "./like/LikeButton";
 import CountLike from "./like/countLike";
 import { useLikes } from "@/contexts/LikeContext";
+import { useExhibition } from "@/contexts/ExhibitionContext"; // useExhibition 임포트
 
 interface ExhibitionLogCardProps {
   id: string;
@@ -13,9 +14,7 @@ interface ExhibitionLogCardProps {
     avatar: any;
   };
   timestamp: string;
-  likes: number;
   hashtags: string[];
-  isInitiallyLiked?: boolean;
 }
 
 const ExhibitionLogCard = ({
@@ -24,21 +23,13 @@ const ExhibitionLogCard = ({
   logTitle,
   author,
   timestamp,
-  likes,
   hashtags,
-  isInitiallyLiked = false,
 }: ExhibitionLogCardProps) => {
-  const { userLikes } = useLikes();
+  const { myLogs } = useExhibition(); // myLogs 가져오기
 
-  const hasUserInteracted = userLikes[id] !== undefined;
-  const isLiked = hasUserInteracted ? userLikes[id]! : isInitiallyLiked;
-
-  let displayLikeCount = likes;
-  if (isInitiallyLiked && !isLiked) {
-    displayLikeCount = likes - 1;
-  } else if (!isInitiallyLiked && isLiked) {
-    displayLikeCount = likes + 1;
-  }
+  // myLogs에서 현재 로그의 좋아요 개수를 찾습니다.
+  const currentLog = myLogs.find((log) => log.id === id);
+  const displayLikes = currentLog?.likes || 0; // 중앙에서 관리되는 좋아요 개수
 
   return (
     <View style={styles.card}>
@@ -61,7 +52,7 @@ const ExhibitionLogCard = ({
           </View>
           <View style={styles.likesContainer}>
             <LikeButton exhibitionLogId={id} size={19} />
-            <CountLike count={displayLikeCount} />
+            <CountLike count={displayLikes} />
           </View>
         </View>
       </View>

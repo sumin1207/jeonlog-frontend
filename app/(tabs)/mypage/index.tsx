@@ -22,11 +22,12 @@ export default function MyPageScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}.${String(month).padStart(2, "0")}.${String(
+      day
+    ).padStart(2, "0")}`;
   };
 
   const styles = getStyles(theme);
@@ -173,56 +174,53 @@ export default function MyPageScreen() {
                 return (
                   <TouchableOpacity
                     key={log.id}
-                    style={styles.recordCard}
+                    style={{ width: "48%" }}
                     onPress={() => {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
                     }}>
-                    <Image
-                      source={exhibition.image}
-                      style={styles.recordImage}
-                      resizeMode='cover'
-                    />
-                    <View style={styles.recordInfo}>
-                      <Text
-                        style={styles.recordTitle}
-                        numberOfLines={2}>
-                        {log.title}
-                      </Text>
-                      <View style={styles.hashtagsContainer}>
-                        {log.hashtags &&
-                          log.hashtags.map((tag: string, tagIndex: number) => (
+                    <View style={styles.card}>
+                      <Image
+                        source={exhibition.image}
+                        style={styles.mainImage}
+                      />
+                      <View style={styles.contentContainer}>
+                        <View style={styles.hashtagsContainer}>
+                          {log.hashtags.map((tag, index) => (
                             <Text
-                              key={tagIndex}
+                              key={index}
                               style={styles.hashtag}>
                               #{tag}
                             </Text>
                           ))}
-                      </View>
-                      <Text style={styles.recordDate}>
-                        {formatDate(log.createdAt)}
-                      </Text>
-                      <View style={styles.recordMeta}>
-                        <View style={styles.recordAuthor}>
-                          <View style={styles.authorAvatar}>
-                            <Ionicons
-                              name='person'
-                              size={12}
-                              color='#666'
-                            />
-                          </View>
-                          <Text style={styles.authorName}>
-                            {log.author?.name || "사용자"}
-                          </Text>
                         </View>
-                        <View style={styles.recordLikes}>
-                          <Ionicons
-                            name='heart'
-                            size={12}
-                            color='#ff6b6b'
-                          />
-                          <Text style={styles.likesCount}>
-                            {log.likes || 0}
-                          </Text>
+                        <View style={styles.authorAndLikesContainer}>
+                          <View style={styles.authorContainer}>
+                            <View style={styles.logAvatar}>
+                              <Ionicons
+                                name='person'
+                                size={16}
+                                color='#fff'
+                              />
+                            </View>
+                            <View style={styles.authorTextContainer}>
+                              <Text style={styles.authorName}>
+                                {log.author?.name || "사용자"}
+                              </Text>
+                              <Text style={styles.timestamp}>
+                                {formatDate(log.createdAt)}
+                              </Text>
+                            </View>
+                          </View>
+                          <View style={styles.likesContainer}>
+                            <Ionicons
+                              name='heart'
+                              size={19}
+                              color='#ff6b6b'
+                            />
+                            <Text style={{ marginLeft: 4, color: "#ff6b6b" }}>
+                              {log.likes || 0}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
@@ -326,6 +324,15 @@ const getStyles = (theme: ThemeType) =>
       borderRadius: 30,
       backgroundColor: "#EFEFEF",
       marginRight: 16,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    logAvatar: {
+      width: 25,
+      height: 25,
+      borderRadius: 16,
+      marginRight: 8,
+      backgroundColor: "#ccc",
       justifyContent: "center",
       alignItems: "center",
     },
@@ -500,82 +507,8 @@ const getStyles = (theme: ThemeType) =>
       flexWrap: "wrap",
       justifyContent: "space-between",
     },
-    recordCard: {
-      width: "48%",
-      aspectRatio: 0.75,
-      borderRadius: 10,
-      overflow: "hidden",
-      marginBottom: 10,
-      backgroundColor: "#fff",
-      borderWidth: 1,
-      borderColor: "#eee",
-    },
-    recordImage: {
-      width: "100%",
-      height: "100%",
-      resizeMode: "contain",
-    },
-    recordInfo: {
-      padding: 10,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    recordTitle: {
-      fontSize: 14,
-      color: "#fff",
-      fontWeight: "bold",
-      marginBottom: 5,
-    },
-    hashtagsContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      marginBottom: 5,
-    },
-    hashtag: {
-      fontSize: 10,
-      color: "#ccc",
-      marginRight: 5,
-    },
-    recordDate: {
-      fontSize: 10,
-      color: "#ccc",
-      marginBottom: 5,
-    },
-    recordMeta: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    recordAuthor: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    authorAvatar: {
-      width: 16,
-      height: 16,
-      borderRadius: 8,
-      backgroundColor: "#ccc",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    authorName: {
-      fontSize: 12,
-      color: "#fff",
-      marginLeft: 5,
-    },
-    recordLikes: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    likesCount: {
-      fontSize: 12,
-      color: "#ff6b6b",
-      marginLeft: 5,
-    },
     emptyRecords: {
+      width: "100%",
       alignItems: "center",
       paddingVertical: 20,
     },
@@ -593,5 +526,60 @@ const getStyles = (theme: ThemeType) =>
     topButton: {
       marginLeft: 10,
       padding: 5,
+    },
+    // Styles from ExhibitionLogCard
+    card: {
+      marginBottom: 20,
+      overflow: "hidden",
+      backgroundColor: "#FFFFFF",
+      borderRadius: 8,
+    },
+    mainImage: {
+      width: "100%",
+      height: 213,
+      borderRadius: 8,
+    },
+    contentContainer: {
+      paddingTop: 12,
+      paddingBottom: 12,
+      paddingHorizontal: 8,
+    },
+    authorAndLikesContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    authorContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      flex: 1,
+      marginRight: 8,
+    },
+    authorName: {
+      fontWeight: "bold",
+      fontSize: 14,
+    },
+    authorTextContainer: {
+      flex: 1,
+    },
+    timestamp: {
+      fontSize: 10.5,
+      color: "#7f7f7fff",
+    },
+    likesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    hashtagsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      marginBottom: 8,
+    },
+    hashtag: {
+      fontSize: 12,
+      color: "#9e9e9eff",
+      marginRight: 8,
+      marginBottom: 4,
     },
   });
