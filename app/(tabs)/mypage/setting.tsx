@@ -84,7 +84,8 @@ export default function MyPageSettingScreen() {
     <Pressable
       style={dynamicStyles.menuItem}
       onPress={onPress}
-      disabled={!onPress}>
+      disabled={!onPress}
+    >
       <View style={dynamicStyles.menuItemLeft}>
         <Ionicons
           name={icon}
@@ -98,21 +99,13 @@ export default function MyPageSettingScreen() {
           )}
         </View>
       </View>
-      {showArrow && (
-        <Ionicons
-          name='chevron-forward'
-          size={20}
-          color='#ccc'
-        />
-      )}
+      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
     </Pressable>
   );
 
   return (
     <View style={dynamicStyles.container}>
-      <ScrollView
-        style={dynamicStyles.scrollView}
-        pointerEvents='auto'>
+      <ScrollView style={dynamicStyles.scrollView} pointerEvents="auto">
         {renderSection(
           "전시 관리",
           <View>
@@ -148,7 +141,7 @@ export default function MyPageSettingScreen() {
             <View style={dynamicStyles.menuItem}>
               <View style={dynamicStyles.menuItemLeft}>
                 <Ionicons
-                  name='moon'
+                  name="moon"
                   size={24}
                   color={theme === "dark" ? "#fff" : "#1c3519"}
                 />
@@ -194,6 +187,7 @@ function getStyles(theme: ThemeType) {
     container: {
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
+      marginTop: 35,
     },
     scrollView: {
       flex: 1,
