@@ -1,11 +1,17 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useExhibition } from './ExhibitionContext';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useExhibition } from "./ExhibitionContext";
 
-const LIKE_STORAGE_KEY = 'exhibition_user_likes';
+const LIKE_STORAGE_KEY = "exhibition_user_likes";
 
 interface LikesByUser {
-  [logId: string]: boolean; 
+  [logId: string]: boolean;
 }
 
 interface LikeContextType {
@@ -15,9 +21,11 @@ interface LikeContextType {
 
 const LikeContext = createContext<LikeContextType | undefined>(undefined);
 
-export const LikeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const LikeProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [userLikes, setUserLikes] = useState<LikesByUser>({});
-  const { myLogs, updateLogLikes } = useExhibition(); // Get myLogs and updateLogLikes
+  const { myLogs, toggleLogLikes } = useExhibition(); // Get myLogs and toggleLogLikes
 
   useEffect(() => {
     const loadLikesFromStorage = async () => {
@@ -34,24 +42,25 @@ export const LikeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const toggleLike = (logId: string) => {
-    setUserLikes(prev => {
-      const newLikes = { ...prev };
-      const isCurrentlyLiked = newLikes[logId];
-      let newLikesCount;
+    const isCurrentlyLiked = !!userLikes[logId]; // 현재 사용자가 좋아요를 눌렀는지 확인
 
+    // ExhibitionContext에 전달할 액션 결정
+    const action = isCurrentlyLiked ? 'decrement' : 'increment';
+
+    // ExhibitionContext에 좋아요 수 변경 요청
+    toggleLogLikes(logId, action);
+
+    // 사용자 로컬 좋아요 상태 업데이트 (UI 즉시 반영 및 AsyncStorage 저장)
+    setUserLikes((prev) => {
+      const newLikes = { ...prev };
       if (isCurrentlyLiked) {
         delete newLikes[logId];
-        newLikesCount = (myLogs.find(log => log.id === logId)?.likes || 1) - 1; // Decrement
       } else {
         newLikes[logId] = true;
-        newLikesCount = (myLogs.find(log => log.id === logId)?.likes || 0) + 1; // Increment
       }
-
-      AsyncStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(newLikes)).catch(e => console.error("Failed to save user likes", e));
-
-      // Update the likes count in ExhibitionContext
-      updateLogLikes(logId, newLikesCount);
-
+      AsyncStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(newLikes)).catch(
+        (e) => console.error("사용자 좋아요 저장 실패", e)
+      );
       return newLikes;
     });
   };
@@ -66,7 +75,7 @@ export const LikeProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useLikes = () => {
   const context = useContext(LikeContext);
   if (context === undefined) {
-    throw new Error('useLikes must be used within a LikeProvider');
+    throw new Error("useLikes must be used within a LikeProvider");
   }
   return context;
 };

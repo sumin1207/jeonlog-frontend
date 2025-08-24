@@ -25,7 +25,7 @@ interface ExhibitionContextType {
   markAsVisited: (exhibitionId: string) => void;
   addMyLog: (exhibitionId: string, logData: any) => Promise<void>; // Function to add a new log
   deleteMyLog: (exhibitionId: string) => Promise<void>; // Function to delete a log
-  updateLogLikes: (exhibitionId: string, newLikesCount: number) => Promise<void>; // Function to update likes count for a log
+  toggleLogLikes: (exhibitionId: string, action: 'increment' | 'decrement') => void;
   isBookmarked: (exhibitionId: string) => boolean;
   isThumbsUp: (exhibitionId: string) => boolean;
   isVisited: (exhibitionId: string) => boolean;
@@ -203,24 +203,33 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     }
   };
 
-  const updateLogLikes = async (exhibitionId: string, newLikesCount: number) => {
+  const toggleLogLikes = (exhibitionId: string, action: 'increment' | 'decrement') => {
     setState((prev) => {
-      const updatedMyLogs = prev.myLogs.map((log) =>
-        log.id === exhibitionId ? { ...log, likes: newLikesCount } : log
-      );
+      let calculatedLikesForStorage = 0; // AsyncStorage에 저장할 값을 캡처하기 위한 변수
+
+      const updatedMyLogs = prev.myLogs.map((log) => {
+        if (log.id === exhibitionId) {
+          const currentLikes = log.likes || 0;
+          let newLikes = action === 'increment' ? currentLikes + 1 : currentLikes - 1;
+          if (newLikes < 0) newLikes = 0; // 좋아요는 0 미만이 될 수 없음
+          calculatedLikesForStorage = newLikes; // 계산된 값을 캡처
+          return { ...log, likes: newLikes };
+        }
+        return log;
+      });
+
+      // AsyncStorage 업데이트 로직을 setState 콜백 내에서 실행
+      // 이렇게 하면 calculatedLikesForStorage 값이 정확히 캡처됩니다.
+      AsyncStorage.getItem("exhibition_records").then(json => {
+        const records = json ? JSON.parse(json) : {};
+        if (records[exhibitionId]) {
+          records[exhibitionId].likes = calculatedLikesForStorage; // 캡처된 값을 사용
+          AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
+        }
+      }).catch(e => console.error("Failed to update log likes in AsyncStorage", e));
+
       return { ...prev, myLogs: updatedMyLogs };
     });
-
-    try {
-      const savedRecordsJSON = await AsyncStorage.getItem("exhibition_records");
-      const records = savedRecordsJSON ? JSON.parse(savedRecordsJSON) : {};
-      if (records[exhibitionId]) {
-        records[exhibitionId].likes = newLikesCount;
-        await AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
-      }
-    } catch (e) {
-      console.error("Failed to update log likes in AsyncStorage", e);
-    }
   };
 
   const isBookmarked = (exhibitionId: string) => {
@@ -252,7 +261,7 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
         markAsVisited,
         addMyLog,
         deleteMyLog,
-        updateLogLikes,
+                toggleLogLikes,
         isBookmarked,
         isThumbsUp,
         isVisited,

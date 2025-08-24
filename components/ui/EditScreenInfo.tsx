@@ -2,87 +2,115 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { ExternalLink } from "./ExternalLink";
-import { Text } from "@/design-system/components";
-import {
-  Colors,
-  Spacing,
-  Typography,
-  BorderRadius,
-} from "@/design-system/theme";
+import { Container } from "@/design-system/layouts/Container";
+import { Text } from "@/design-system/components/Text";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Colors } from "@/design-system/theme/colors";
 
 export default function EditScreenInfo({ path }: { path: string }) {
+  const { theme } = useTheme();
+
   return (
-    <View>
-      <View style={styles.getStartedContainer}>
+    <Container>
+      <Container style={styles.getStartedContainer}>
         <Text
-          style={styles.getStartedText}
-          color='secondary'>
+          style={
+            [
+              styles.getStartedText,
+              {
+                color:
+                  theme === "light"
+                    ? "rgba(0,0,0,0.8)"
+                    : "rgba(255,255,255,0.8)",
+              },
+            ] as any
+          }>
           Open up the code for this screen:
         </Text>
 
-        <View
-          style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-          <Text
-            variant='body'
-            style={styles.monoText}>
-            {path}
-          </Text>
-        </View>
+        <Container
+          style={
+            [
+              styles.codeHighlightContainer,
+              styles.homeScreenFilename,
+              {
+                backgroundColor:
+                  theme === "light"
+                    ? "rgba(0,0,0,0.05)"
+                    : "rgba(255,255,255,0.05)",
+              },
+            ] as any
+          }>
+          <Text style={styles.monoText}>{path}</Text>
+        </Container>
 
         <Text
-          style={styles.getStartedText}
-          color='secondary'>
+          style={
+            [
+              styles.getStartedText,
+              {
+                color:
+                  theme === "light"
+                    ? "rgba(0,0,0,0.8)"
+                    : "rgba(255,255,255,0.8)",
+              },
+            ] as any
+          }>
           Change any of the text, save the file, and your app will automatically
           update.
         </Text>
-      </View>
+      </Container>
 
-      <View style={styles.helpContainer}>
+      <Container style={styles.helpContainer}>
         <ExternalLink
           style={styles.helpLink}
           href='https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet'>
           <Text
-            style={styles.helpLinkText}
-            color='primary'>
+            style={
+              [styles.helpLinkText, { color: Colors.primary.main }] as any
+            }>
             Tap here if your app doesn't automatically update after making
             changes
           </Text>
         </ExternalLink>
-      </View>
-    </View>
+      </Container>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
   getStartedContainer: {
     alignItems: "center",
-    marginHorizontal: Spacing.xxl,
+    marginHorizontal: 20,
   },
   homeScreenFilename: {
-    marginVertical: Spacing.sm,
+    marginVertical: 8,
   },
   codeHighlightContainer: {
-    borderRadius: BorderRadius.xs,
-    paddingHorizontal: Spacing.xs,
-    backgroundColor: Colors.neutral.gray100,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
   },
   getStartedText: {
-    fontSize: Typography.fontSize.lg,
-    lineHeight: Typography.fontSize.lg * Typography.lineHeight.normal,
+    fontSize: 18,
+    lineHeight: 24,
     textAlign: "center",
+    marginBottom: 16,
   },
   monoText: {
-    fontFamily: "SpaceMono",
+    fontFamily: "SpaceMono-Regular",
+    fontSize: 14,
   },
   helpContainer: {
-    marginTop: Spacing.md,
-    marginHorizontal: Spacing.lg,
+    marginTop: 16,
+    marginHorizontal: 20,
     alignItems: "center",
   },
   helpLink: {
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
   },
   helpLinkText: {
     textAlign: "center",
+    fontSize: 16,
   },
 });

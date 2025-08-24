@@ -22,14 +22,13 @@ export default function MyPageScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date
-      .toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-      .replace(/\. /g, ".")
-      .replace(/\.$/, "");
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}.${String(month).padStart(2, "0")}.${String(day).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const styles = getStyles(theme);
@@ -269,50 +268,6 @@ const getStyles = (theme: ThemeType) =>
       borderRadius: 12,
       marginBottom: 6,
     },
-    cardOverlay: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      borderRadius: 12,
-      padding: 12,
-      justifyContent: "space-between",
-    },
-    cardTopInfo: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    cardDate: {
-      fontSize: 12,
-      color: "#ffffff",
-      fontWeight: "500",
-    },
-    cardGallery: {
-      fontSize: 12,
-      color: "#ffffff",
-      fontWeight: "500",
-    },
-    cardCenterInfo: {
-      alignItems: "center",
-      justifyContent: "center",
-      flex: 1,
-    },
-    cardArtist: {
-      fontSize: 16,
-      color: "#ffffff",
-      fontWeight: "300",
-      fontStyle: "italic",
-      marginBottom: 8,
-      textAlign: "center",
-    },
-    cardTitle: {
-      fontSize: 20,
-      color: "#ffffff",
-      fontWeight: "300",
-      fontStyle: "italic",
-      textAlign: "center",
-    },
     cardDescription: {
       fontSize: 12,
       color: "#000000",
@@ -320,6 +275,7 @@ const getStyles = (theme: ThemeType) =>
       lineHeight: 16,
     },
     emptyRecords: {
+      width: "100%",
       alignItems: "center",
       justifyContent: "center",
       paddingVertical: 50,
