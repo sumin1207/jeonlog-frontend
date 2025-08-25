@@ -58,8 +58,8 @@ export default function CategoryScreen() {
       fontSize: 24,
       fontWeight: "bold",
       color: theme === "dark" ? "#fff" : "#1c3519",
-      marginTop: 20,
-      marginBottom: 30,
+      marginTop: 45,
+      marginBottom: 6,
     },
     // 탭 스타일
     tabContainer: {
@@ -124,7 +124,8 @@ export default function CategoryScreen() {
       key={categoryName}
       style={styles.categoryButton}
       onPress={() => handleCategoryPress(categoryName)}
-      activeOpacity={0.7}>
+      activeOpacity={0.7}
+    >
       <Text style={styles.categoryText}>{categoryName}</Text>
     </TouchableOpacity>
   );
@@ -138,9 +139,7 @@ export default function CategoryScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>카테고리</Text>
 
         {/* 탭 네비게이션 */}
@@ -150,12 +149,14 @@ export default function CategoryScreen() {
               key={tab}
               style={styles.tab}
               onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}>
+              activeOpacity={0.7}
+            >
               <Text
                 style={[
                   styles.tabText,
                   activeTab === tab && styles.activeTabText,
-                ]}>
+                ]}
+              >
                 {tab}
               </Text>
               {activeTab === tab && <View style={styles.activeTabIndicator} />}

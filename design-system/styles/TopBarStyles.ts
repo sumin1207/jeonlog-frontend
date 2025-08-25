@@ -8,7 +8,7 @@ export const TopBarStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: Spacing.md,
+    paddingTop: 30, //Spacing.md,
   },
   logoContainer: {
     flexDirection: "row",

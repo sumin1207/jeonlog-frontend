@@ -33,83 +33,110 @@ export default function MyPageScreen() {
 
   const styles = getStyles(theme);
 
+  // 로그인 체크 로직 (주석 처리된 부분을 활성화)
+  if (!isLoggedIn || !userInfo) {
+    console.log(
+      "🔍 MyPage: 로그인 필요 - isLoggedIn:",
+      isLoggedIn,
+      "userInfo:",
+      userInfo
+    );
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>마이페이지</Text>
+        </View>
+        <View style={styles.loginRequiredContainer}>
+          <Ionicons
+            name='person-circle-outline'
+            size={80}
+            color='#ccc'
+          />
+          <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
+          <Text style={styles.loginRequiredSubtitle}>
+            마이페이지를 이용하려면 로그인해주세요
+          </Text>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => router.push("/")}>
+            <Text style={styles.loginButtonText}>로그인 하러가기</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
+
   return (
     <View style={styles.container}>
-      {/* 상단 헤더 */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>마이페이지</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.headerIcon}>
+          <TouchableOpacity style={styles.topButton}>
             <Ionicons
               name='notifications-outline'
-              size={24}
-              color='#1c3519'
+              size={28}
+              color='#000'
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.headerIcon}
+            style={styles.topButton}
             onPress={() => router.push("/mypage/setting")}>
             <Ionicons
               name='settings-outline'
-              size={24}
-              color='#1c3519'
+              size={28}
+              color='#000'
             />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* 구분선 */}
-      <View style={styles.divider} />
-
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
-        {/* 프로필 섹션 */}
+      <ScrollView style={styles.scrollView}>
         <View style={styles.profileSection}>
+          <View style={styles.avatar}>
+            <Ionicons
+              name='person'
+              size={40}
+              color='#666'
+            />
+          </View>
           <View style={styles.profileInfo}>
-            <View style={styles.avatar}>
-              <Ionicons
-                name='person'
-                size={40}
-                color='#666'
-              />
-            </View>
-            <View style={styles.profileText}>
-              <Text style={styles.userName}>석준's 전시라이프</Text>
-              <Text style={styles.userDescription}>
-                안녕하세요 저는 전린이입니다.
-              </Text>
-              <View style={styles.profileButtons}>
-                <TouchableOpacity style={styles.profileButton}>
-                  <Text style={styles.profileButtonText}>프로필 수정</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.profileButton}
-                  onPress={() =>
-                    router.push("/(tabs)/mypage/exhibition/Bookmarked")
-                  }>
-                  <Text style={styles.profileButtonText}>저장한 전시</Text>
-                </TouchableOpacity>
-                <Ionicons
-                  name='person'
-                  size={16}
-                  color='#666'
-                  style={styles.profileIcon}
-                />
-              </View>
-            </View>
+            <Text style={styles.profileName}>
+              {userInfo?.name ?? "석준's 전시라이프"}
+            </Text>
+            <Text style={styles.profileBio}>안녕하세요 저는 전린이입니다.</Text>
           </View>
         </View>
 
-        {/* 구분선 */}
+        <View style={styles.buttonsSection}>
+          <View style={styles.mainButtonsWrapper}>
+            <TouchableOpacity style={styles.actionButton}>
+              <Text style={styles.actionButtonText}>프로필 수정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, { marginLeft: 10 }]}
+              onPress={() =>
+                router.push("/(tabs)/mypage/exhibition/Bookmarked")
+              }>
+              <Text style={styles.actionButtonText}>저장한 전시</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons
+              name='person-outline'
+              size={19}
+              color='#000'
+            />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.divider} />
 
-        {/* 전시 기록 섹션 */}
-        <View style={styles.recordsSection}>
-          <Text style={styles.recordsTitle}>
-            나의 전시 기록들({myLogs.length})
+        <View style={styles.logsSection}>
+          <Text style={styles.logsTitle}>
+            나의 전시 기록들 ({myLogs.length})
           </Text>
-          <View style={styles.divider} />
           <View style={styles.recordsGrid}>
             {myLogs.length > 0 ? (
               myLogs.map((log) => {
@@ -124,16 +151,17 @@ export default function MyPageScreen() {
                 return (
                   <TouchableOpacity
                     key={log.id}
-                    style={styles.exhibitionCard}
+                    style={styles.logCard}
                     onPress={() => {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
                     }}>
                     <Image
                       source={exhibition.image}
-                      style={styles.exhibitionImage}
-                      resizeMode='cover'
+                      style={styles.logImage}
                     />
-                    <Text style={styles.cardDescription}>
+                    <Text
+                      style={styles.logTitle}
+                      numberOfLines={1}>
                       {exhibition.title}
                     </Text>
                   </TouchableOpacity>
@@ -157,129 +185,156 @@ const getStyles = (theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#ffffff",
+      backgroundColor: "#fff",
     },
     header: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
+      paddingTop: 50,
+      paddingBottom: 10,
       paddingHorizontal: 20,
-      paddingTop: 60,
-      paddingBottom: 20,
-      backgroundColor: "#ffffff",
+      borderBottomWidth: 1,
+      borderBottomColor: "#f0f0f0",
     },
     headerTitle: {
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: "bold",
-      color: "#1c3519",
     },
     headerIcons: {
       flexDirection: "row",
-      alignItems: "center",
     },
-    headerIcon: {
+    topButton: {
       marginLeft: 16,
-      padding: 8,
     },
     scrollView: {
       flex: 1,
     },
     profileSection: {
-      paddingHorizontal: 20,
-      marginBottom: 8,
-    },
-    profileInfo: {
       flexDirection: "row",
-      alignItems: "flex-start",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 20,
     },
     avatar: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      backgroundColor: "#EFEFEF",
-      borderWidth: 2,
-      borderColor: "#4A90E2",
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: "#f0f0f0",
+      marginRight: 15,
       justifyContent: "center",
       alignItems: "center",
-      marginRight: 16,
     },
-    profileText: {
+    profileInfo: {
       flex: 1,
     },
-    userName: {
-      fontSize: 18,
+    profileName: {
+      fontSize: 19,
       fontWeight: "bold",
-      color: "#1c3519",
-      marginBottom: 4,
     },
-    userDescription: {
-      fontSize: 14,
-      color: "#666",
-      marginBottom: 16,
+    profileBio: {
+      fontSize: 13,
+      color: "#555",
+      marginTop: 6,
     },
-    profileButtons: {
+    buttonsSection: {
       flexDirection: "row",
+      paddingHorizontal: 20,
+      marginBottom: 25,
       alignItems: "center",
     },
-    profileButton: {
-      backgroundColor: "#F5F5F5",
-      paddingVertical: 8,
-      paddingHorizontal: 16,
-      borderRadius: 20,
+    mainButtonsWrapper: {
+      flex: 1,
+      flexDirection: "row",
       marginRight: 10,
     },
-    profileButtonText: {
-      fontSize: 14,
-      color: "#1c3519",
+    actionButton: {
+      flex: 1,
+      backgroundColor: "#f0f0f0",
+      borderRadius: 8,
+      paddingVertical: 7.7,
+      alignItems: "center",
     },
-    profileIcon: {
-      marginLeft: 8,
+    actionButtonText: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: "#333",
+    },
+    iconButton: {
+      backgroundColor: "#f0f0f0",
+      borderRadius: 8,
+      padding: 8,
+      justifyContent: "center",
+      alignItems: "center",
     },
     divider: {
-      height: 3,
-      backgroundColor: "#E5E5E5",
-      marginHorizontal: 20,
-      marginVertical: 10,
+      height: 10,
+      backgroundColor: "#f5f5f5",
     },
-    recordsSection: {
-      paddingHorizontal: 20,
-      marginBottom: 8,
+    logsSection: {
+      padding: 20,
     },
-    recordsTitle: {
-      fontSize: 18,
+    logsTitle: {
+      fontSize: 17,
       fontWeight: "bold",
-      color: "#1c3519",
-      marginBottom: 10,
+      marginBottom: 15,
     },
     recordsGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
     },
-    exhibitionCard: {
+    logCard: {
       width: "48%",
-      marginBottom: 15,
+      marginBottom: 20,
     },
-    exhibitionImage: {
+    logImage: {
       width: "100%",
-      height: 200,
-      borderRadius: 12,
-      marginBottom: 6,
+      height: 220,
+      borderRadius: 8,
     },
-    cardDescription: {
-      fontSize: 12,
-      color: "#000000",
+    logTitle: {
+      marginTop: 8,
+      fontSize: 13,
+      color: "#333",
       textAlign: "center",
-      lineHeight: 16,
     },
     emptyRecords: {
       width: "100%",
       alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: 50,
+      paddingVertical: 40,
     },
     emptyText: {
       fontSize: 16,
+      color: "#888",
+    },
+    loginRequiredContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 20,
+    },
+    loginRequiredTitle: {
+      fontSize: 22,
+      fontWeight: "bold",
+      marginTop: 20,
+      marginBottom: 10,
+    },
+    loginRequiredSubtitle: {
+      fontSize: 16,
       color: "#666",
+      textAlign: "center",
+      marginBottom: 30,
+    },
+    loginButton: {
+      backgroundColor: "#1e90ff",
+      paddingVertical: 15,
+      paddingHorizontal: 40,
+      borderRadius: 8,
+    },
+    loginButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
     },
   });

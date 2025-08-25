@@ -6,13 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
-import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 import ExhibitionLogCard from "./ExhibitionLogCard";
 import { useRouter } from "expo-router";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Record {
   id: string;
@@ -39,9 +40,28 @@ export default function ExhibitionLogScreen() {
   const router = useRouter();
   const { myLogs, isLoading } = useExhibition();
   const [isLatest, setIsLatest] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const sortedRecords = useMemo(() => {
-    const records = [...myLogs];
+    let records = [...myLogs];
+
+    if (searchQuery.trim() !== "") {
+      records = records.filter((log) => {
+        const exhibition =
+          exhibitionData[log.id as keyof typeof exhibitionData];
+        const logTitleMatch = log.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const exhibitionTitleMatch = exhibition?.title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const hashtagsMatch = log.hashtags?.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        return logTitleMatch || exhibitionTitleMatch || hashtagsMatch;
+      });
+    }
+
     if (isLatest) {
       records.sort(
         (a, b) =>
@@ -51,9 +71,8 @@ export default function ExhibitionLogScreen() {
       // TODO: 인기순 정렬
     }
     return records;
-  }, [myLogs, isLatest]);
+  }, [myLogs, isLatest, searchQuery]);
 
-  // 좌우 구분 두줄로 출력
   const { leftColumn, rightColumn } = useMemo(() => {
     const left: Record[] = [];
     const right: Record[] = [];
@@ -72,10 +91,7 @@ export default function ExhibitionLogScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, styles.emptyContainer]}>
-        <ActivityIndicator
-          size='large'
-          color='#1c3519'
-        />
+        <ActivityIndicator size="large" color="#1c3519" />
       </View>
     );
   }
@@ -86,7 +102,8 @@ export default function ExhibitionLogScreen() {
       return (
         <TouchableOpacity
           key={log.id}
-          onPress={() => router.push(`/exhibition-log/${log.id}`)}>
+          onPress={() => router.push(`/exhibition-log/${log.id}`)}
+        >
           <ExhibitionLogCard
             id={log.id}
             image={exhibition.image}
@@ -105,7 +122,32 @@ export default function ExhibitionLogScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar />
+      <View style={styles.searchHeader}>
+        <View style={styles.searchContainer}>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#888"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="기록, 전시, 해시태그 검색"
+            placeholderTextColor="#888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchQuery("")}
+              style={styles.clearButton}
+            >
+              <Ionicons name="close-circle" size={20} color="#888" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
       <View style={styles.headerContainer}>
         <Text style={styles.title}> 다른 시선으로 본 전시 기록들</Text>
         <View style={styles.toggleContainer}>
@@ -132,7 +174,11 @@ export default function ExhibitionLogScreen() {
         </ScrollView>
       ) : (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>아직 기록된 전시가 없습니다.</Text>
+          <Text style={styles.emptyText}>
+            {searchQuery
+              ? "검색 결과가 없습니다."
+              : "아직 기록된 전시가 없습니다."}
+          </Text>
         </View>
       )}
     </View>
@@ -145,13 +191,40 @@ const createStyles = (theme: "light" | "dark") =>
       flex: 1,
       backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
     },
+    searchHeader: {
+      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
+      paddingHorizontal: 20,
+      paddingTop: 60,
+      paddingBottom: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#333" : "#f0f0f0",
+    },
+    searchContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#f0f0f0",
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      marginTop: -10,
+    },
+    searchIcon: {
+      marginRight: 10,
+    },
+    searchInput: {
+      flex: 1,
+      height: 40,
+      color: theme === "dark" ? "#fff" : "#000",
+    },
+    clearButton: {
+      marginLeft: 10,
+    },
     headerContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingTop: 20,
+      paddingTop: 12,
       paddingHorizontal: 20,
-      marginBottom: 20,
+      marginBottom: 10,
     },
     title: {
       fontSize: 20,
