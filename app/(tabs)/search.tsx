@@ -304,6 +304,18 @@ export default function SearchScreen() {
     }
   };
 
+  // 검색 페이지 초기화 함수
+  const resetSearchPage = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setApiResults([]);
+    setApiError(null);
+    setIsLoading(false);
+    setIsSearchFocused(false);
+    setShowHistory(false);
+    setSelectedMuseum(null);
+  };
+
   // 예시: 검색어 입력 후 검색 실행
   // 기존 executeSearch 함수 내에 아래 코드 추가
   // fetchSearchResults(query);
@@ -315,13 +327,6 @@ export default function SearchScreen() {
 
       {/* 검색 입력 필드 */}
       <View style={SearchStyles.searchInputSection}>
-        <TouchableOpacity style={SearchStyles.backButton}>
-          <Ionicons
-            name='arrow-back'
-            size={24}
-            color='#666'
-          />
-        </TouchableOpacity>
         <View style={SearchStyles.searchInputContainer}>
           <TextInput
             style={SearchStyles.searchInput}
@@ -389,6 +394,49 @@ export default function SearchScreen() {
           </View>
         </View>
       </View>
+
+      {/* 검색 결과 섹션 */}
+      {isLoading && (
+        <View style={SearchStyles.loadingSection}>
+          <Text style={SearchStyles.loadingText}>검색 중...</Text>
+        </View>
+      )}
+
+      {apiError && (
+        <View style={SearchStyles.errorSection}>
+          <Text style={SearchStyles.errorText}>오류: {apiError}</Text>
+        </View>
+      )}
+
+      {apiResults.length > 0 && (
+        <View style={SearchStyles.resultsSection}>
+          <Text style={SearchStyles.resultsTitle}>검색 결과</Text>
+          {apiResults.map((result, index) => (
+            <TouchableOpacity
+              key={index}
+              style={SearchStyles.resultItem}
+              onPress={() => {
+                console.log("검색 결과 클릭:", result);
+                // 여기에 상세 페이지로 이동하는 로직 추가
+              }}>
+              <Text style={SearchStyles.resultTitle}>{result.title}</Text>
+              {result.description && (
+                <Text style={SearchStyles.resultDescription}>
+                  {result.description}
+                </Text>
+              )}
+              {result.location && (
+                <Text style={SearchStyles.resultLocation}>
+                  📍 {result.location}
+                </Text>
+              )}
+              {result.date && (
+                <Text style={SearchStyles.resultDate}>📅 {result.date}</Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
     </View>
   );
 }

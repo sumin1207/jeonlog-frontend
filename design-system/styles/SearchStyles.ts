@@ -113,4 +113,61 @@ export const SearchStyles = StyleSheet.create({
     color: Colors.text.primary,
     flex: 1,
   },
+
+  // 검색 결과 섹션 스타일
+  loadingSection: {
+    padding: Spacing.md,
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.secondary,
+  },
+  errorSection: {
+    padding: Spacing.md,
+    alignItems: "center",
+  },
+  errorText: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.secondary,
+  },
+  resultsSection: {
+    paddingHorizontal: Spacing.screenPadding,
+    paddingTop: Spacing.md,
+  },
+  resultsTitle: {
+    fontSize: Typography.text.h4.fontSize,
+    fontWeight: Typography.text.h4.fontWeight,
+    color: Colors.text.primary,
+    marginBottom: Spacing.md,
+  },
+  resultItem: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: Colors.background.light,
+    borderRadius: BorderRadius.input.small,
+    borderWidth: 1,
+    borderColor: Colors.border.light,
+    marginBottom: Spacing.sm,
+  },
+  resultTitle: {
+    fontSize: Typography.text.body.fontSize,
+    fontWeight: Typography.text.body.fontWeight,
+    color: Colors.text.primary,
+    marginBottom: Spacing.xs,
+  },
+  resultDescription: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+  },
+  resultLocation: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+    marginTop: Spacing.xs,
+  },
+  resultDate: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+    marginTop: Spacing.xs,
+  },
 });
