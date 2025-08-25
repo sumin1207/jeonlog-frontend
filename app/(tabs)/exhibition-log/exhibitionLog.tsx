@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
-  StyleSheet,
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
@@ -14,6 +12,8 @@ import ExhibitionLogCard from "./ExhibitionLogCard";
 import { useRouter } from "expo-router";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { Ionicons } from "@expo/vector-icons";
+import { Text, Container } from "../../../design-system";
+import { ExhibitionLogStyles } from "../../../design-system/styles";
 
 interface Record {
   id: string;
@@ -55,7 +55,7 @@ export default function ExhibitionLogScreen() {
         const exhibitionTitleMatch = exhibition?.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
-        const hashtagsMatch = log.hashtags?.some((tag) =>
+        const hashtagsMatch = log.hashtags?.some((tag: string) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase())
         );
         return logTitleMatch || exhibitionTitleMatch || hashtagsMatch;
@@ -86,12 +86,17 @@ export default function ExhibitionLogScreen() {
     return { leftColumn: left, rightColumn: right };
   }, [sortedRecords]);
 
-  const styles = createStyles(theme);
-
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.emptyContainer]}>
-        <ActivityIndicator size="large" color="#1c3519" />
+      <View
+        style={[
+          ExhibitionLogStyles.container,
+          ExhibitionLogStyles.emptyContainer,
+        ]}>
+        <ActivityIndicator
+          size='large'
+          color='#1c3519'
+        />
       </View>
     );
   }
@@ -102,8 +107,7 @@ export default function ExhibitionLogScreen() {
       return (
         <TouchableOpacity
           key={log.id}
-          onPress={() => router.push(`/exhibition-log/${log.id}`)}
-        >
+          onPress={() => router.push(`/exhibition-log/${log.id}`)}>
           <ExhibitionLogCard
             id={log.id}
             image={exhibition.image}
@@ -121,150 +125,94 @@ export default function ExhibitionLogScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchHeader}>
-        <View style={styles.searchContainer}>
+    <Container style={ExhibitionLogStyles.container}>
+      <View style={ExhibitionLogStyles.searchHeader}>
+        <View style={ExhibitionLogStyles.searchContainer}>
           <Ionicons
-            name="search"
+            name='search'
             size={20}
-            color="#888"
-            style={styles.searchIcon}
+            color='#888'
+            style={ExhibitionLogStyles.searchIcon}
           />
           <TextInput
-            style={styles.searchInput}
-            placeholder="기록, 전시, 해시태그 검색"
-            placeholderTextColor="#888"
+            style={ExhibitionLogStyles.searchInput}
+            placeholder='기록, 전시, 해시태그 검색'
+            placeholderTextColor='#888'
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity
               onPress={() => setSearchQuery("")}
-              style={styles.clearButton}
-            >
-              <Ionicons name="close-circle" size={20} color="#888" />
+              style={ExhibitionLogStyles.clearButton}>
+              <Ionicons
+                name='close-circle'
+                size={20}
+                color='#888'
+              />
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}> 다른 시선으로 본 전시 기록들</Text>
-        <View style={styles.toggleContainer}>
+      <View style={ExhibitionLogStyles.headerContainer}>
+        <Text style={ExhibitionLogStyles.title}>
+          {" "}
+          다른 시선으로 본 전시 기록들
+        </Text>
+        <View style={ExhibitionLogStyles.toggleContainer}>
           <TouchableOpacity onPress={() => setIsLatest(true)}>
-            <Text style={[styles.toggleText, isLatest && styles.activeToggle]}>
+            <Text
+              style={
+                isLatest
+                  ? {
+                      ...ExhibitionLogStyles.toggleText,
+                      ...ExhibitionLogStyles.activeToggle,
+                    }
+                  : ExhibitionLogStyles.toggleText
+              }>
               최신순
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsLatest(false)}>
-            <Text style={[styles.toggleText, !isLatest && styles.activeToggle]}>
+            <Text
+              style={
+                !isLatest
+                  ? {
+                      ...ExhibitionLogStyles.toggleText,
+                      ...ExhibitionLogStyles.activeToggle,
+                    }
+                  : ExhibitionLogStyles.toggleText
+              }>
               인기순
             </Text>
           </TouchableOpacity>
         </View>
       </View>
       {sortedRecords.length > 0 ? (
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.columnContainer}>
-            <View style={styles.column}>{renderColumn(leftColumn)}</View>
-            <View style={[styles.column, styles.rightColumn]}>
+        <ScrollView style={ExhibitionLogStyles.scrollView}>
+          <View style={ExhibitionLogStyles.columnContainer}>
+            <View style={ExhibitionLogStyles.column}>
+              {renderColumn(leftColumn)}
+            </View>
+            <View
+              style={[
+                ExhibitionLogStyles.column,
+                ExhibitionLogStyles.rightColumn,
+              ]}>
               {renderColumn(rightColumn)}
             </View>
           </View>
         </ScrollView>
       ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
+        <View style={ExhibitionLogStyles.emptyContainer}>
+          <Text style={ExhibitionLogStyles.emptyText}>
             {searchQuery
               ? "검색 결과가 없습니다."
               : "아직 기록된 전시가 없습니다."}
           </Text>
         </View>
       )}
-    </View>
+    </Container>
   );
 }
-
-const createStyles = (theme: "light" | "dark") =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
-    },
-    searchHeader: {
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
-      paddingHorizontal: 20,
-      paddingTop: 60,
-      paddingBottom: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#f0f0f0",
-    },
-    searchContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#f0f0f0",
-      borderRadius: 10,
-      paddingHorizontal: 10,
-      marginTop: -10,
-    },
-    searchIcon: {
-      marginRight: 10,
-    },
-    searchInput: {
-      flex: 1,
-      height: 40,
-      color: theme === "dark" ? "#fff" : "#000",
-    },
-    clearButton: {
-      marginLeft: 10,
-    },
-    headerContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingTop: 12,
-      paddingHorizontal: 20,
-      marginBottom: 10,
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-    },
-    toggleContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    toggleText: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#888",
-      marginHorizontal: 5,
-    },
-    activeToggle: {
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#000",
-    },
-    scrollView: {
-      flex: 1,
-      paddingHorizontal: 20,
-    },
-    columnContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    column: {
-      width: "48%",
-    },
-    rightColumn: {
-      marginTop: 18,
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    emptyText: {
-      fontSize: 18,
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-  });

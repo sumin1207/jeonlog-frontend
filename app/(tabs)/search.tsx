@@ -1,31 +1,28 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Animated,
-  Dimensions,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Pressable,
-  Alert,
-  Button,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SearchResultSkeleton } from "@/components/ui/Skeleton";
 import { exhibitionData } from "../../data/exhibitionsDataStorage";
 import searchService from "../../services/searchService";
+import { Text, Container } from "../../design-system";
+import { SearchStyles } from "../../design-system/styles";
+import TopBar from "@/components/ui/TopBar";
 
-const { width: screenWidth } = Dimensions.get("window");
+// 인기 검색어 데이터
+const popularSearchTerms = [
+  "모다갤러리",
+  "미셀 앙리",
+  "위대한 컬러리스트",
+  "캐서린 번하드전",
+  "톰삭스전",
+  "카포디몬테",
+  "김창열",
+  "요하네스버그",
+  "마르크샤갈 특별전",
+  "요시고 사진전",
+];
 
 // 임시 검색 데이터
 const mockExhibitions = [
@@ -146,12 +143,6 @@ export default function SearchScreen() {
   const [apiResults, setApiResults] = useState<any[]>([]);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // 애니메이션 값들
-  const searchInputScale = useRef(new Animated.Value(1)).current;
-  const searchContainerOpacity = useRef(new Animated.Value(0)).current;
-  const resultsOpacity = useRef(new Animated.Value(0)).current;
-  const searchIconRotation = useRef(new Animated.Value(0)).current;
-
   // 검색 기록 로드
   useEffect(() => {
     loadSearchHistory();
@@ -166,22 +157,6 @@ export default function SearchScreen() {
       });
     }
   }, [showHistory, searchHistory]);
-
-  // 컴포넌트 마운트 시 애니메이션
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(searchContainerOpacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(resultsOpacity, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   // 검색 기록 로드 함수
   const loadSearchHistory = async () => {
@@ -246,36 +221,17 @@ export default function SearchScreen() {
     }
   };
 
-  // 검색 입력 포커스 애니메이션
+  // 검색 입력 포커스 처리
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
     setShowHistory(true);
-    Animated.parallel([
-      Animated.timing(searchInputScale, {
-        toValue: 1.02,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
   };
 
-  // 검색 입력 블러 애니메이션
+  // 검색 입력 블러 처리
   const handleSearchBlur = () => {
     setIsSearchFocused(false);
     // 검색 기록 클릭을 위해 지연 시간을 늘림
     setTimeout(() => setShowHistory(false), 500);
-    Animated.parallel([
-      Animated.timing(searchInputScale, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(searchIconRotation, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
   };
 
   // 검색 및 필터링 함수
@@ -352,648 +308,87 @@ export default function SearchScreen() {
   // 기존 executeSearch 함수 내에 아래 코드 추가
   // fetchSearchResults(query);
 
-  // 검색 결과 아이템 렌더링
-  const renderSearchResult = ({
-    item,
-    index,
-  }: {
-    item: any;
-    index: number;
-  }) => {
-    return (
-      <Animated.View
-        style={{
-          opacity: resultsOpacity,
-          transform: [
-            {
-              translateY: resultsOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0],
-              }),
-            },
-          ],
-        }}>
-        <TouchableOpacity
-          style={[
-            styles.resultItem,
-            { backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff" },
-          ]}
-          onPress={(e) => {
-            // 이벤트 전파 방지
-            e?.stopPropagation?.();
-            router.push(`/exhibition/${item.id}` as any);
-          }}
-          activeOpacity={0.7}>
-          <View style={styles.resultImage}>
-            <Image
-              source={item.image}
-              style={styles.imagePlaceholder}
-              resizeMode='cover'
-            />
-          </View>
-          <View style={styles.resultInfo}>
-            <View style={styles.resultHeader}>
-              <Text
-                style={[
-                  styles.resultTitle,
-                  { color: theme === "dark" ? "#fff" : "#1c3519" },
-                ]}>
-                {item.title}
-              </Text>
-              <View
-                style={[
-                  styles.categoryTag,
-                  {
-                    backgroundColor: "#4CAF50",
-                  },
-                ]}>
-                <Text style={styles.categoryText}>{item.category}</Text>
-              </View>
-            </View>
-            <Text
-              style={[
-                styles.resultLocation,
-                { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}>
-              📍 {item.location}
-            </Text>
-            <Text
-              style={[
-                styles.resultDate,
-                { color: theme === "dark" ? "#ccc" : "#666" },
-              ]}>
-              📅 {item.date}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
-
-  const renderMuseumInfo = () => {
-    if (!selectedMuseum) return null;
-
-    return (
-      <View style={styles.museumContainer}>
-        <TouchableOpacity
-          style={styles.museumButton}
-          onPress={(e) => {
-            // 이벤트 전파 방지
-            e?.stopPropagation?.();
-            // 박물관 상세 페이지로 이동 (탭 내부)
-            router.push(
-              `/(tabs)/museum/${encodeURIComponent(selectedMuseum.name)}` as any
-            );
-          }}
-          activeOpacity={0.7}>
-          <View style={styles.museumHeader}>
-            <Image
-              source={require("../../assets/images/museumBackground/bg1.jpg")}
-              style={styles.museumImage}
-            />
-            <View style={styles.museumInfo}>
-              <Text style={styles.museumName}>{selectedMuseum.name}</Text>
-              <Text style={styles.museumAddress}>{selectedMuseum.address}</Text>
-              <Text style={styles.museumPhone}>{selectedMuseum.phone}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <Text style={styles.exhibitionSectionTitle}>
-          현재 전시 ({selectedMuseum.exhibitions.length}개)
-        </Text>
-
-        {selectedMuseum.exhibitions.map((exhibition: any) => (
-          <TouchableOpacity
-            key={exhibition.id}
-            style={styles.exhibitionItem}
-            onPress={(e) => {
-              // 이벤트 전파 방지
-              e?.stopPropagation?.();
-              router.push(`/exhibition/${exhibition.id}` as any);
-            }}
-            activeOpacity={0.7}>
-            <Image
-              source={exhibition.image}
-              style={styles.exhibitionImage}
-            />
-            <View style={styles.exhibitionInfo}>
-              <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
-              <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 20,
-      paddingTop: 20,
-    },
-    searchContainer: {
-      marginBottom: 20,
-      alignItems: "center",
-    },
-    searchInputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: "100%",
-      maxWidth: screenWidth * 0.9,
-    },
-    searchInput: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      borderRadius: 25,
-      paddingHorizontal: 20,
-      paddingVertical: 15,
-      fontSize: 16,
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
-      borderWidth: isSearchFocused ? 2 : 0,
-      borderColor: "#1c3519",
-    },
-    searchIcon: {
-      position: "absolute",
-      right: 15,
-      zIndex: 1,
-    },
-    clearButton: {
-      position: "absolute",
-      right: 15,
-      zIndex: 1,
-    },
-    resultsContainer: {
-      flex: 1,
-    },
-    resultsTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 15,
-    },
-    resultItem: {
-      flexDirection: "row",
-      padding: 16,
-      marginBottom: 12,
-      borderRadius: 12,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    resultImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      backgroundColor: "#f0f0f0",
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: 16,
-    },
-    imagePlaceholder: {
-      width: "100%",
-      height: "100%",
-      borderRadius: 8,
-    },
-    resultInfo: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    resultHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: 4,
-    },
-    resultTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      flex: 1,
-      marginRight: 8,
-    },
-    categoryTag: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 12,
-    },
-    categoryText: {
-      fontSize: 12,
-      color: "#fff",
-      fontWeight: "600",
-    },
-    resultLocation: {
-      fontSize: 14,
-      marginBottom: 2,
-    },
-    resultDate: {
-      fontSize: 14,
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    emptyText: {
-      fontSize: 16,
-      color: theme === "dark" ? "#ccc" : "#666",
-      textAlign: "center",
-    },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    loadingText: {
-      fontSize: 16,
-      color: theme === "dark" ? "#ccc" : "#666",
-      marginTop: 10,
-    },
-    historyItem: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingVertical: 12,
-      paddingHorizontal: 15,
-      borderRadius: 8,
-      marginBottom: 8,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      borderWidth: 1,
-      borderColor: theme === "dark" ? "#444" : "#e0e0e0",
-      minHeight: 50,
-    },
-    historyContent: {
-      flexDirection: "row",
-      alignItems: "center",
-      flex: 1,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-    },
-    historyText: {
-      marginLeft: 8,
-      fontSize: 14,
-    },
-    historyContainer: {
-      marginTop: 20,
-      paddingHorizontal: 10,
-      paddingBottom: 10,
-    },
-    historyHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 10,
-    },
-    historyTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
-    },
-    museumContainer: {
-      marginTop: 20,
-    },
-    museumButton: {
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 15,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    museumHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    museumImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      marginRight: 16,
-    },
-    museumInfo: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    museumName: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 4,
-    },
-    museumAddress: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-      marginBottom: 2,
-    },
-    museumPhone: {
-      fontSize: 12,
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-    exhibitionSectionTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 10,
-    },
-    exhibitionItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#eee",
-    },
-    exhibitionImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      marginRight: 15,
-    },
-    exhibitionInfo: {
-      flex: 1,
-    },
-    exhibitionTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 2,
-    },
-    exhibitionDate: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-    deleteButton: {
-      padding: 8,
-      borderRadius: 4,
-      backgroundColor: theme === "dark" ? "#444" : "#f0f0f0",
-      minWidth: 32,
-      minHeight: 32,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  });
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    setSearchResults([]);
-    setShowHistory(true);
-    Keyboard.dismiss();
-  };
-
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        // 키보드만 내리고 검색 기록창은 유지
-        Keyboard.dismiss();
-        // 검색 기록창이 열려있고 검색어가 비어있다면 유지
-        if (showHistory || searchQuery.trim() === "") {
-          // 아무것도 하지 않음 - 검색 기록창 유지
-        }
-      }}>
-      <View style={styles.container}>
-        <TopBar />
-        <Animated.View
-          style={[styles.content, { opacity: searchContainerOpacity }]}>
-          {/* 검색바 */}
-          <View style={styles.searchContainer}>
-            <Animated.View
-              style={[
-                styles.searchInputContainer,
-                { transform: [{ scale: searchInputScale }] },
-              ]}>
-              <TextInput
-                style={styles.searchInput}
-                placeholder='전시를 검색해보세요'
-                placeholderTextColor={theme === "dark" ? "#999" : "#999"}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
-                returnKeyType='search'
-                autoCapitalize='none'
-                autoCorrect={false}
-                onSubmitEditing={() => {
-                  if (searchQuery.trim()) {
-                    setIsSearchFocused(false);
-                    setShowHistory(false);
-                    executeSearch(searchQuery);
-                  }
-                }}
-              />
-              {searchQuery.length > 0 ? (
-                <TouchableOpacity
-                  style={styles.clearButton}
-                  onPress={clearSearch}
-                  activeOpacity={0.7}>
-                  <Ionicons
-                    name='close-circle'
-                    size={20}
-                    color={theme === "dark" ? "#ccc" : "#666"}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <Animated.View
-                  style={[
-                    styles.searchIcon,
-                    {
-                      transform: [
-                        {
-                          rotate: searchIconRotation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ["0deg", "90deg"],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}>
-                  <Ionicons
-                    name='search'
-                    size={20}
-                    color={theme === "dark" ? "#ccc" : "#666"}
-                  />
-                </Animated.View>
-              )}
-            </Animated.View>
+    <View style={SearchStyles.container}>
+      {/* 상단 바 */}
+      <TopBar />
+
+      {/* 검색 입력 필드 */}
+      <View style={SearchStyles.searchInputSection}>
+        <TouchableOpacity style={SearchStyles.backButton}>
+          <Ionicons
+            name='arrow-back'
+            size={24}
+            color='#666'
+          />
+        </TouchableOpacity>
+        <View style={SearchStyles.searchInputContainer}>
+          <TextInput
+            style={SearchStyles.searchInput}
+            placeholder='관심있는 전시를 검색해보세요'
+            placeholderTextColor='#999'
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}
+            returnKeyType='search'
+            autoCapitalize='none'
+            autoCorrect={false}
+            onSubmitEditing={() => {
+              if (searchQuery.trim()) {
+                setIsSearchFocused(false);
+                setShowHistory(false);
+                executeSearch(searchQuery);
+              }
+            }}
+          />
+          <Ionicons
+            name='search'
+            size={20}
+            color='#999'
+            style={SearchStyles.searchInputIcon}
+          />
+        </View>
+      </View>
+
+      {/* 인기 검색어 섹션 */}
+      <View style={SearchStyles.popularSection}>
+        <Text style={SearchStyles.popularTitle}>인기 검색어</Text>
+        <View style={SearchStyles.popularDivider} />
+        <View style={SearchStyles.popularGrid}>
+          {/* 왼쪽 컬럼 (1-5번) */}
+          <View style={SearchStyles.popularColumn}>
+            {popularSearchTerms.slice(0, 5).map((term, index) => (
+              <TouchableOpacity
+                key={index}
+                style={SearchStyles.popularItem}
+                onPress={() => {
+                  setSearchQuery(term);
+                  executeSearch(term);
+                }}>
+                <Text style={SearchStyles.popularNumber}>{index + 1}.</Text>
+                <Text style={SearchStyles.popularText}>{term}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          {/* 로딩 상태 */}
-          {isLoading && (
-            <View style={styles.loadingContainer}>
-              <SearchResultSkeleton />
-            </View>
-          )}
-
-          {/* API 에러 메시지 */}
-          {apiError && (
-            <View style={{ padding: 16 }}>
-              <Text style={{ color: "red", textAlign: "center" }}>
-                {apiError}
-              </Text>
-            </View>
-          )}
-
-          {/* API 검색 결과 */}
-          {!isLoading && apiResults.length > 0 && (
-            <FlatList
-              data={apiResults}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    padding: 16,
-                    borderBottomWidth: 1,
-                    borderColor: "#eee",
-                  }}>
-                  <Text style={{ fontSize: 16 }}>{item.title}</Text>
-                </View>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={{ paddingBottom: 20 }}
-            />
-          )}
-
-          {/* 검색 기록 */}
-          {showHistory &&
-          searchHistory.length > 0 &&
-          (isSearchFocused || searchQuery.trim() === "") ? (
-            <View style={styles.historyContainer}>
-              <View style={styles.historyHeader}>
-                <Text
-                  style={[
-                    styles.historyTitle,
-                    { color: theme === "dark" ? "#fff" : "#1c3519" },
-                  ]}>
-                  최근 검색어 ({searchHistory.length}개)
-                </Text>
-                <TouchableOpacity
-                  onPress={clearAllSearchHistory}
-                  activeOpacity={0.7}>
-                  <Text
-                    style={{
-                      color: theme === "dark" ? "#ccc" : "#666",
-                      fontSize: 12,
-                    }}>
-                    전체 삭제
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps='handled'>
-                {searchHistory.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.historyItem}
-                    onPress={() => {
-                      console.log("🔍 === 검색 기록 클릭됨! ===");
-                      console.log("📝 클릭된 검색어:", item);
-
-                      // 검색어 설정
-                      setSearchQuery(item);
-
-                      // 검색 실행 후 포커스 해제하여 검색 결과 표시
-                      setIsSearchFocused(false);
-                      setShowHistory(false);
-
-                      // 즉시 검색 실행
-                      executeSearch(item);
-                    }}
-                    activeOpacity={0.7}>
-                    <View style={styles.historyContent}>
-                      <Ionicons
-                        name='time-outline'
-                        size={16}
-                        color={theme === "dark" ? "#ccc" : "#666"}
-                      />
-                      <Text
-                        style={[
-                          styles.historyText,
-                          { color: theme === "dark" ? "#fff" : "#1c3519" },
-                        ]}>
-                        {item}
-                      </Text>
-                    </View>
-
-                    <TouchableOpacity
-                      style={styles.deleteButton}
-                      onPress={(e) => {
-                        // 이벤트 버블링 방지
-                        e.stopPropagation();
-
-                        console.log("🗑️ === 삭제 버튼 클릭 ===");
-                        deleteSearchHistory(item);
-                      }}
-                      activeOpacity={0.7}>
-                      <Ionicons
-                        name='close'
-                        size={16}
-                        color={theme === "dark" ? "#ccc" : "#666"}
-                      />
-                    </TouchableOpacity>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          ) : null}
-
-          {/* 검색 결과 */}
-          {!isLoading &&
-            !isSearchFocused &&
-            (selectedMuseum || searchResults.length > 0) && (
-              <Animated.View
-                style={[styles.resultsContainer, { opacity: resultsOpacity }]}>
-                {selectedMuseum
-                  ? renderMuseumInfo()
-                  : searchResults.length > 0 && (
-                      <FlatList
-                        data={searchResults}
-                        renderItem={renderSearchResult}
-                        keyExtractor={(item) => item.id}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 20 }}
-                        keyboardShouldPersistTaps='handled'
-                      />
-                    )}
-              </Animated.View>
-            )}
-
-          {/* 검색 결과가 없을 때만 빈 상태 표시 */}
-          {!isLoading &&
-            !isSearchFocused &&
-            !selectedMuseum &&
-            searchResults.length === 0 &&
-            searchQuery.trim().length > 0 && (
-              <View style={styles.emptyContainer}>
-                <Ionicons
-                  name='search-outline'
-                  size={60}
-                  color={theme === "dark" ? "#ccc" : "#666"}
-                />
-                <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
-              </View>
-            )}
-        </Animated.View>
+          {/* 오른쪽 컬럼 (6-10번) */}
+          <View style={SearchStyles.popularColumn}>
+            {popularSearchTerms.slice(5, 10).map((term, index) => (
+              <TouchableOpacity
+                key={index + 5}
+                style={SearchStyles.popularItem}
+                onPress={() => {
+                  setSearchQuery(term);
+                  executeSearch(term);
+                }}>
+                <Text style={SearchStyles.popularNumber}>{index + 6}.</Text>
+                <Text style={SearchStyles.popularText}>{term}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 }

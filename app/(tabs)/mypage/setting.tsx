@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
-  StyleSheet,
   Switch,
   ScrollView,
   Pressable,
@@ -17,6 +15,10 @@ import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
 import { removeStoredToken } from "../../../services/authService";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage"; // Import exhibitionData
+import { Text, Container } from "../../../design-system";
+import { SettingStyles } from "../../../design-system/styles";
+import { Colors } from "../../../design-system/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function MyPageSettingScreen() {
   const router = useRouter();
@@ -26,8 +28,6 @@ export default function MyPageSettingScreen() {
     useExhibition();
   const { logout, userInfo } = useAuth();
 
-  // 다크모드 스타일 동적 적용
-  const dynamicStyles = getStyles(theme);
   const [visitedCount, setVisitedCount] = useState(0);
 
   React.useEffect(() => {
@@ -69,8 +69,8 @@ export default function MyPageSettingScreen() {
   };
 
   const renderSection = (title: string, children: React.ReactNode) => (
-    <View style={dynamicStyles.section}>
-      <Text style={dynamicStyles.sectionTitle}>{title}</Text>
+    <View style={SettingStyles.section}>
+      <Text style={SettingStyles.sectionTitle}>{title}</Text>
       {children}
     </View>
   );
@@ -82,30 +82,37 @@ export default function MyPageSettingScreen() {
     showArrow: boolean = true
   ) => (
     <Pressable
-      style={dynamicStyles.menuItem}
+      style={SettingStyles.menuItem}
       onPress={onPress}
-      disabled={!onPress}
-    >
-      <View style={dynamicStyles.menuItemLeft}>
+      disabled={!onPress}>
+      <View style={SettingStyles.menuItemLeft}>
         <Ionicons
           name={icon}
           size={24}
-          color={theme === "dark" ? "#fff" : "#1c3519"}
+          color={Colors.primary.main}
         />
-        <View style={dynamicStyles.menuItemText}>
-          <Text style={dynamicStyles.menuItemTitle}>{title}</Text>
+        <View style={SettingStyles.menuItemText}>
+          <Text style={SettingStyles.menuItemTitle}>{title}</Text>
           {subtitle && (
-            <Text style={dynamicStyles.menuItemSubtitle}>{subtitle}</Text>
+            <Text style={SettingStyles.menuItemSubtitle}>{subtitle}</Text>
           )}
         </View>
       </View>
-      {showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />}
+      {showArrow && (
+        <Ionicons
+          name='chevron-forward'
+          size={20}
+          color='#ccc'
+        />
+      )}
     </Pressable>
   );
 
   return (
-    <View style={dynamicStyles.container}>
-      <ScrollView style={dynamicStyles.scrollView} pointerEvents="auto">
+    <Container style={SettingStyles.container}>
+      <ScrollView
+        style={SettingStyles.scrollView}
+        pointerEvents='auto'>
         {renderSection(
           "전시 관리",
           <View>
@@ -138,21 +145,21 @@ export default function MyPageSettingScreen() {
         {renderSection(
           "설정",
           <View>
-            <View style={dynamicStyles.menuItem}>
-              <View style={dynamicStyles.menuItemLeft}>
+            <View style={SettingStyles.menuItem}>
+              <View style={SettingStyles.menuItemLeft}>
                 <Ionicons
-                  name="moon"
+                  name='moon'
                   size={24}
-                  color={theme === "dark" ? "#fff" : "#1c3519"}
+                  color={Colors.primary.main}
                 />
-                <View style={dynamicStyles.menuItemText}>
-                  <Text style={dynamicStyles.menuItemTitle}>다크모드</Text>
+                <View style={SettingStyles.menuItemText}>
+                  <Text style={SettingStyles.menuItemTitle}>다크모드</Text>
                 </View>
               </View>
               <Switch
                 value={theme === "dark"}
                 onValueChange={(value) => setTheme(value ? "dark" : "light")}
-                trackColor={{ false: "#ccc", true: "#1c3519" }}
+                trackColor={{ false: "#ccc", true: Colors.primary.main }}
                 thumbColor={theme === "dark" ? "#fff" : "#f4f3f4"}
               />
             </View>
@@ -178,59 +185,6 @@ export default function MyPageSettingScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </Container>
   );
 }
-
-function getStyles(theme: ThemeType) {
-  return StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#f5f5f5",
-      marginTop: 35,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    section: {
-      marginBottom: 20,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginHorizontal: 20,
-      marginVertical: 10,
-    },
-    menuItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      paddingHorizontal: 20,
-      paddingVertical: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
-    },
-    menuItemLeft: {
-      flexDirection: "row",
-      alignItems: "center",
-      flex: 1,
-    },
-    menuItemText: {
-      marginLeft: 15,
-      flex: 1,
-    },
-    menuItemTitle: {
-      fontSize: 16,
-      color: theme === "dark" ? "#fff" : "#1c3519",
-    },
-    menuItemSubtitle: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-      marginTop: 2,
-    },
-  });
-}
-
-import AsyncStorage from "@react-native-async-storage/async-storage";

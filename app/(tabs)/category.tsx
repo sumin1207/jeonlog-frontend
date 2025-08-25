@@ -1,42 +1,19 @@
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import TopBar from "@/components/ui/TopBar";
-import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Text, Container, Row } from "../../design-system";
+import { CategoryStyles } from "../../design-system/styles";
 
 export default function CategoryScreen() {
-  const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState("장르별");
   const router = useRouter();
+  const { theme } = useTheme();
+  const [activeTab, setActiveTab] = useState("지역별");
 
-  const tabs = ["장르별", "성격별", "지역별"];
+  const tabs = ["지역별", "장르별", "성향별"];
 
-  const genreData = [
-    "현대미술",
-    "회화",
-    "사진",
-    "조각/설치",
-    "디지털아트",
-    "일러스트/그래픽",
-    "패션/텍스타일",
-    "건축/디자인",
-    "공예/도예",
-    "해외명화/고전미술",
-  ];
-
-  // 성격별 데이터
-  const personalityData = ["차분한", "역동적인", "로맨틱한", "고전적인"];
-
-  // 지역별 데이터
   const regionData = [
-    "강남, 서초, 양재",
-    "잠실, 송파, 강동",
+    "강남, 서초, 송파",
     "동작, 관악, 사당",
     "마포, 서대문, 은평",
     "강북, 노원, 도봉",
@@ -45,70 +22,27 @@ export default function CategoryScreen() {
     "영등포, 강서, 양천",
   ];
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffffff",
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 20,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginTop: 45,
-      marginBottom: 6,
-    },
-    // 탭 스타일
-    tabContainer: {
-      flexDirection: "row",
-      marginBottom: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#e0e0e0",
-    },
-    tab: {
-      flex: 1,
-      paddingVertical: 15,
-      alignItems: "center",
-    },
-    tabText: {
-      fontSize: 16,
-      fontWeight: "500",
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
-    activeTabText: {
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      fontWeight: "600",
-    },
-    activeTabIndicator: {
-      position: "absolute",
-      bottom: -1,
-      left: 0,
-      right: 0,
-      height: 2,
-      backgroundColor: "#1c3519",
-    },
-    // 카테고리 버튼 스타일
-    categoryButton: {
-      paddingVertical: 20,
-      paddingHorizontal: 20,
-      marginBottom: 12,
-      borderRadius: 12,
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#ffffff",
-      borderWidth: 1,
-      borderColor: theme === "dark" ? "#333" : "#e0e0e0",
-      minHeight: 60,
-      justifyContent: "center",
-    },
-    categoryText: {
-      fontSize: 16,
-      fontWeight: "500",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      textAlign: "center",
-    },
-  });
+  const genreData = [
+    "회화",
+    "조각",
+    "설치",
+    "미디어아트",
+    "사진",
+    "공예",
+    "건축",
+    "디자인",
+  ];
+
+  const personalityData = [
+    "감성적",
+    "지적",
+    "실용적",
+    "창의적",
+    "전통적",
+    "현대적",
+    "자연친화적",
+    "도시적",
+  ];
 
   const handleCategoryPress = (categoryName: string) => {
     const type = activeTab === "지역별" ? "region" : "personality";
@@ -122,11 +56,10 @@ export default function CategoryScreen() {
   const renderCategoryButton = (categoryName: string) => (
     <TouchableOpacity
       key={categoryName}
-      style={styles.categoryButton}
+      style={CategoryStyles.categoryButton}
       onPress={() => handleCategoryPress(categoryName)}
-      activeOpacity={0.7}
-    >
-      <Text style={styles.categoryText}>{categoryName}</Text>
+      activeOpacity={0.7}>
+      <Text style={CategoryStyles.categoryText}>{categoryName}</Text>
     </TouchableOpacity>
   );
 
@@ -138,28 +71,28 @@ export default function CategoryScreen() {
       : personalityData;
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>카테고리</Text>
+    <Container style={CategoryStyles.container}>
+      <ScrollView style={CategoryStyles.content}>
+        <Text style={CategoryStyles.title}>카테고리</Text>
 
         {/* 탭 네비게이션 */}
-        <View style={styles.tabContainer}>
+        <View style={CategoryStyles.tabContainer}>
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
-              style={styles.tab}
+              style={CategoryStyles.tab}
               onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}
-            >
+              activeOpacity={0.7}>
               <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
-                ]}
-              >
+                style={{
+                  ...CategoryStyles.tabText,
+                  ...(activeTab === tab ? CategoryStyles.activeTabText : {}),
+                }}>
                 {tab}
               </Text>
-              {activeTab === tab && <View style={styles.activeTabIndicator} />}
+              {activeTab === tab && (
+                <View style={CategoryStyles.activeTabIndicator} />
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -167,6 +100,6 @@ export default function CategoryScreen() {
         {/* 카테고리 버튼들 */}
         {currentData.map(renderCategoryButton)}
       </ScrollView>
-    </View>
+    </Container>
   );
 }

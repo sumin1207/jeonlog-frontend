@@ -1,18 +1,13 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, TouchableOpacity, ScrollView, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
+import { Text, Button, Container, Row, Column } from "../../../design-system";
+import { MyPageStyles } from "../../../design-system/styles";
 
 export default function MyPageScreen() {
   const router = useRouter();
@@ -31,49 +26,47 @@ export default function MyPageScreen() {
     )}`;
   };
 
-  const styles = getStyles(theme);
-
-  // 로그인 체크 로직 (주석 처리된 부분을 활성화)
-  if (!isLoggedIn || !userInfo) {
-    console.log(
-      "🔍 MyPage: 로그인 필요 - isLoggedIn:",
-      isLoggedIn,
-      "userInfo:",
-      userInfo
-    );
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>마이페이지</Text>
-        </View>
-        <View style={styles.loginRequiredContainer}>
-          <Ionicons
-            name='person-circle-outline'
-            size={80}
-            color='#ccc'
-          />
-          <Text style={styles.loginRequiredTitle}>로그인이 필요합니다</Text>
-          <Text style={styles.loginRequiredSubtitle}>
-            마이페이지를 이용하려면 로그인해주세요
-          </Text>
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => router.push("/")}>
-            <Text style={styles.loginButtonText}>로그인 하러가기</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
+  // 로그인 api 연동되면 나중에 수정
+  // if (!isLoggedIn || !userInfo) {
+  //   console.log(
+  //     "🔍 MyPage: 로그인 필요 - isLoggedIn:",
+  //     isLoggedIn,
+  //     "userInfo:",
+  //     userInfo
+  //   );
+  //   return (
+  //     <Container style={MyPageStyles.container}>
+  //       <View style={MyPageStyles.header}>
+  //         <Text variant="h3">마이페이지</Text>
+  //       </View>
+  //       <View style={MyPageStyles.loginRequiredContainer}>
+  //         <Ionicons
+  //           name='person-circle-outline'
+  //           size={80}
+  //           color='#ccc'
+  //         />
+  //         <Text variant="h2">로그인이 필요합니다</Text>
+  //         <Text variant="body">
+  //           마이페이지를 이용하려면 로그인해주세요
+  //         </Text>
+  //         <Button
+  //           title="로그인 하러가기"
+  //           onPress={() => router.push("/")}
+  //           variant="primary"
+  //         />
+  //       </View>
+  //     </Container>
+  //   );
+  // }
 
   console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>마이페이지</Text>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.topButton}>
+    <Container style={MyPageStyles.container}>
+      <View style={MyPageStyles.header}>
+        <Text variant='h3'>마이페이지</Text>
+        <Row style={MyPageStyles.headerIcons}>
+          <TouchableOpacity style={MyPageStyles.topButton}>
             <Ionicons
               name='notifications-outline'
               size={28}
@@ -81,7 +74,7 @@ export default function MyPageScreen() {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.topButton}
+            style={MyPageStyles.topButton}
             onPress={() => router.push("/mypage/setting")}>
             <Ionicons
               name='settings-outline'
@@ -89,55 +82,57 @@ export default function MyPageScreen() {
               color='#000'
             />
           </TouchableOpacity>
-        </View>
+        </Row>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.profileSection}>
-          <View style={styles.avatar}>
+      <ScrollView style={MyPageStyles.scrollView}>
+        <Row style={MyPageStyles.profileSection}>
+          <View style={MyPageStyles.avatar}>
             <Ionicons
               name='person'
               size={40}
               color='#666'
             />
           </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>
-              {userInfo?.name ?? "석준's 전시라이프"}
-            </Text>
-            <Text style={styles.profileBio}>안녕하세요 저는 전린이입니다.</Text>
-          </View>
-        </View>
+          <Column style={MyPageStyles.profileInfo}>
+            <Text variant='h4'>{userInfo?.name ?? "석준's 전시라이프"}</Text>
+            <Text variant='caption'>안녕하세요 저는 전린이입니다.</Text>
+          </Column>
+        </Row>
 
-        <View style={styles.buttonsSection}>
-          <View style={styles.mainButtonsWrapper}>
-            <TouchableOpacity style={styles.actionButton}>
-              <Text style={styles.actionButtonText}>프로필 수정</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, { marginLeft: 10 }]}
+        <Row style={MyPageStyles.buttonsSection}>
+          <Row style={MyPageStyles.mainButtonsWrapper}>
+            <Button
+              title='프로필 수정'
+              onPress={() => {}}
+              variant='secondary'
+              style={{ flex: 1 }}
+            />
+            <Button
+              title='저장한 전시'
               onPress={() =>
                 router.push("/(tabs)/mypage/exhibition/Bookmarked")
-              }>
-              <Text style={styles.actionButtonText}>저장한 전시</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={styles.iconButton}>
+              }
+              variant='secondary'
+              style={{ flex: 1, marginLeft: 10 }}
+            />
+          </Row>
+          <TouchableOpacity style={MyPageStyles.iconButton}>
             <Ionicons
               name='person-outline'
               size={19}
               color='#000'
             />
           </TouchableOpacity>
-        </View>
+        </Row>
 
-        <View style={styles.divider} />
+        <View style={MyPageStyles.divider} />
 
-        <View style={styles.logsSection}>
-          <Text style={styles.logsTitle}>
-            나의 전시 기록들 ({myLogs.length})
-          </Text>
-          <View style={styles.recordsGrid}>
+        <Column style={MyPageStyles.logsSection}>
+          <Text variant='h4'>나의 전시 기록들 ({myLogs.length})</Text>
+          <Row
+            style={MyPageStyles.recordsGrid}
+            wrap>
             {myLogs.length > 0 ? (
               myLogs.map((log) => {
                 const exhibitionId = log.exhibitionId || log.id;
@@ -151,190 +146,35 @@ export default function MyPageScreen() {
                 return (
                   <TouchableOpacity
                     key={log.id}
-                    style={styles.logCard}
+                    style={MyPageStyles.logCard}
                     onPress={() => {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
                     }}>
                     <Image
                       source={exhibition.image}
-                      style={styles.logImage}
+                      style={MyPageStyles.logImage}
                     />
                     <Text
-                      style={styles.logTitle}
-                      numberOfLines={1}>
+                      variant='caption'
+                      align='center'
+                      style={MyPageStyles.logTitle}>
                       {exhibition.title}
                     </Text>
                   </TouchableOpacity>
                 );
               })
             ) : (
-              <View style={styles.emptyRecords}>
-                <Text style={styles.emptyText}>
+              <Column style={MyPageStyles.emptyRecords}>
+                <Text
+                  variant='body'
+                  color='secondary'>
                   작성한 전시 기록이 없습니다
                 </Text>
-              </View>
+              </Column>
             )}
-          </View>
-        </View>
+          </Row>
+        </Column>
       </ScrollView>
-    </View>
+    </Container>
   );
 }
-
-const getStyles = (theme: ThemeType) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-    },
-    header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingTop: 50,
-      paddingBottom: 10,
-      paddingHorizontal: 20,
-      borderBottomWidth: 1,
-      borderBottomColor: "#f0f0f0",
-    },
-    headerTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-    },
-    headerIcons: {
-      flexDirection: "row",
-    },
-    topButton: {
-      marginLeft: 16,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    profileSection: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 20,
-      paddingVertical: 20,
-    },
-    avatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: "#f0f0f0",
-      marginRight: 15,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    profileInfo: {
-      flex: 1,
-    },
-    profileName: {
-      fontSize: 19,
-      fontWeight: "bold",
-    },
-    profileBio: {
-      fontSize: 13,
-      color: "#555",
-      marginTop: 6,
-    },
-    buttonsSection: {
-      flexDirection: "row",
-      paddingHorizontal: 20,
-      marginBottom: 25,
-      alignItems: "center",
-    },
-    mainButtonsWrapper: {
-      flex: 1,
-      flexDirection: "row",
-      marginRight: 10,
-    },
-    actionButton: {
-      flex: 1,
-      backgroundColor: "#f0f0f0",
-      borderRadius: 8,
-      paddingVertical: 7.7,
-      alignItems: "center",
-    },
-    actionButtonText: {
-      fontSize: 14,
-      fontWeight: "500",
-      color: "#333",
-    },
-    iconButton: {
-      backgroundColor: "#f0f0f0",
-      borderRadius: 8,
-      padding: 8,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    divider: {
-      height: 10,
-      backgroundColor: "#f5f5f5",
-    },
-    logsSection: {
-      padding: 20,
-    },
-    logsTitle: {
-      fontSize: 17,
-      fontWeight: "bold",
-      marginBottom: 15,
-    },
-    recordsGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    logCard: {
-      width: "48%",
-      marginBottom: 20,
-    },
-    logImage: {
-      width: "100%",
-      height: 220,
-      borderRadius: 8,
-    },
-    logTitle: {
-      marginTop: 8,
-      fontSize: 13,
-      color: "#333",
-      textAlign: "center",
-    },
-    emptyRecords: {
-      width: "100%",
-      alignItems: "center",
-      paddingVertical: 40,
-    },
-    emptyText: {
-      fontSize: 16,
-      color: "#888",
-    },
-    loginRequiredContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingHorizontal: 20,
-    },
-    loginRequiredTitle: {
-      fontSize: 22,
-      fontWeight: "bold",
-      marginTop: 20,
-      marginBottom: 10,
-    },
-    loginRequiredSubtitle: {
-      fontSize: 16,
-      color: "#666",
-      textAlign: "center",
-      marginBottom: 30,
-    },
-    loginButton: {
-      backgroundColor: "#1e90ff",
-      paddingVertical: 15,
-      paddingHorizontal: 40,
-      borderRadius: 8,
-    },
-    loginButtonText: {
-      color: "#fff",
-      fontSize: 16,
-      fontWeight: "bold",
-    },
-  });
