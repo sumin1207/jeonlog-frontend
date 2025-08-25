@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { style as getThemedStyle } from "./Home.styles"; // Import styles from Home.styles.ts
 import { Colors } from "@/design-system/theme";
+import { Spacing } from "@/design-system/theme";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -50,6 +51,7 @@ export default function HomeScreen() {
 
   // 추천 데이터
   const getRecommendationData = () => {
+    //mock data (나중에 실제 데이터로 교체)
     if (activeTab === "전체") {
       return [
         {
@@ -284,36 +286,21 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return (
-      <View style={style.container}>
-        <TopBar />
-        <ScrollView style={style.content}>
-          <Text style={style.title}>요즘 뜨고 있는 전시</Text>
-          <View style={style.skeletonContainer}>
-            <ExhibitionCardSkeleton style={style.skeletonItem} />
-            <ExhibitionCardSkeleton style={style.skeletonItem} />
-            <ExhibitionCardSkeleton style={style.skeletonItem} />
-            <ExhibitionCardSkeleton style={style.skeletonItem} />
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-
   return (
     <View style={style.container}>
       <TopBar />
       <ScrollView
         style={style.content}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Spacing.xxl }}>
         {/* 기존 콘텐츠 */}
-        <Text style={style.title}>요즘 뜨고 있는 전시</Text>
+        <Text style={style.title1}>요즘 뜨고 있는 전시</Text>
         <HorizontalSliding />
 
-        <Text style={style.title}>나를 위한 전시 추천</Text>
+        <Text style={style.title1}>나를 위한 전시 추천</Text>
         <RecommendForYou />
 
+        <Text style={style.title2}>전시 둘러보기</Text>
         {/* 탭 네비게이션 */}
         <View style={style.tabContainer}>
           {tabs.map((tab) => (
@@ -369,13 +356,15 @@ export default function HomeScreen() {
         )}
 
         {/* 추천 카드 목록 */}
-        <FlatList
-          data={getRecommendationData()}
-          renderItem={renderRecommendationCard}
-          keyExtractor={(item) => item.id}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={{ marginTop: Spacing.md }}>
+          <FlatList
+            data={getRecommendationData()}
+            renderItem={renderRecommendationCard}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
       </ScrollView>
     </View>
   );

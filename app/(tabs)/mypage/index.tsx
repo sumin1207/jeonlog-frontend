@@ -33,8 +33,6 @@ export default function MyPageScreen() {
 
   const styles = getStyles(theme);
 
-  console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
-
   return (
     <View style={styles.container}>
       {/* 상단 헤더 */}
@@ -188,7 +186,7 @@ const getStyles = (theme: ThemeType) =>
     },
     profileSection: {
       paddingHorizontal: 20,
-      marginBottom: 20,
+      marginBottom: 8,
     },
     profileInfo: {
       flexDirection: "row",
@@ -238,20 +236,20 @@ const getStyles = (theme: ThemeType) =>
       marginLeft: 8,
     },
     divider: {
-      height: 1,
+      height: 3,
       backgroundColor: "#E5E5E5",
       marginHorizontal: 20,
-      marginVertical: 15,
+      marginVertical: 10,
     },
     recordsSection: {
       paddingHorizontal: 20,
-      marginBottom: 20,
+      marginBottom: 8,
     },
     recordsTitle: {
       fontSize: 18,
       fontWeight: "bold",
       color: "#1c3519",
-      marginBottom: 15,
+      marginBottom: 10,
     },
     recordsGrid: {
       flexDirection: "row",

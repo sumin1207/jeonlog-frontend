@@ -96,7 +96,6 @@ export default function ExhibitionLogScreen() {
               avatar: require("@/assets/images/mainIcon.png"),
             }}
             timestamp={formatTimestamp(log.createdAt)}
-            likes={0}
             hashtags={log.hashtags || ["전시기록"]}
           />
         </TouchableOpacity>
