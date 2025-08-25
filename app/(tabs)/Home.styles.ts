@@ -74,10 +74,12 @@ export const style = (theme: string) => {
       fontWeight: Typography.fontWeight.medium,
       color: themeColors.text.secondary,
       letterSpacing: -0.2,
+      zIndex: 2,
     },
     activeTabText: {
       color: Colors.primary.main,
       fontWeight: Typography.fontWeight.semibold,
+      zIndex: 2,
     },
     activeTabIndicator: {
       position: "absolute",
@@ -93,6 +95,7 @@ export const style = (theme: string) => {
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
+      zIndex: 1,
     },
 
     ageFilterContainer: {

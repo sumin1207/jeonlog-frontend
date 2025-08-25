@@ -327,6 +327,15 @@ export default function SearchScreen() {
 
       {/* 검색 입력 필드 */}
       <View style={SearchStyles.searchInputSection}>
+        <TouchableOpacity
+          style={SearchStyles.backButton}
+          onPress={resetSearchPage}>
+          <Ionicons
+            name='arrow-back'
+            size={24}
+            color='#666'
+          />
+        </TouchableOpacity>
         <View style={SearchStyles.searchInputContainer}>
           <TextInput
             style={SearchStyles.searchInput}
