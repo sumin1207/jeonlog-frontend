@@ -91,14 +91,12 @@ const LogHeader = memo(({ author, styles }: { author: Author | null, styles: any
 
 const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition | null, record: any, styles: any }) => {
   const { width: screenWidth } = Dimensions.get("window");
-  // Calculate the image width based on screen width and container padding
-  const imageWidth = screenWidth - (styles.postContainer.paddingHorizontal || 0) * 2;
+  const imageContainerWidth = screenWidth;
 
   let imagesToShow = [];
   if (record?.images && record.images.length > 0) {
-    // Sort images to show the main image first
     const otherImages = record.images.filter((img: string) => img !== record.mainImage);
-    imagesToShow = [record.mainImage, ...otherImages].filter(Boolean); // Ensure no null/undefined values
+    imagesToShow = [record.mainImage, ...otherImages].filter(Boolean);
   } else if (exhibition?.image) {
     imagesToShow = [exhibition.image];
   }
@@ -106,20 +104,23 @@ const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition |
   return (
     <>
       {imagesToShow.length > 0 && (
-        <View style={[styles.postContainer, { height: imageWidth }]}>
+        <View style={{ height: 400 }}>
           <ScrollView
             horizontal
-            pagingEnabled
             showsHorizontalScrollIndicator={false}
           >
-            {imagesToShow.map((img: any, index: number) => (
-              <Image
-                key={index}
-                source={typeof img === 'string' ? { uri: img } : img}
-                style={[styles.image, { width: imageWidth, height: imageWidth, aspectRatio: undefined }]}
-                resizeMode='cover'
-              />
-            ))}
+            {imagesToShow.map((img: any, index: number) => {
+              const imageSource = typeof img === 'string' ? { uri: img } : img;
+              return (
+                <View key={index} style={{ width: imageContainerWidth, height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
+                  <Image
+                    source={imageSource}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode='contain'
+                  />
+                </View>
+              )
+            })}
           </ScrollView>
         </View>
       )}

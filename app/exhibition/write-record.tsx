@@ -379,24 +379,34 @@ export default function WriteRecordScreen() {
               <View style={styles.imagePreviewContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {selectedImages.map((uri, index) => (
-                    <View key={index} style={styles.thumbnailContainer}>
-                      <Image source={{ uri }} style={styles.thumbnail} />
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => handleRemoveImage(index)}
-                      >
-                        <Ionicons name="close-circle" size={24} color="#FFFFFF" />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.mainBadge,
-                          mainImageIndex === index && styles.mainBadgeSelected,
-                        ]}
-                        onPress={() => handleSetMainImage(index)}
-                      >
-                        <Text style={styles.mainBadgeText}>대표</Text>
-                      </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleSetMainImage(index)}
+                    >
+                      <View style={styles.thumbnailContainer}>
+                        <Image source={{ uri }} style={styles.thumbnail} />
+                        {mainImageIndex === index && (
+                          <View
+                            style={[
+                              styles.mainBadge,
+                              styles.mainBadgeSelected,
+                            ]}
+                          >
+                            <Text style={styles.mainBadgeText}>대표</Text>
+                          </View>
+                        )}
+                        <TouchableOpacity
+                          style={styles.removeButton}
+                          onPress={() => handleRemoveImage(index)}
+                        >
+                          <Ionicons
+                            name="close-circle"
+                            size={24}
+                            color="#FFFFFF"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>
