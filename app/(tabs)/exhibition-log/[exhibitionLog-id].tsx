@@ -11,6 +11,7 @@ import {
   Platform,
   InteractionManager,
   BackHandler,
+  Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -88,18 +89,46 @@ const LogHeader = memo(({ author, styles }: { author: Author | null, styles: any
   );
 });
 
-const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition | null, record: RecordData | null, styles: any }) => (
-  <>
-    <View style={styles.postContainer}>
-      {exhibition?.image && (
-        <Image source={exhibition.image} style={styles.image} resizeMode='cover' />
+const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition | null, record: any, styles: any }) => {
+  const { width: screenWidth } = Dimensions.get("window");
+  // Calculate the image width based on screen width and container padding
+  const imageWidth = screenWidth - (styles.postContainer.paddingHorizontal || 0) * 2;
+
+  let imagesToShow = [];
+  if (record?.images && record.images.length > 0) {
+    // Sort images to show the main image first
+    const otherImages = record.images.filter((img: string) => img !== record.mainImage);
+    imagesToShow = [record.mainImage, ...otherImages].filter(Boolean); // Ensure no null/undefined values
+  } else if (exhibition?.image) {
+    imagesToShow = [exhibition.image];
+  }
+
+  return (
+    <>
+      {imagesToShow.length > 0 && (
+        <View style={[styles.postContainer, { height: imageWidth }]}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+          >
+            {imagesToShow.map((img: any, index: number) => (
+              <Image
+                key={index}
+                source={typeof img === 'string' ? { uri: img } : img}
+                style={[styles.image, { width: imageWidth, height: imageWidth, aspectRatio: undefined }]}
+                resizeMode='cover'
+              />
+            ))}
+          </ScrollView>
+        </View>
       )}
-    </View>
-    <Text style={styles.postContent}>
-      {String(record?.content || exhibition?.description || "내용 없음")}
-    </Text>
-  </>
-));
+      <Text style={styles.postContent}>
+        {String(record?.content || exhibition?.description || "내용 없음")}
+      </Text>
+    </>
+  );
+});
 
 const LogActionBar = memo(({ exhibitionLogId, likes, isLiked, styles }: { exhibitionLogId: string, likes: number, isLiked: boolean, styles: any }) => {
   return (

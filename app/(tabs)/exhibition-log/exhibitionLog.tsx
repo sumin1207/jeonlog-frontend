@@ -110,7 +110,7 @@ export default function ExhibitionLogScreen() {
           onPress={() => router.push(`/exhibition-log/${log.id}`)}>
           <ExhibitionLogCard
             id={log.id}
-            image={exhibition.image}
+            image={log.mainImage ? { uri: log.mainImage } : exhibition.image}
             logTitle={log.title}
             author={{
               name: "user", //추후 유저 데이터로 대체

@@ -12,13 +12,14 @@ import {
   Platform,
   ActivityIndicator,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useExhibition } from "../../contexts/ExhibitionContext";
 import { useAuth } from "../../components/context/AuthContext"; // Import useAuth
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 
 type Visibility = "공개" | "팔로워만 공개" | "비공개";
@@ -34,7 +35,8 @@ const getExhibitionId = (
 
 export default function WriteRecordScreen() {
   const { theme } = useTheme();
-  const { markAsVisited, addMyLog, myLogs } = useExhibition();
+  const { markAsVisited, addMyLog, myLogs, myDrafts, saveDraft } =
+    useExhibition();
   const { userInfo } = useAuth(); // Destructure userInfo
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -47,6 +49,8 @@ export default function WriteRecordScreen() {
   const [error, setError] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<Visibility>("공개");
   const [isMenuVisible, setMenuVisible] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [mainImageIndex, setMainImageIndex] = useState<number>(0);
 
   useEffect(() => {
     const loadData = () => {
@@ -71,15 +75,72 @@ export default function WriteRecordScreen() {
         setTitle(existingLog.title || "");
         setContent(existingLog.content || "");
         setVisibility(existingLog.visibility || "공개");
+        setSelectedImages(existingLog.images || []);
+        setMainImageIndex(existingLog.mainImageIndex || 0);
+      } else {
+        // Load draft if no submitted log exists
+        const draft = myDrafts[exhibitionId];
+        if (draft) {
+          setTitle(draft.title || "");
+          setContent(draft.content || "");
+          setVisibility(draft.visibility || "공개");
+          setSelectedImages(draft.images || []);
+          setMainImageIndex(draft.mainImageIndex || 0);
+        }
       }
       setLoading(false);
     };
 
     loadData();
-  }, [exhibitionId, myLogs]);
+  }, [exhibitionId, myLogs, myDrafts]);
+
+  const handlePickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "권한 필요",
+        "갤러리에 접근하려면 권한을 허용해야 합니다."
+      );
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uris = result.assets.map((asset) => asset.uri);
+      setSelectedImages((prevImages) => [...prevImages, ...uris]);
+    }
+  };
+
+  const handleSetMainImage = (index: number) => {
+    setMainImageIndex(index);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => {
+      const newImages = [...prevImages];
+      newImages.splice(index, 1);
+      // Adjust main image index if necessary
+      if (mainImageIndex === index) {
+        setMainImageIndex(0);
+      } else if (mainImageIndex > index) {
+        setMainImageIndex(mainImageIndex - 1);
+      }
+      return newImages;
+    });
+  };
 
   const handleSave = async () => {
-    setMenuVisible(false); // Close menu before showing alert
+    setMenuVisible(false);
+
+    if (selectedImages.length === 0) {
+      Alert.alert("오류", "이미지를 1개 이상 추가해야 합니다.");
+      return;
+    }
 
     if (!title || !content) {
       Alert.alert("오류", "제목과 내용을 모두 입력해주세요.");
@@ -92,21 +153,25 @@ export default function WriteRecordScreen() {
 
     try {
       const hashtags = [];
-    const regex = /#([a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]+)/g;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-      hashtags.push(match[1]);
-    }
-    const newRecord = {
-      title,
-      content,
-      createdAt: new Date().toISOString(),
-      hashtags,
-      visibility,
-      image: exhibition?.image, // Add image from exhibition data
-      author: { name: userInfo?.name || "사용자", avatar: require("../../assets/images/mainIcon.png") }, // Default author
-      likes: 0, // Default likes
-    };
+      const regex = /#([a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣_]+)/g;
+      let match;
+      while ((match = regex.exec(content)) !== null) {
+        hashtags.push(match[1]);
+      }
+      const newRecord = {
+        title,
+        content,
+        createdAt: new Date().toISOString(),
+        hashtags,
+        visibility,
+        images: selectedImages,
+        mainImage: selectedImages[mainImageIndex],
+        author: {
+          name: userInfo?.name || "사용자",
+          avatar: require("../../assets/images/mainIcon.png"),
+        },
+        likes: 0,
+      };
 
       await addMyLog(exhibitionId, newRecord);
       markAsVisited(exhibitionId);
@@ -122,6 +187,23 @@ export default function WriteRecordScreen() {
     } catch (e) {
       Alert.alert("오류", "기록을 저장하는 데 실패했습니다.");
     }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!exhibitionId) {
+      Alert.alert("오류", "유효하지 않은 전시 ID입니다.");
+      return;
+    }
+
+    const draftData = {
+      title,
+      content,
+      visibility,
+      images: selectedImages,
+      mainImageIndex,
+    };
+    await saveDraft(exhibitionId, draftData);
+    Alert.alert("임시 저장 완료", "작성 중인 내용이 임시 저장되었습니다.");
   };
 
   const handleVisibilityChange = (newVisibility: Visibility) => {
@@ -152,9 +234,13 @@ export default function WriteRecordScreen() {
       return <Text style={styles.errorText}>{error}</Text>;
     }
     if (exhibition) {
+      const imageSource =
+        selectedImages.length > 0
+          ? { uri: selectedImages[mainImageIndex] }
+          : exhibition.image;
       return (
         <>
-          <Image source={exhibition.image} style={styles.posterImage} />
+          <Image source={imageSource} style={styles.posterImage} />
           <View style={styles.exhibitionDetails}>
             <Text
               style={[styles.exhibitionTitle, { color: textColor }]}
@@ -278,7 +364,7 @@ export default function WriteRecordScreen() {
               />
             </View>
 
-            <View style={styles.contentContainer}>
+            <ScrollView style={styles.contentContainer}>
               <TextInput
                 style={[styles.contentInput, { color: textColor }]}
                 placeholder="전시는 어땠나요?"
@@ -287,37 +373,47 @@ export default function WriteRecordScreen() {
                 onChangeText={setContent}
                 multiline
               />
-            </View>
+            </ScrollView>
+
+            {selectedImages.length > 0 && (
+              <View style={styles.imagePreviewContainer}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {selectedImages.map((uri, index) => (
+                    <View key={index} style={styles.thumbnailContainer}>
+                      <Image source={{ uri }} style={styles.thumbnail} />
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => handleRemoveImage(index)}
+                      >
+                        <Ionicons name="close-circle" size={24} color="#FFFFFF" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[
+                          styles.mainBadge,
+                          mainImageIndex === index && styles.mainBadgeSelected,
+                        ]}
+                        onPress={() => handleSetMainImage(index)}
+                      >
+                        <Text style={styles.mainBadgeText}>대표</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
 
             <View style={[styles.toolbar, { borderTopColor: borderColor }]}>
               <View style={styles.toolbarActions}>
-                <TouchableOpacity style={styles.toolbarIcon}>
+                <TouchableOpacity
+                  style={styles.toolbarIcon}
+                  onPress={handlePickImage}
+                >
                   <Ionicons name="camera-outline" size={28} color={textColor} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.toolbarIcon}>
-                  <Ionicons name="text" size={28} color={textColor} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.toolbarIcon}>
-                  <MaterialCommunityIcons
-                    name="format-align-left"
-                    size={28}
-                    color={textColor}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.toolbarIcon}>
-                  <Ionicons name="happy-outline" size={28} color={textColor} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.toolbarIcon}>
-                  <Ionicons
-                    name="ellipsis-horizontal-circle-outline"
-                    size={28}
-                    color={textColor}
-                  />
-                </TouchableOpacity>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleSaveDraft}>
                 <Text style={[styles.saveText, { color: textColor }]}>
-                  저장
+                  임시저장
                 </Text>
               </TouchableOpacity>
             </View>
@@ -438,12 +534,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
   },
   contentInput: {
     flex: 1,
     fontSize: 16,
     textAlignVertical: "top",
+    minHeight: 100, // Ensure it has some height
   },
   toolbar: {
     flexDirection: "row",
@@ -462,6 +560,44 @@ const styles = StyleSheet.create({
   },
   saveText: {
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  imagePreviewContainer: {
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E5E5",
+  },
+  thumbnailContainer: {
+    marginHorizontal: 5,
+    position: "relative",
+  },
+  thumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  removeButton: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 12,
+  },
+  mainBadge: {
+    position: "absolute",
+    bottom: 5,
+    left: 5,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  mainBadgeSelected: {
+    backgroundColor: "#1c3519",
+  },
+  mainBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
     fontWeight: "bold",
   },
 });
