@@ -11,6 +11,7 @@ import {
   Platform,
   InteractionManager,
   BackHandler,
+  Dimensions,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -88,18 +89,47 @@ const LogHeader = memo(({ author, styles }: { author: Author | null, styles: any
   );
 });
 
-const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition | null, record: RecordData | null, styles: any }) => (
-  <>
-    <View style={styles.postContainer}>
-      {exhibition?.image && (
-        <Image source={exhibition.image} style={styles.image} resizeMode='cover' />
+const LogBody = memo(({ exhibition, record, styles }: { exhibition: Exhibition | null, record: any, styles: any }) => {
+  const { width: screenWidth } = Dimensions.get("window");
+  const imageContainerWidth = screenWidth;
+
+  let imagesToShow = [];
+  if (record?.images && record.images.length > 0) {
+    const otherImages = record.images.filter((img: string) => img !== record.mainImage);
+    imagesToShow = [record.mainImage, ...otherImages].filter(Boolean);
+  } else if (exhibition?.image) {
+    imagesToShow = [exhibition.image];
+  }
+
+  return (
+    <>
+      {imagesToShow.length > 0 && (
+        <View style={{ height: 400 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {imagesToShow.map((img: any, index: number) => {
+              const imageSource = typeof img === 'string' ? { uri: img } : img;
+              return (
+                <View key={index} style={{ width: imageContainerWidth, height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
+                  <Image
+                    source={imageSource}
+                    style={{ width: '100%', height: '100%' }}
+                    resizeMode='contain'
+                  />
+                </View>
+              )
+            })}
+          </ScrollView>
+        </View>
       )}
-    </View>
-    <Text style={styles.postContent}>
-      {String(record?.content || exhibition?.description || "내용 없음")}
-    </Text>
-  </>
-));
+      <Text style={styles.postContent}>
+        {String(record?.content || exhibition?.description || "내용 없음")}
+      </Text>
+    </>
+  );
+});
 
 const LogActionBar = memo(({ exhibitionLogId, likes, isLiked, styles }: { exhibitionLogId: string, likes: number, isLiked: boolean, styles: any }) => {
   return (

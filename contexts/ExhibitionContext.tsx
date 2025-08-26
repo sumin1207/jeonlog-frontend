@@ -12,6 +12,7 @@ interface ExhibitionState {
   thumbsUpExhibitions: string[];
   visitedExhibitions: string[];
   myLogs: any[]; // State for authored logs
+  myDrafts: { [key: string]: any }; // State for drafts
 }
 
 interface ExhibitionContextType {
@@ -19,12 +20,15 @@ interface ExhibitionContextType {
   thumbsUpExhibitions: string[];
   visitedExhibitions: string[];
   myLogs: any[]; // State for authored logs
+  myDrafts: { [key: string]: any };
   toggleBookmarked: (exhibitionId: string) => void;
   toggleThumbsUp: (exhibitionId: string) => void;
   toggleVisited: (exhibitionId: string) => void;
   markAsVisited: (exhibitionId: string) => void;
   addMyLog: (exhibitionId: string, logData: any) => Promise<void>; // Function to add a new log
   deleteMyLog: (exhibitionId: string) => Promise<void>; // Function to delete a log
+  saveDraft: (exhibitionId: string, draftData: any) => Promise<void>;
+  deleteDraft: (exhibitionId: string) => Promise<void>;
   toggleLogLikes: (exhibitionId: string, action: 'increment' | 'decrement') => void;
   isBookmarked: (exhibitionId: string) => boolean;
   isThumbsUp: (exhibitionId: string) => boolean;
@@ -49,6 +53,7 @@ interface ExhibitionProviderProps {
 }
 
 const STORAGE_KEY = "exhibitionState";
+const DRAFTS_STORAGE_KEY = "exhibition_drafts";
 
 export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   children,
@@ -58,6 +63,7 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     thumbsUpExhibitions: [],
     visitedExhibitions: [],
     myLogs: [],
+    myDrafts: {},
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,6 +72,7 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
       try {
         const storedState = await AsyncStorage.getItem(STORAGE_KEY);
         const storedLogs = await AsyncStorage.getItem("exhibition_records");
+        const storedDrafts = await AsyncStorage.getItem(DRAFTS_STORAGE_KEY);
 
         const exhibitionState: ExhibitionState = storedState
           ? JSON.parse(storedState)
@@ -74,8 +81,10 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
               thumbsUpExhibitions: [],
               visitedExhibitions: [],
               myLogs: [],
+              myDrafts: {},
             };
         const initialLogs = storedLogs ? JSON.parse(storedLogs) : {};
+        const initialDrafts = storedDrafts ? JSON.parse(storedDrafts) : {};
 
         // Filter logs to only include those whose ID is in the visitedExhibitions list
         const validLogIds = Object.keys(initialLogs).filter((id) =>
@@ -90,6 +99,7 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
         setState({
           ...exhibitionState,
           myLogs: transformedLogs.reverse(),
+          myDrafts: initialDrafts,
         });
       } catch (error) {
         console.error("Failed to load exhibition state from storage", error);
@@ -105,7 +115,13 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     if (!isLoading) {
       const saveState = async () => {
         try {
-          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          // Separate drafts from the main state before saving to avoid duplication
+          const { myDrafts, ...stateToSave } = state;
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+          await AsyncStorage.setItem(
+            DRAFTS_STORAGE_KEY,
+            JSON.stringify(myDrafts)
+          );
         } catch (error) {
           console.error("Failed to save exhibition state to storage", error);
         }
@@ -113,6 +129,23 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
       saveState();
     }
   }, [state, isLoading]);
+
+  const saveDraft = async (exhibitionId: string, draftData: any) => {
+    setState((prev) => {
+      const newDrafts = { ...prev.myDrafts, [exhibitionId]: draftData };
+      return { ...prev, myDrafts: newDrafts };
+    });
+    // No need to call AsyncStorage here, the useEffect will handle it.
+  };
+
+  const deleteDraft = async (exhibitionId: string) => {
+    setState((prev) => {
+      const newDrafts = { ...prev.myDrafts };
+      delete newDrafts[exhibitionId];
+      return { ...prev, myDrafts: newDrafts };
+    });
+    // No need to call AsyncStorage here, the useEffect will handle it.
+  };
 
   const toggleBookmarked = (exhibitionId: string) => {
     setState((prev) => ({
@@ -162,10 +195,14 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     setState((prev) => {
       // Filter out the old log if it exists, to prevent duplicates
       const otherLogs = prev.myLogs.filter((log) => log.id !== exhibitionId);
+      const newDrafts = { ...prev.myDrafts };
+      delete newDrafts[exhibitionId]; // Delete draft on final save
+
       return {
         ...prev,
         // Add the new or updated log to the front of the list
         myLogs: [newLog, ...otherLogs],
+        myDrafts: newDrafts,
       };
     });
     // Then, update AsyncStorage
@@ -255,13 +292,16 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
         thumbsUpExhibitions: state.thumbsUpExhibitions,
         visitedExhibitions: state.visitedExhibitions,
         myLogs: state.myLogs,
+        myDrafts: state.myDrafts,
         toggleBookmarked,
         toggleThumbsUp,
         toggleVisited,
         markAsVisited,
         addMyLog,
         deleteMyLog,
-                toggleLogLikes,
+        saveDraft,
+        deleteDraft,
+        toggleLogLikes,
         isBookmarked,
         isThumbsUp,
         isVisited,
