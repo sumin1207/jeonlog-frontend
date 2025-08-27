@@ -34,7 +34,7 @@ export const MyPageStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing.screenPadding,
-    paddingVertical: Spacing.screenPadding,
+    paddingVertical: Spacing.md,
   },
   avatar: {
     width: 80,
@@ -49,8 +49,8 @@ export const MyPageStyles = StyleSheet.create({
     flex: 1,
   },
   profileName: {
-    fontSize: Typography.text.h4.fontSize,
-    fontWeight: Typography.text.h4.fontWeight,
+    fontSize: Typography.text.bodySmall.fontSize,
+    fontWeight: Typography.text.bodySmall.fontWeight,
     color: Colors.text.primary,
   },
   profileBio: {
@@ -61,7 +61,7 @@ export const MyPageStyles = StyleSheet.create({
   buttonsSection: {
     flexDirection: "row",
     paddingHorizontal: Spacing.screenPadding,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
     alignItems: "center",
   },
   mainButtonsWrapper: {
@@ -73,7 +73,7 @@ export const MyPageStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.neutral.gray200,
     borderRadius: BorderRadius.button.medium,
-    paddingVertical: 7.7,
+    paddingVertical: 6,
     alignItems: "center",
   },
   actionButtonText: {
@@ -84,7 +84,7 @@ export const MyPageStyles = StyleSheet.create({
   iconButton: {
     backgroundColor: Colors.neutral.gray200,
     borderRadius: BorderRadius.button.medium,
-    padding: Spacing.sm,
+    padding: 8,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -94,10 +94,11 @@ export const MyPageStyles = StyleSheet.create({
   },
   logsSection: {
     padding: Spacing.screenPadding,
+    paddingTop: Spacing.md,
   },
   logsTitle: {
-    fontSize: Typography.text.h4.fontSize,
-    fontWeight: Typography.text.h4.fontWeight,
+    fontSize: Typography.text.bodySmall.fontSize,
+    fontWeight: Typography.text.bodySmall.fontWeight,
     marginBottom: Spacing.md,
     color: Colors.text.primary,
   },

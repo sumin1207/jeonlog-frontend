@@ -17,8 +17,8 @@ export const BookmarkedStyles = StyleSheet.create({
     padding: 5,
   },
   headerTitle: {
-    fontSize: Typography.text.h4.fontSize,
-    fontWeight: Typography.text.h4.fontWeight,
+    fontSize: Typography.text.bodySmall.fontSize,
+    fontWeight: Typography.text.bodySmall.fontWeight,
     color: Colors.text.primary,
   },
   listContentContainer: {
@@ -54,16 +54,16 @@ export const BookmarkedStyles = StyleSheet.create({
     justifyContent: "space-between",
   },
   exhibitionTitle: {
-    fontSize: Typography.text.body.fontSize,
-    fontWeight: Typography.text.body.fontWeight,
+    fontSize: Typography.text.bodySmall.fontSize,
+    fontWeight: Typography.text.bodySmall.fontWeight,
     color: Colors.text.primary,
   },
   exhibitionLocation: {
-    fontSize: Typography.text.bodySmall.fontSize,
+    fontSize: Typography.text.caption.fontSize,
     color: Colors.text.secondary,
   },
   exhibitionDate: {
-    fontSize: Typography.text.bodySmall.fontSize,
+    fontSize: Typography.text.caption.fontSize,
     color: Colors.text.secondary,
   },
   emptyContainer: {
@@ -72,7 +72,7 @@ export const BookmarkedStyles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: Typography.text.body.fontSize,
+    fontSize: Typography.text.bodySmall.fontSize,
     textAlign: "center",
     color: Colors.text.secondary,
   },

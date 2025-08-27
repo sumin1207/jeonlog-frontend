@@ -95,7 +95,9 @@ export default function MyPageScreen() {
             />
           </View>
           <Column style={MyPageStyles.profileInfo}>
-            <Text variant='h4'>{userInfo?.name ?? "석준's 전시라이프"}</Text>
+            <Text variant='bodySmall'>
+              {userInfo?.name ?? "석준's 전시라이프"}
+            </Text>
             <Text variant='caption'>안녕하세요 저는 전린이입니다.</Text>
           </Column>
         </Row>
@@ -104,23 +106,25 @@ export default function MyPageScreen() {
           <Row style={MyPageStyles.mainButtonsWrapper}>
             <Button
               title='프로필 수정'
-              onPress={() => {}}
+              onPress={() => router.push("/mypage/setting")}
               variant='secondary'
-              style={{ flex: 1 }}
+              size='small'
+              style={{ flex: 1, paddingVertical: 6 }}
             />
             <Button
-              title='저장한 전시'
+              title='북마크한 전시'
               onPress={() =>
                 router.push("/(tabs)/mypage/exhibition/Bookmarked")
               }
               variant='secondary'
-              style={{ flex: 1, marginLeft: 10 }}
+              size='small'
+              style={{ flex: 1, marginLeft: 8, paddingVertical: 6 }}
             />
           </Row>
           <TouchableOpacity style={MyPageStyles.iconButton}>
             <Ionicons
               name='person-outline'
-              size={19}
+              size={16}
               color='#000'
             />
           </TouchableOpacity>
@@ -129,7 +133,7 @@ export default function MyPageScreen() {
         <View style={MyPageStyles.divider} />
 
         <Column style={MyPageStyles.logsSection}>
-          <Text variant='h4'>나의 전시 기록들 ({myLogs.length})</Text>
+          <Text variant='bodySmall'>나의 전시 기록들 ({myLogs.length})</Text>
           <Row
             style={MyPageStyles.recordsGrid}
             wrap>

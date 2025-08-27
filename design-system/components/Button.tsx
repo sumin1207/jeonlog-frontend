@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
   // Sizes
   small: {
     paddingHorizontal: Spacing.buttonPadding.horizontal,
-    paddingVertical: Spacing.buttonPadding.vertical,
-    minHeight: 32,
+    paddingVertical: 6,
+    minHeight: 28,
   },
   medium: {
     paddingHorizontal: Spacing.buttonPadding.horizontal,
