@@ -8,9 +8,9 @@ import { CategoryStyles } from "../../design-system/styles";
 export default function CategoryScreen() {
   const router = useRouter();
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState("지역별");
+  const [activeTab, setActiveTab] = useState("지역");
 
-  const tabs = ["지역별", "장르별", "성향별"];
+  const tabs = ["지역", "장르", "성격"];
 
   const regionData = [
     "강남, 서초, 송파",
@@ -33,19 +33,10 @@ export default function CategoryScreen() {
     "디자인",
   ];
 
-  const personalityData = [
-    "감성적",
-    "지적",
-    "실용적",
-    "창의적",
-    "전통적",
-    "현대적",
-    "자연친화적",
-    "도시적",
-  ];
+  const personalityData = ["차분한", "역동적인", "로맨틱한", "고전적인"];
 
   const handleCategoryPress = (categoryName: string) => {
-    const type = activeTab === "지역별" ? "region" : "personality";
+    const type = activeTab === "지역" ? "region" : "personality";
     router.push(
       `/(tabs)/category/${type}?category=${encodeURIComponent(
         categoryName
@@ -64,9 +55,9 @@ export default function CategoryScreen() {
   );
 
   const currentData =
-    activeTab === "지역별"
+    activeTab === "지역"
       ? regionData
-      : activeTab === "장르별"
+      : activeTab === "장르"
       ? genreData
       : personalityData;
 
