@@ -6,15 +6,35 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  BackHandler,
 } from "react-native";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 
 export default function CategoryDetailScreen() {
   const { theme } = useTheme();
   const router = useRouter();
   const { type, category } = useLocalSearchParams();
+
+  // 안드로이드 뒤로가기 버튼 처리
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        router.replace("/(tabs)/category");
+        return true; // 이벤트 소비
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [router]);
+
+  // 뒤로가기 버튼 클릭 시 카테고리 메인 페이지로 이동
+  const handleBackPress = () => {
+    router.replace("/(tabs)/category");
+  };
 
   // Data (remains unchanged)
   const regionData = {
@@ -396,7 +416,7 @@ export default function CategoryDetailScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={handleBackPress}
           activeOpacity={0.7}>
           <Ionicons
             name='arrow-back-outline'
