@@ -155,7 +155,11 @@ export default function MyPageScreen() {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
                     }}>
                     <Image
-                      source={exhibition.image}
+                      source={
+                        log.mainImage
+                          ? { uri: log.mainImage }
+                          : exhibition.image
+                      }
                       style={MyPageStyles.logImage}
                     />
                     <Text
