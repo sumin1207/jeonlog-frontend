@@ -48,7 +48,7 @@ export default function EditProfileScreen() {
     }
   }, [userInfo, isLoading]);
 
-  const handlePickImage = async () => {
+  const launchImagePicker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("Permission required", "Please grant permission to access photos.");
@@ -64,6 +64,29 @@ export default function EditProfileScreen() {
     if (!result.canceled) {
       setAvatar(result.assets[0].uri);
     }
+  };
+
+  const handleChangePhotoPress = () => {
+    Alert.alert(
+      "프로필 사진 변경",
+      "",
+      [
+        {
+          text: "갤러리에서 선택",
+          onPress: launchImagePicker,
+        },
+        {
+          text: "기본 이미지로 변경",
+          onPress: () => setAvatar(null),
+          style: "destructive",
+        },
+        {
+          text: "취소",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleSave = async () => {
@@ -107,17 +130,17 @@ export default function EditProfileScreen() {
     <Container variant="safe" style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text>Cancel</Text>
+          <Text>취소</Text>
         </TouchableOpacity>
         <Text variant="h3">프로필 수정</Text>
         <TouchableOpacity onPress={handleSave}>
-          <Text style={styles.saveText}>Save</Text>
+          <Text style={styles.saveText}>저장</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView>
         <View style={styles.avatarContainer}>
-          <TouchableOpacity onPress={handlePickImage}>
+          <TouchableOpacity onPress={handleChangePhotoPress}>
             {avatar ? (
               <Image source={{ uri: avatar }} style={styles.avatar} />
             ) : (
@@ -170,7 +193,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 8, // Keep a smaller padding for aesthetics
     borderBottomWidth: 1,
     borderBottomColor: Colors.border.light,
   },

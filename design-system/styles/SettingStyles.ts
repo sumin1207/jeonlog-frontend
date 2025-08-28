@@ -17,7 +17,7 @@ export const SettingStyles = StyleSheet.create({
     fontWeight: Typography.text.h4.fontWeight,
     color: Colors.primary.main,
     marginHorizontal: Spacing.screenPadding,
-    marginVertical: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   menuItem: {
     flexDirection: "row",
