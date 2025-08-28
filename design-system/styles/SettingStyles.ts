@@ -5,7 +5,6 @@ export const SettingStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background.light,
-    marginTop: 35,
   },
   scrollView: {
     flex: 1,

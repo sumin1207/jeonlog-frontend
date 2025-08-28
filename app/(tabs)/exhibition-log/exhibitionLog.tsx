@@ -120,7 +120,9 @@ export default function ExhibitionLogScreen() {
   };
 
   return (
-    <Container style={ExhibitionLogStyles.container}>
+    <Container
+      variant="safe"
+      style={ExhibitionLogStyles.container}>
       <View style={ExhibitionLogStyles.searchHeader}>
         <View style={ExhibitionLogStyles.searchContainer}>
           <Ionicons

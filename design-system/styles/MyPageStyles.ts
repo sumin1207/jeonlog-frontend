@@ -10,7 +10,7 @@ export const MyPageStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 50,
+    paddingTop: 30,
     paddingBottom: Spacing.sm,
     paddingHorizontal: Spacing.screenPadding,
     borderBottomWidth: 1,
@@ -106,6 +106,7 @@ export const MyPageStyles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    marginTop: Spacing.md,
   },
   logCard: {
     width: "48%",

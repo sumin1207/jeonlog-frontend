@@ -109,7 +109,9 @@ export default function MyPageSettingScreen() {
   );
 
   return (
-    <Container style={SettingStyles.container}>
+    <Container
+      variant="safe"
+      style={SettingStyles.container}>
       <ScrollView
         style={SettingStyles.scrollView}
         pointerEvents='auto'>
