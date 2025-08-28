@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from "react";
 import {
   View,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
+  FlatList,
 } from "react-native";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
@@ -20,6 +20,7 @@ interface Record {
   title: string;
   createdAt: string;
   hashtags?: string[];
+  mainImage?: string;
 }
 
 const formatTimestamp = (isoDate: string) => {
@@ -73,19 +74,6 @@ export default function ExhibitionLogScreen() {
     return records;
   }, [myLogs, isLatest, searchQuery]);
 
-  const { leftColumn, rightColumn } = useMemo(() => {
-    const left: Record[] = [];
-    const right: Record[] = [];
-    sortedRecords.forEach((record, index) => {
-      if (index % 2 === 0) {
-        left.push(record);
-      } else {
-        right.push(record);
-      }
-    });
-    return { leftColumn: left, rightColumn: right };
-  }, [sortedRecords]);
-
   if (isLoading) {
     return (
       <View
@@ -101,10 +89,17 @@ export default function ExhibitionLogScreen() {
     );
   }
 
-  const renderColumn = (columnData: Record[]) => {
-    return columnData.map((log) => {
-      const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
-      return (
+  const renderItem = ({ item: log, index }: { item: Record; index: number }) => {
+    const exhibition = exhibitionData[log.id as keyof typeof exhibitionData];
+    const isRightColumn = index % 2 !== 0;
+    return (
+      <View
+        style={{
+          flex: 1,
+          margin: 4,
+          maxWidth: "48%",
+          marginTop: isRightColumn ? 22 : 4, // Apply marginTop to the right column
+        }}>
         <TouchableOpacity
           key={log.id}
           onPress={() => router.push(`/exhibition-log/${log.id}`)}>
@@ -120,8 +115,8 @@ export default function ExhibitionLogScreen() {
             hashtags={log.hashtags || ["전시기록"]}
           />
         </TouchableOpacity>
-      );
-    });
+      </View>
+    );
   };
 
   return (
@@ -190,20 +185,13 @@ export default function ExhibitionLogScreen() {
         </View>
       </View>
       {sortedRecords.length > 0 ? (
-        <ScrollView style={ExhibitionLogStyles.scrollView}>
-          <View style={ExhibitionLogStyles.columnContainer}>
-            <View style={ExhibitionLogStyles.column}>
-              {renderColumn(leftColumn)}
-            </View>
-            <View
-              style={[
-                ExhibitionLogStyles.column,
-                ExhibitionLogStyles.rightColumn,
-              ]}>
-              {renderColumn(rightColumn)}
-            </View>
-          </View>
-        </ScrollView>
+        <FlatList
+          data={sortedRecords}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          contentContainerStyle={{ paddingHorizontal: 12 }}
+        />
       ) : (
         <View style={ExhibitionLogStyles.emptyContainer}>
           <Text style={ExhibitionLogStyles.emptyText}>

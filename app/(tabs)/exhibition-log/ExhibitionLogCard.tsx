@@ -62,8 +62,7 @@ const ExhibitionLogCard = ({
 
 const styles = StyleSheet.create({
   card: {
-    width: 160,
-    marginBottom: 20,
+    flex: 1,
     overflow: "hidden",
   },
   mainImage: {
