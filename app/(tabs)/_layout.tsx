@@ -119,10 +119,7 @@ export default function TabLayout() {
         name='museum/[name]'
         options={{ href: null }}
       />
-      <Tabs.Screen
-        name='exhibition-log/[exhibitionLog-id]'
-        options={{ href: null }}
-      />
+      {/* exhibition-log/[exhibitionLog-id]는 exhibition-log/_layout.tsx에서 이미 정의되어 있음 */}
     </Tabs>
   );
 }
