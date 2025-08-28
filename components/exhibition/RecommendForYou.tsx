@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
-import { exhibitionData } from "../../data/exhibitionsDataStorage"; 
+import { exhibitionData } from "../../data/exhibitionsDataStorage";
+import { Colors } from "../../design-system/theme";
+import { Spacing } from "../../design-system/theme";
 
 const { width } = Dimensions.get("window");
 const exhibitionsArray = Object.values(exhibitionData);
@@ -18,49 +20,90 @@ const exhibitionsArray = Object.values(exhibitionData);
 const RecommendForYou = () => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
-  const router = useRouter(); // ✅ useRouter 훅 사용
+  const router = useRouter();
 
-  // ✅ HorizontalSliding과 동일한 동적 사이즈 계산 로직 적용
-  const itemContentWidth = width * 0.5; // 화면 너비의 50%
-  const imageHeight = itemContentWidth * 1.336; // 이미지 비율에 따른 높이 계산
-  const itemWidth = itemContentWidth + 20; // 아이템 너비 + 좌우 마진 10*2
+  // 카드 크기 조정 - 이미지에서 보이는 것처럼
+  const itemContentWidth = width * 0.35; // 화면 너비의 35%로 조정
+  const imageHeight = itemContentWidth * 1.2; // 이미지 높이 비율 조정
+  const itemWidth = itemContentWidth + 20; // 아이템 너비 + 좌우 마진
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      // ✅ TouchableOpacity를 사용하여 클릭 가능하게 변경
       <TouchableOpacity
-        onPress={() => router.push(`/exhibition/${item.id}` as any)} // ✅ 라우팅 로직 추가
+        onPress={() => router.push(`/exhibition/${item.id}` as any)}
         style={[
           styles.itemContainer,
           {
-            width: itemContentWidth, // ✅ 동적 너비 적용
-            backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff", // ✅ 테마별 배경색
+            width: itemContentWidth,
+            backgroundColor:
+              theme === "dark"
+                ? Colors.background.cardDark
+                : Colors.background.card,
           },
         ]}
-      >
-        {/* ✅ 이미지 소스 및 동적 높이 적용 */}
-        <Image
-          source={item.image} // ✅ exhibitionData의 image 속성 사용
-          style={[styles.image, { height: imageHeight }]} // ✅ 동적 높이 적용
-        />
-        <View style={styles.titleContainer}>
+        activeOpacity={0.8}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={item.image}
+            style={[styles.image, { height: imageHeight }]}
+            resizeMode='cover'
+          />
+        </View>
+
+        <View style={styles.contentContainer}>
           <Text
             style={[
               styles.title,
-              { color: theme === "dark" ? "#fff" : "#000000" }, // ✅ 테마별 텍스트 색상
+              {
+                color:
+                  theme === "dark"
+                    ? Colors.text.dark.primary
+                    : Colors.text.primary,
+              },
             ]}
-          >
+            numberOfLines={2}>
             {item.title}
           </Text>
+
+          {item.location && (
+            <Text
+              style={[
+                styles.location,
+                {
+                  color:
+                    theme === "dark"
+                      ? Colors.text.dark.secondary
+                      : Colors.text.secondary,
+                },
+              ]}
+              numberOfLines={1}>
+              {item.location}
+            </Text>
+          )}
+
+          {item.date && (
+            <Text
+              style={[
+                styles.date,
+                {
+                  color:
+                    theme === "dark"
+                      ? Colors.text.dark.secondary
+                      : Colors.text.secondary,
+                },
+              ]}
+              numberOfLines={1}>
+              {item.date}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     ),
-    [theme, router, itemContentWidth, imageHeight] // ✅ 종속성 추가
+    [theme, router, itemContentWidth, imageHeight]
   );
 
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: imageHeight + 100 }]}>
       <FlatList
         ref={flatListRef}
         data={exhibitionsArray}
@@ -69,10 +112,12 @@ const RecommendForYou = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment="center"
-        decelerationRate="normal"
-        contentContainerStyle={styles.flatListContent}
-        // onMomentumScrollEnd={handleScroll} // Removed
+        snapToAlignment='center'
+        decelerationRate='normal'
+        contentContainerStyle={{
+          paddingLeft: (width - itemContentWidth) / 2 - 125,
+          paddingRight: 10,
+        }}
         getItemLayout={(data, index) => ({
           length: itemWidth,
           offset: itemWidth * index,
@@ -87,54 +132,60 @@ const RecommendForYou = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 300,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
     borderBottomColor: "#ddd",
-    borderBottomWidth:3,
+    borderBottomWidth: 3,
     marginBottom: 10,
   },
-  flatListContent: {
-    paddingHorizontal: (width - width * 0.8) / 2 - 10,
-  },
+
   itemContainer: {
-    width: width * 0.5,
     marginHorizontal: 10,
-    backgroundColor: "transparent",
-    borderRadius:10,
+    backgroundColor: "#fff",
+    borderRadius: 12,
     overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0,
-    shadowRadius: 3.84,
-    elevation: 5,
-    borderColor: "#ddd",
-    
-    
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
+
+  imageContainer: {
+    position: "relative",
+  },
+
   image: {
-    width: "80%",
-    height: 100,
+    width: "100%",
     resizeMode: "cover",
-    borderRadius: 10,
-    borderColor: "#ddd",
-    borderWidth: 1, 
+  },
+
+  contentContainer: {
+    padding: Spacing.md,
+    paddingTop: Spacing.sm,
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: "bold",
-    textAlign: "center",
-    color: "black",
+    marginBottom: Spacing.xs,
+    lineHeight: 16,
+    textAlign: "left",
   },
-  titleContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: 40,
-    marginBottom: 30,
+
+  location: {
+    fontSize: 10,
+    marginBottom: Spacing.xs,
+    lineHeight: 14,
+    textAlign: "left",
+  },
+
+  date: {
+    fontSize: 9,
+    lineHeight: 12,
+    textAlign: "left",
   },
 });
+
 export default RecommendForYou;

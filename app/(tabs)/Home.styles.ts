@@ -30,10 +30,11 @@ export const style = (theme: string) => {
       textAlign: "left",
       alignSelf: "flex-start",
       letterSpacing: -0.5,
+      paddingHorizontal: Spacing.md,
     },
 
     title2: {
-      fontSize: Typography.text.h4.fontSize,
+      fontSize: Typography.text.h3.fontSize,
       fontWeight: Typography.fontWeight.bold,
       marginBottom: Spacing.lg,
       marginTop: Spacing.xl,
@@ -55,19 +56,22 @@ export const style = (theme: string) => {
     tabContainer: {
       flexDirection: "row",
       marginBottom: Spacing.lg,
-      backgroundColor:
-        theme === "dark" ? Colors.neutral.gray800 : Colors.neutral.gray50,
+      backgroundColor: "transparent",
       borderRadius: BorderRadius.button.pill,
-      padding: Spacing.xs,
-      marginHorizontal: -Spacing.screenPadding,
+      padding: 0,
+      marginHorizontal: 0,
       marginLeft: 0,
+      borderBottomWidth: 1,
+      borderBottomColor:
+        theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray300,
     },
     tab: {
       flex: 1,
       paddingVertical: Spacing.md,
       alignItems: "center",
-      borderRadius: BorderRadius.button.pill,
-      marginHorizontal: Spacing.xs,
+      borderRadius: 0,
+      marginHorizontal: 0,
+      position: "relative",
     },
     tabText: {
       fontSize: Typography.text.body.fontSize,
@@ -83,18 +87,17 @@ export const style = (theme: string) => {
     },
     activeTabIndicator: {
       position: "absolute",
-      top: 0,
+      bottom: -1,
       left: 0,
       right: 0,
-      bottom: 0,
-      backgroundColor:
-        theme === "dark" ? Colors.neutral.gray700 : Colors.neutral.white,
-      borderRadius: BorderRadius.button.pill,
-      shadowColor: Colors.shadow.light,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      height: 3,
+      backgroundColor: Colors.primary.main,
+      borderRadius: 0,
+      shadowColor: Colors.primary.main,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0,
+      shadowRadius: 0,
+      elevation: 0,
       zIndex: 1,
     },
 
@@ -144,7 +147,7 @@ export const style = (theme: string) => {
     },
 
     recommendationCard: {
-      marginBottom: Spacing.md,
+      marginBottom: Spacing.lg,
       backgroundColor:
         theme === "dark" ? Colors.neutral.gray800 : Colors.neutral.white,
       borderRadius: BorderRadius.card.medium,
@@ -156,21 +159,19 @@ export const style = (theme: string) => {
       borderWidth: 1,
       borderColor:
         theme === "dark" ? Colors.neutral.gray700 : Colors.neutral.gray100,
+      overflow: "hidden",
     },
     cardContent: {
       flexDirection: "row",
-      padding: Spacing.lg,
-      alignItems: "center",
+      alignItems: "stretch",
     },
     imagePlaceholder: {
-      width: 90,
-      height: 90,
-      borderRadius: BorderRadius.card.small,
+      width: 120,
+      height: 120,
       backgroundColor:
         theme === "dark" ? Colors.neutral.gray700 : Colors.neutral.gray100,
       justifyContent: "center",
       alignItems: "center",
-      marginRight: Spacing.lg,
       shadowColor: Colors.shadow.light,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -180,13 +181,15 @@ export const style = (theme: string) => {
     cardTextContainer: {
       flex: 1,
       justifyContent: "center",
+      padding: Spacing.lg,
     },
     cardTitle: {
       fontSize: Typography.text.body.fontSize,
-      fontWeight: Typography.fontWeight.semibold,
-      marginBottom: Spacing.xs,
+      fontWeight: Typography.fontWeight.bold,
+      marginBottom: Spacing.sm,
       letterSpacing: -0.2,
       lineHeight: Typography.text.body.fontSize * 1.3,
+      color: themeColors.text.primary,
     },
     cardLocation: {
       fontSize: Typography.fontSize.sm,
@@ -195,8 +198,8 @@ export const style = (theme: string) => {
       letterSpacing: -0.1,
     },
     cardDate: {
-      fontSize: Typography.fontSize.xs,
-      color: theme === "dark" ? Colors.neutral.gray500 : Colors.neutral.gray600,
+      fontSize: Typography.fontSize.sm,
+      color: themeColors.text.secondary,
       fontWeight: Typography.fontWeight.medium,
       letterSpacing: -0.1,
     },

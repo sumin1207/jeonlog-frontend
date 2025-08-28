@@ -329,7 +329,7 @@ export default function SearchScreen() {
       <View style={SearchStyles.searchInputSection}>
         <TouchableOpacity
           style={SearchStyles.backButton}
-          onPress={resetSearchPage}>
+          onPress={() => router.push("/(tabs)/home")}>
           <Ionicons
             name='arrow-back'
             size={24}
@@ -403,19 +403,6 @@ export default function SearchScreen() {
           </View>
         </View>
       </View>
-
-      {/* 검색 결과 섹션 */}
-      {isLoading && (
-        <View style={SearchStyles.loadingSection}>
-          <Text style={SearchStyles.loadingText}>검색 중...</Text>
-        </View>
-      )}
-
-      {apiError && (
-        <View style={SearchStyles.errorSection}>
-          <Text style={SearchStyles.errorText}>오류: {apiError}</Text>
-        </View>
-      )}
 
       {apiResults.length > 0 && (
         <View style={SearchStyles.resultsSection}>

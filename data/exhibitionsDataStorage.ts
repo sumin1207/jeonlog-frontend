@@ -20,7 +20,7 @@ export const exhibitionData = {
   },
   "2": {
     id: "2",
-    title: "톰 삭스 전",
+    title: "현대카드 컬쳐프로젝트29: 톰 삭스 전",
     location: "DDP 뮤지엄 전시 1관(지하 2층)",
     address: "서울 중구 을지로 281",
     date: "2025.04.25 - 2025.09.07",

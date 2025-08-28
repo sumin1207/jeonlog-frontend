@@ -11,6 +11,8 @@ import {
 import { useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
+import { Colors } from "../../design-system/theme";
+import { Spacing } from "../../design-system/theme";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +24,7 @@ const HorizontalSliding = () => {
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
 
-  // Calculate dynamic dimensions
+  // Calculate dynamic dimensions - 현재 크기 유지
   const itemContentWidth = width * 0.5;
   const imageHeight = itemContentWidth * 1.336;
   const itemWidth = itemContentWidth + 20; // item width + margin
@@ -35,23 +37,67 @@ const HorizontalSliding = () => {
           styles.itemContainer,
           {
             width: itemContentWidth,
-            backgroundColor: theme === "dark" ? "#transparent" : "#transparent",
+            backgroundColor:
+              theme === "dark"
+                ? Colors.background.cardDark
+                : Colors.background.card,
           },
         ]}
-      >
-        <Image
-          source={item.image}
-          style={[styles.image, { height: imageHeight }]}
-        />
-        <View style={styles.titleContainer}>
+        activeOpacity={0.8}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={item.image}
+            style={[styles.image, { height: imageHeight }]}
+            resizeMode='cover'
+          />
+        </View>
+
+        <View style={styles.contentContainer}>
           <Text
             style={[
               styles.title,
-              { color: theme === "dark" ? "#fff" : "#000000" },
+              {
+                color:
+                  theme === "dark"
+                    ? Colors.text.dark.primary
+                    : Colors.text.primary,
+              },
             ]}
-          >
+            numberOfLines={2}>
             {item.title}
           </Text>
+
+          {item.location && (
+            <Text
+              style={[
+                styles.location,
+                {
+                  color:
+                    theme === "dark"
+                      ? Colors.text.dark.secondary
+                      : Colors.text.secondary,
+                },
+              ]}
+              numberOfLines={1}>
+              {item.location}
+            </Text>
+          )}
+
+          {item.date && (
+            <Text
+              style={[
+                styles.date,
+                {
+                  color:
+                    theme === "dark"
+                      ? Colors.text.dark.primary
+                      : Colors.text.primary,
+                },
+              ]}
+              numberOfLines={1}>
+              {item.date}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     ),
@@ -59,7 +105,7 @@ const HorizontalSliding = () => {
   );
 
   return (
-    <View style={[styles.container, { height: imageHeight + 50 }]}>
+    <View style={[styles.container, { height: imageHeight + 100 }]}>
       <FlatList
         ref={flatListRef}
         data={exhibitionsArray} // Use the array from the central data source
@@ -68,10 +114,10 @@ const HorizontalSliding = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment="center"
-        decelerationRate="normal"
+        snapToAlignment='center'
+        decelerationRate='normal'
         contentContainerStyle={{
-          paddingLeft: (width - itemContentWidth) / 2 - 50,
+          paddingLeft: (width - itemContentWidth) / 2 - 100,
           paddingRight: 10,
         }}
         getItemLayout={(data, index) => ({
@@ -92,45 +138,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
     borderBottomColor: "#ddd",
-    borderBottomWidth:3,
-    
+    borderBottomWidth: 3,
   },
-  
+
   itemContainer: {
     marginHorizontal: 10,
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
+
+  imageContainer: {
+    position: "relative",
+  },
+
   image: {
     width: "100%",
-    height: 200, // ✅ 이미지의 높이를 유지합니다.
-    resizeMode: "cover", // ✅ 이미지 비율 유지 및 채우기 (contain도 가능)
-    borderRadius: 10, // ✅ 여기에서 이미지를 둥글게 만듭니다.
-    borderWidth: 1, // 테두리 두께 (예: 1픽셀)
-    borderColor: "#ddd", // 테두리 색상 (테마에 따라 다르게 설정)
+    resizeMode: "cover",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "black",
 
+  contentContainer: {
+    padding: Spacing.md,
+    paddingTop: Spacing.sm,
   },
-  titleContainer: {
-    height: 40,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 30,
+
+  title: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: Spacing.xs,
+    lineHeight: 16,
+    textAlign: "left",
+  },
+
+  location: {
+    fontSize: 10,
+    marginBottom: Spacing.xs,
+    lineHeight: 14,
+    textAlign: "left",
+  },
+
+  date: {
+    fontSize: 9,
+    lineHeight: 12,
+    textAlign: "left",
   },
 });
 
