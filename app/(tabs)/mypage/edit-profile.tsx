@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "@/components/context/AuthContext";
 import { Container, Text } from "@/design-system";
 import { Colors } from "@/design-system/theme";
+import { editProfileStyles } from "@/design-system/styles/editProfileStyles";
 
 const USER_PROFILE_EXTENDED_KEY = "user_profile_extended";
 
@@ -101,13 +102,13 @@ export default function EditProfileScreen() {
     const extendedProfile = { bio, avatar };
     await AsyncStorage.setItem(key, JSON.stringify(extendedProfile));
 
-    Alert.alert("Profile Updated", "Your profile has been successfully updated.");
+    Alert.alert("", "프로필이 성공적으로 업데이트 되었습니다!");
     router.back();
   };
 
   if (isLoading) {
     return (
-      <Container style={styles.centeredContainer}>
+      <Container style={editProfileStyles.centeredContainer}>
         <ActivityIndicator size="large" color={Colors.primary.main} />
       </Container>
     );
@@ -115,7 +116,7 @@ export default function EditProfileScreen() {
 
   if (!userInfo) {
     return (
-      <Container style={styles.centeredContainer}>
+      <Container style={editProfileStyles.centeredContainer}>
         <Text>You must be logged in to edit your profile.</Text>
         <TouchableOpacity onPress={() => router.replace("/")}>
           <Text style={{ color: Colors.primary.main, marginTop: 16 }}>
@@ -127,45 +128,45 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <Container variant="safe" style={styles.container}>
-      <View style={styles.header}>
+    <Container variant="safe" style={editProfileStyles.container}>
+      <View style={editProfileStyles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text>취소</Text>
         </TouchableOpacity>
         <Text variant="h3">프로필 수정</Text>
         <TouchableOpacity onPress={handleSave}>
-          <Text style={styles.saveText}>저장</Text>
+          <Text style={editProfileStyles.saveText}>저장</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView>
-        <View style={styles.avatarContainer}>
+        <View style={editProfileStyles.avatarContainer}>
           <TouchableOpacity onPress={handleChangePhotoPress}>
             {avatar ? (
-              <Image source={{ uri: avatar }} style={styles.avatar} />
+              <Image source={{ uri: avatar }} style={editProfileStyles.avatar} />
             ) : (
-              <View style={[styles.avatar, styles.avatarPlaceholder]}>
+              <View style={[editProfileStyles.avatar, editProfileStyles.avatarPlaceholder]}>
                 <Ionicons name="person" size={60} color="#666" />
               </View>
             )}
-            <Text style={styles.changePhotoText}>프로필 사진 변경</Text>
+            <Text style={editProfileStyles.changePhotoText}>프로필 사진 변경</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>닉네임</Text>
+        <View style={editProfileStyles.form}>
+          <View style={editProfileStyles.inputContainer}>
+            <Text style={editProfileStyles.label}>닉네임</Text>
             <TextInput
-              style={styles.input}
+              style={editProfileStyles.input}
               value={name}
               onChangeText={setName}
               placeholder="닉네임을 입력하세요"
             />
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>한줄 소개</Text>
+          <View style={editProfileStyles.inputContainer}>
+            <Text style={editProfileStyles.label}>한줄 소개</Text>
             <TextInput
-              style={styles.input}
+              style={editProfileStyles.input}
               value={bio}
               onChangeText={setBio}
               placeholder="한줄 소개를 입력하세요"
@@ -177,67 +178,3 @@ export default function EditProfileScreen() {
     </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background.light,
-  },
-  centeredContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.background.light,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 8, // Keep a smaller padding for aesthetics
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
-  },
-  saveText: {
-    color: Colors.primary.main,
-    fontWeight: "bold",
-  },
-  avatarContainer: {
-    alignItems: "center",
-    marginVertical: 24,
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: Colors.neutral.gray200,
-  },
-  avatarPlaceholder: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  changePhotoText: {
-    color: Colors.primary.main,
-    marginTop: 8,
-    textAlign: "center",
-  },
-  form: {
-    paddingHorizontal: 16,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    marginBottom: 8,
-    color: Colors.text.secondary,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: Colors.border.light,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: "#fff",
-  },
-});
