@@ -9,8 +9,8 @@ export const ExhibitionLogStyles = StyleSheet.create({
   searchHeader: {
     backgroundColor: Colors.background.light,
     paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 60,
-    paddingBottom: Spacing.sm,
+    paddingTop: 16,
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border.light,
   },

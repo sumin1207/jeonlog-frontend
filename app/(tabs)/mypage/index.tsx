@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { View, TouchableOpacity, ScrollView, Image } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
@@ -12,8 +13,31 @@ import { MyPageStyles } from "../../../design-system/styles";
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { isLoggedIn, setIsLoggedIn, logout, userInfo, isLoading } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, logout, userInfo, setUserInfo, isLoading } = useAuth();
   const { myLogs } = useExhibition();
+
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [bio, setBio] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadExtendedProfile = async () => {
+        if (userInfo) {
+          const key = `user_profile_extended_${userInfo.id}`;
+          const savedProfileJson = await AsyncStorage.getItem(key);
+          if (savedProfileJson) {
+            const savedProfile = JSON.parse(savedProfileJson);
+            setBio(savedProfile.bio || "");
+            setAvatar(savedProfile.avatar || null);
+          } else {
+            setBio("안녕하세요 저는 전린이입니다.");
+            setAvatar(null);
+          }
+        }
+      };
+      loadExtendedProfile();
+    }, [userInfo])
+  );
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -25,6 +49,49 @@ export default function MyPageScreen() {
       "0"
     )}`;
   };
+
+  const handleTestLogin = () => {
+    const testUser = {
+      id: "test-user-01",
+      name: "테스트 유저",
+      email: "test@example.com",
+      loginType: "google",
+    };
+    setUserInfo(testUser);
+  };
+
+  if (!userInfo) {
+    return (
+      <Container style={MyPageStyles.container}>
+        <View style={MyPageStyles.header}>
+          <Text variant="h3">마이페이지</Text>
+        </View>
+        <View style={MyPageStyles.loginRequiredContainer}>
+          <Ionicons
+            name='person-circle-outline'
+            size={80}
+            color='#ccc'
+          />
+          <Text variant="h2">로그인이 필요합니다</Text>
+          <Text variant="body">
+            마이페이지를 이용하려면 로그인해주세요
+          </Text>
+          <Button
+            title="로그인 하러가기"
+            onPress={() => router.push("/")}
+            variant="primary"
+          />
+          <View style={{ marginTop: 16 }}>
+            <Button
+              title="테스트 모드로 시작 (개발용)"
+              onPress={handleTestLogin}
+              variant="secondary"
+            />
+          </View>
+        </View>
+      </Container>
+    );
+  }
 
   // 로그인 api 연동되면 나중에 수정
   // if (!isLoggedIn || !userInfo) {
@@ -87,18 +154,18 @@ export default function MyPageScreen() {
 
       <ScrollView style={MyPageStyles.scrollView}>
         <Row style={MyPageStyles.profileSection}>
-          <View style={MyPageStyles.avatar}>
-            <Ionicons
-              name='person'
-              size={40}
-              color='#666'
-            />
-          </View>
+          {avatar ? (
+            <Image source={{ uri: avatar }} style={MyPageStyles.avatar} />
+          ) : (
+            <View style={MyPageStyles.avatar}>
+              <Ionicons name="person" size={40} color="#666" />
+            </View>
+          )}
           <Column style={MyPageStyles.profileInfo}>
             <Text variant='bodySmall'>
               {userInfo?.name ?? "석준's 전시라이프"}
             </Text>
-            <Text variant='caption'>안녕하세요 저는 전린이입니다.</Text>
+            <Text variant='caption'>{bio}</Text>
           </Column>
         </Row>
 
@@ -106,7 +173,7 @@ export default function MyPageScreen() {
           <Row style={MyPageStyles.mainButtonsWrapper}>
             <Button
               title='프로필 수정'
-              onPress={() => router.push("/mypage/setting")}
+              onPress={() => router.push("/(tabs)/mypage/edit-profile")}
               variant='secondary'
               size='small'
               style={{ flex: 1, paddingVertical: 6 }}
