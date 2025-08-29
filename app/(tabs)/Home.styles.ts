@@ -54,6 +54,8 @@ export const style = (theme: string) => {
     },
 
     tabContainer: {
+      borderTopWidth: 1,
+      borderTopColor: "f1f1f1",
       flexDirection: "row",
       marginBottom: Spacing.lg,
       backgroundColor: "transparent",

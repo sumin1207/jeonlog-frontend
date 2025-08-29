@@ -4,7 +4,7 @@ import { Colors, Spacing, Typography, BorderRadius } from "../theme";
 export const TopBarStyles = StyleSheet.create({
   container: {
     height: 80,
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary.contrast,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

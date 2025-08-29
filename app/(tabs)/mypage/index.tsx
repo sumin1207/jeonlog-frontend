@@ -13,7 +13,14 @@ import { MyPageStyles } from "../../../design-system/styles";
 export default function MyPageScreen() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { isLoggedIn, setIsLoggedIn, logout, userInfo, setUserInfo, isLoading } = useAuth();
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    logout,
+    userInfo,
+    setUserInfo,
+    isLoading,
+  } = useAuth();
   const { myLogs } = useExhibition();
 
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -67,15 +74,9 @@ export default function MyPageScreen() {
           <Text variant="h3">마이페이지</Text>
         </View>
         <View style={MyPageStyles.loginRequiredContainer}>
-          <Ionicons
-            name='person-circle-outline'
-            size={80}
-            color='#ccc'
-          />
+          <Ionicons name="person-circle-outline" size={80} color="#ccc" />
           <Text variant="h2">로그인이 필요합니다</Text>
-          <Text variant="body">
-            마이페이지를 이용하려면 로그인해주세요
-          </Text>
+          <Text variant="body">마이페이지를 이용하려면 로그인해주세요</Text>
           <Button
             title="로그인 하러가기"
             onPress={() => router.push("/")}
@@ -131,23 +132,16 @@ export default function MyPageScreen() {
   return (
     <Container style={MyPageStyles.container}>
       <View style={MyPageStyles.header}>
-        <Text variant='h3'>마이페이지</Text>
+        <Text variant="h3">마이페이지</Text>
         <Row style={MyPageStyles.headerIcons}>
           <TouchableOpacity style={MyPageStyles.topButton}>
-            <Ionicons
-              name='notifications-outline'
-              size={28}
-              color='#000'
-            />
+            <Ionicons name="notifications-outline" size={28} color="#000" />
           </TouchableOpacity>
           <TouchableOpacity
             style={MyPageStyles.topButton}
-            onPress={() => router.push("/mypage/setting")}>
-            <Ionicons
-              name='settings-outline'
-              size={28}
-              color='#000'
-            />
+            onPress={() => router.push("/mypage/setting")}
+          >
+            <Ionicons name="settings-outline" size={28} color="#000" />
           </TouchableOpacity>
         </Row>
       </View>
@@ -162,48 +156,40 @@ export default function MyPageScreen() {
             </View>
           )}
           <Column style={MyPageStyles.profileInfo}>
-            <Text variant='bodySmall'>
-              {userInfo?.name ?? "석준's 전시라이프"}
-            </Text>
-            <Text variant='caption'>{bio}</Text>
+            <Text variant="bold">{userInfo?.name ?? "석준's 전시라이프"}</Text>
+            <Text variant="caption">{bio}</Text>
           </Column>
         </Row>
 
         <Row style={MyPageStyles.buttonsSection}>
           <Row style={MyPageStyles.mainButtonsWrapper}>
             <Button
-              title='프로필 수정'
+              title="프로필 수정"
               onPress={() => router.push("/(tabs)/mypage/edit-profile")}
-              variant='secondary'
-              size='small'
+              variant="secondary"
+              size="small"
               style={{ flex: 1, paddingVertical: 6 }}
             />
             <Button
-              title='북마크한 전시'
+              title="북마크한 전시"
               onPress={() =>
                 router.push("/(tabs)/mypage/exhibition/Bookmarked")
               }
-              variant='secondary'
-              size='small'
+              variant="secondary"
+              size="small"
               style={{ flex: 1, marginLeft: 8, paddingVertical: 6 }}
             />
           </Row>
           <TouchableOpacity style={MyPageStyles.iconButton}>
-            <Ionicons
-              name='person-outline'
-              size={16}
-              color='#000'
-            />
+            <Ionicons name="person-outline" size={16} color="#000" />
           </TouchableOpacity>
         </Row>
 
         <View style={MyPageStyles.divider} />
 
         <Column style={MyPageStyles.logsSection}>
-          <Text variant='bodySmall'>나의 전시 기록들 ({myLogs.length})</Text>
-          <Row
-            style={MyPageStyles.recordsGrid}
-            wrap>
+          <Text variant="bodySmall">나의 전시 기록들 ({myLogs.length})</Text>
+          <Row style={MyPageStyles.recordsGrid} wrap>
             {myLogs.length > 0 ? (
               myLogs.map((log) => {
                 const exhibitionId = log.exhibitionId || log.id;
@@ -220,7 +206,8 @@ export default function MyPageScreen() {
                     style={MyPageStyles.logCard}
                     onPress={() => {
                       router.push(`/exhibition-log/${log.id}?from=mypage`);
-                    }}>
+                    }}
+                  >
                     <Image
                       source={
                         log.mainImage
@@ -230,9 +217,10 @@ export default function MyPageScreen() {
                       style={MyPageStyles.logImage}
                     />
                     <Text
-                      variant='caption'
-                      align='center'
-                      style={MyPageStyles.logTitle}>
+                      variant="caption"
+                      align="center"
+                      style={MyPageStyles.logTitle}
+                    >
                       {exhibition.title}
                     </Text>
                   </TouchableOpacity>
@@ -240,9 +228,7 @@ export default function MyPageScreen() {
               })
             ) : (
               <Column style={MyPageStyles.emptyRecords}>
-                <Text
-                  variant='body'
-                  color='secondary'>
+                <Text variant="body" color="secondary">
                   작성한 전시 기록이 없습니다
                 </Text>
               </Column>
