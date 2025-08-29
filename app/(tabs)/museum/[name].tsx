@@ -137,6 +137,181 @@ export default function MuseumDetailScreen() {
         },
       ],
     },
+    뮤지엄209: {
+      name: "뮤지엄209",
+      headerImage: undefined,
+      museumEmblem: require("../../../assets/images/museumEmblem/museum209Emblem.jpg"),
+      address: "서울특별시 송파구 잠실로 209 소피텔 앰배서더 서울 호텔 3층",
+      latitude: 37.514219,
+      longitude: 127.103073,
+      phone: "02-6953-8016",
+      website: "https://www.instagram.com/museum209/",
+      hours: "10:00~19:00 (입장 마감 18:00)",
+      closedDays: "매주 월요일",
+      entrance: "전시별로 상이함 (성인 15,000원, 청소년/어린이 12,000원 기준)",
+      description:
+        "근현대 경계를 넘나드는 범주의 아티스트와 문화, 예술을 아카이브하고 다양한 관람객에게 소개하는 새로운 미술관. 기존 미술관의 프레임을 벗어나 다양한 컨텐츠를 소개하며 관람객과 함께 문화와 예술로 공감하는 열린 미술관",
+      parking: "소피텔 앰배서더 서울 호텔 주차장 이용",
+      parkingFee: "호텔 주차료 정책에 따름",
+      subway: "2호선 잠실나루역, 8호선 몽촌토성역",
+      exhibitions: [{}],
+    },
+    뮤지엄한미: {
+      name: "뮤지엄한미",
+      headerImage: undefined,
+      museumEmblem: require("../../../assets/images/museumEmblem/museumHanmiEmblem.png"),
+      address:
+        "서울특별시 종로구 삼청로 9길 45 (본관), 서울특별시 종로구 삼청로 11길 11 (별관)",
+      latitude: 37.585219,
+      longitude: 126.983767,
+      phone: "02-733-1315",
+      website: "https://museumhanmi.or.kr/",
+      hours: "화-일요일 10:00 - 18:00",
+      closedDays: "매주 월요일",
+      entrance:
+        "성인 15,000원, 학생 7,500원, 경로 7,500원, 종로구민·재직자·재학생 7,500원 (본관, 별관 통합권)",
+      description:
+        "국내 최초의 사진전문 미술관으로, 사진예술의 확장으로의 변화를 추구하는 복합문화플랫폼. 20,000장 이상의 사진 프린트와 필름 롤을 보관하는 수장고를 운영",
+      parking: "주차공간 협소, 대중교통 이용 권장",
+      parkingFee: "주차장 없음",
+      subway:
+        "시청역 4번 출구 혹은 광화문역 2번 출구 - 종로 11번 마을버스 환승 - 삼청공원 정류소 하차",
+      exhibitions: [{}],
+    },
+    환기미술관: {
+      name: "환기미술관",
+      headerImage: undefined, //require("../../../assets/images/museumBackground/whankiBg.jpg"),
+      museumEmblem: undefined, //require("../../../assets/images/museumEmblem/whankiEmblem.png"),
+      address: "서울시 종로구 자하문로40길 63",
+      latitude: 37.59431,
+      longitude: 126.96892,
+      phone: "02-391-7701",
+      website: "https://whankimuseum.org",
+      hours: "오전 10시~오후 6시 (입장마감 오후 5시)",
+      closedDays: "매주 월요일 휴관",
+      entrance: "전시 종류에 따라 상이 (웹사이트 확인 필요)",
+      description:
+        "한국 현대미술의 선구자 김환기 화백의 작품을 전시하는 미술관. 북악산 자락에 위치하며 김환기 화백의 작품 2,000여 점을 포함하여 총 2,500여 점의 작품을 보유. 본관, 별관, 수향산방의 3건물로 구성",
+      parking: "소규모 주차장 운영",
+      parkingFee: "주차료 별도",
+      subway: "3호선 경복궁역, 부암동 방향 버스 이용",
+      exhibitions: [{}],
+    },
+    세화미술관: {
+      name: "세화미술관",
+      headerImage: undefined, //require("../../../assets/images/museumBackground/sehwaBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/sehwaEmblem.png"),
+      address: "서울시 종로구 새문안로 68 흥국생명빌딩 2층",
+      latitude: 37.570863,
+      longitude: 126.975963,
+      phone: "02-2002-7789",
+      website: "https://sehwamuseum.org",
+      hours: "화-일요일 10:00-18:00 (입장 마감 시간 17:30)",
+      closedDays: "매주 월요일, 매년 1월 1일, 추석 당일, 성탄절",
+      entrance: "전시에 따라 상이",
+      description:
+        "현대미술과 다양한 장르의 실험적 기획전을 선보이는 미술관. 광화문 인근에 위치하여 접근성이 좋으며, 젊은 작가들의 작품을 중심으로 기획전시를 진행",
+      parking:
+        "흥국생명빌딩 지하주차장 이용 (전시 관람객에 한해 2시간 무료주차)",
+      parkingFee: "2시간 무료, 이후 유료",
+      subway: "5호선 광화문역 6번 출구로 나와 약 250m 직진",
+      exhibitions: [{}],
+    },
+    한원미술관: {
+      name: "한원미술관",
+      headerImage: undefined, //require("../../../assets/images/museumBackground/hanwonBg.jpeg"),
+      museumEmblem: undefined, //require("../../../assets/images/museumEmblem/hanwonEmblem.png"),
+      address: "서울특별시 서초구 서초동 1449-12",
+      latitude: 37.480649,
+      longitude: 127.012856,
+      phone: "02-588-5853",
+      website: "http://www.hanwon.org",
+      hours: "화-일 10:00-18:00",
+      closedDays: "매주 월요일",
+      entrance: "무료",
+      description:
+        "한국 구상미술의 발전과 일반 공중의 문화교육에 이바지할 목적으로 1993년 설립된 사립미술관. 예술의전당 맞은편에 위치하며 젊은 작가들의 실험적 작품을 소개",
+      parking: "소규모 주차장 운영",
+      parkingFee: "무료",
+      subway: "3호선 남부터미널역, 2호선 서초역에서 도보",
+      exhibitions: [{}],
+    },
+    송은: {
+      name: "송은",
+      headerImage: require("../../../assets/images/museumBackground/songeunBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/songeunEmblem.jpg"),
+      address: "06016 서울 강남구 도산대로 441 (청담동)",
+      latitude: 37.520087,
+      longitude: 127.049622,
+      phone: "02-3448-0100",
+      website: "https://www.songeunartspace.org",
+      hours: "11:00~18:30",
+      closedDays: "일요일, 공휴일",
+      entrance: "무료 (네이버 사전예약 필수)",
+      description:
+        "미술계 젊은 인재들의 전시와 연구 활동을 지원하는 비영리 문화재단. 헤르조그&드 뫼롱이 설계한 삼각형 모양의 건물이 특징적이며, 송은미술대상전 등 신진 작가 지원사업을 지속적으로 운영",
+      parking: "교통약자 외 주차장 이용 불가",
+      parkingFee: "주차 불가",
+      subway: "수인분당선 압구정로데오역 4번 출구, 도보 10분",
+      exhibitions: [{}],
+    },
+    푸투라서울: {
+      name: "푸투라서울",
+      headerImage: require("../../../assets/images/museumBackground/futuraBg.png"),
+      museumEmblem: require("../../../assets/images/museumEmblem/futuraEmblem.png"),
+      address: "서울 종로구 북촌로 61",
+      latitude: 37.582455,
+      longitude: 126.985022,
+      phone: "02-000-0000",
+      website: "https://futuraseoul.org",
+      hours: "10:30 ~ 19:00, 목금 21:00까지",
+      closedDays: "매주 월요일 휴관",
+      entrance: "전시에 따라 상이",
+      description:
+        "북촌 한옥마을에 위치한 예술공간. WGNB가 설계한 1층 로비와 후원, 2층 전시실과 중정, 3층 테라스와 옥상으로 구성. 10.8m 높이의 대형 전시실 '백 개의 시'를 중심으로 미래지향적 전시를 선보임",
+      parking: "주차장 없음, 대중교통 이용",
+      parkingFee: "주차장 없음",
+      subway: "3호선 안국역에서 도보 15분",
+      exhibitions: [{}],
+    },
+    아르코미술관: {
+      name: "아르코미술관",
+      headerImage: require("../../../assets/images/museumBackground/arkoBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/arkoEmblem.jpg"),
+      address: "03087 서울 종로구 동숭길 3 (동숭동, 한국문화예술진흥원)",
+      latitude: 37.582076,
+      longitude: 127.002045,
+      phone: "02-760-4850",
+      website: "https://www.arko.or.kr/artcenter/",
+      hours: "11:00 ~ 19:00 (입장마감 18:30)",
+      closedDays: "월요일, 1월 1일, 설날·추석 당일",
+      entrance: "무료",
+      description:
+        "한국문화예술진흥원 산하 미술회관으로 개관된 미술관. 다양한 장르의 실험적인 기획전과 대중과 소통할 수 있는 교육프로그램, 국제교류 네트워크를 활용한 협업 프로그램 운영",
+      parking: "대중교통 이용 권장",
+      parkingFee: "별도 문의",
+      subway: "4호선 혜화역 2번 출구, 도보 2분",
+      exhibitions: [{}],
+    },
+    예술의전당: {
+      name: "예술의전당",
+      headerImage: require("../../../assets/images/museumBackground/sacBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/sacEmblem.png"),
+      address: "서울특별시 서초구 남부순환로 2406 예술의전당",
+      latitude: 37.479966,
+      longitude: 127.0133,
+      phone: "02-580-1300",
+      website: "http://www.sac.or.kr/",
+      hours: "시설별 상이 (공연 및 전시 일정에 따라 변동)",
+      closedDays: "공연일정에 따라 변경",
+      entrance: "시설 및 공연/전시에 따라 상이",
+      description:
+        "대한민국 대표 종합 예술기관으로 오페라하우스, 콘서트홀, 한가람미술관, 한가람디자인미술관 등 다양한 시설을 보유. 클래식, 오페라, 연극, 뮤지컬, 전시 등 다양한 장르의 공연과 전시를 선보임",
+      parking: "대형 주차장 운영",
+      parkingFee: "유료 (시간당 요금제)",
+      subway: "3호선 남부터미널역 5번 출구에서 셔틀버스 이용 또는 도보 15분",
+      exhibitions: [{}],
+    },
   };
 
   const museum = museumData[name as keyof typeof museumData];
@@ -412,13 +587,15 @@ export default function MuseumDetailScreen() {
             style={[
               styles.errorText,
               { color: theme === "dark" ? "#fff" : "#333" },
-            ]}>
+            ]}
+          >
             박물관 정보를 찾을 수 없습니다.
           </Text>
           <TouchableOpacity
             style={styles.errorBackButton}
             onPress={() => router.back()}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+          >
             <Text style={styles.backButtonText}>돌아가기</Text>
           </TouchableOpacity>
         </View>
@@ -436,9 +613,10 @@ export default function MuseumDetailScreen() {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
-          activeOpacity={0.7}>
+          activeOpacity={0.7}
+        >
           <Ionicons
-            name='chevron-back'
+            name="chevron-back"
             size={24}
             color={theme === "dark" ? "#fff" : "#000"}
           />
@@ -448,15 +626,13 @@ export default function MuseumDetailScreen() {
         <Text style={styles.navTitle}>{museum.name}</Text>
       </View>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* 박물관 이미지 */}
         <View style={styles.imageSection}>
           <Image
             source={museum.headerImage}
             style={styles.museumImage}
-            resizeMode='cover'
+            resizeMode="cover"
           />
         </View>
 
@@ -469,27 +645,23 @@ export default function MuseumDetailScreen() {
                 <Image
                   source={museum.museumEmblem}
                   style={styles.museumEmblemIcon}
-                  resizeMode='contain'
+                  resizeMode="contain"
                 />
               )}
             </View>
             <View style={styles.secondRow}>
               <Text style={styles.locationText}>전시장소</Text>
               <View style={styles.rightIconsContainer}>
-                <TouchableOpacity
-                  style={styles.iconButton}
-                  activeOpacity={0.7}>
+                <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
                   <Ionicons
-                    name='heart-outline'
+                    name="heart-outline"
                     size={24}
                     color={theme === "dark" ? "#fff" : "#000"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.iconButton}
-                  activeOpacity={0.7}>
+                <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
                   <Ionicons
-                    name='share-outline'
+                    name="share-outline"
                     size={24}
                     color={theme === "dark" ? "#fff" : "#000"}
                   />
@@ -557,7 +729,8 @@ export default function MuseumDetailScreen() {
               style={[
                 styles.infoSection,
                 { borderBottomWidth: 0, paddingBottom: 0 },
-              ]}>
+              ]}
+            >
               <Text style={styles.infoLabel}>주차요금</Text>
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
             </View>
@@ -572,7 +745,7 @@ export default function MuseumDetailScreen() {
           <View style={styles.locationInfo}>
             <View style={styles.infoRow}>
               <Ionicons
-                name='location-outline'
+                name="location-outline"
                 size={16}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -608,18 +781,19 @@ export default function MuseumDetailScreen() {
                 },
               ]}
               onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
-              activeOpacity={0.7}>
+              activeOpacity={0.7}
+            >
               <Image
                 source={exhibition.image}
                 style={styles.exhibitionImage}
-                resizeMode='cover'
+                resizeMode="cover"
               />
               <View style={styles.exhibitionInfo}>
                 <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
                 <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
               </View>
               <Ionicons
-                name='chevron-forward'
+                name="chevron-forward"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
