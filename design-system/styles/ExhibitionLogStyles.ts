@@ -44,7 +44,7 @@ export const ExhibitionLogStyles = StyleSheet.create({
   title: {
     fontSize: Typography.text.h3.fontSize,
     fontWeight: Typography.text.h3.fontWeight,
-    color: Colors.primary.main,
+    color: Colors.primary.dark, //Colors.primary.main,
   },
   toggleContainer: {
     flexDirection: "row",

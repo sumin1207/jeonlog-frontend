@@ -73,7 +73,7 @@ export default function TopBar({ title, right }: TopBarProps) {
           <Image
             source={require("../../assets/images/topBar.png")}
             style={TopBarStyles.logoImage}
-            resizeMode='contain'
+            resizeMode="contain"
           />
         </Pressable>
       </View>
@@ -88,10 +88,12 @@ export default function TopBar({ title, right }: TopBarProps) {
                 transform: [{ scale: searchButtonScale }],
                 opacity: searchButtonOpacity,
               },
-            ]}>
+            ]}
+          >
             <Pressable
               style={TopBarStyles.searchButton}
-              onPress={handleSearchPress}>
+              onPress={handleSearchPress}
+            >
               <Animated.View
                 style={{
                   transform: [
@@ -102,14 +104,15 @@ export default function TopBar({ title, right }: TopBarProps) {
                       }),
                     },
                   ],
-                }}>
+                }}
+              >
                 <Ionicons
-                  name='search-outline'
+                  name="search-outline"
                   size={24}
                   color={
                     isSearchPressed
                       ? Colors.secondary.main
-                      : Colors.primary.contrast
+                      : Colors.primary.main
                   }
                 />
               </Animated.View>

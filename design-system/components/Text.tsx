@@ -16,7 +16,8 @@ export interface TextProps extends RNTextProps {
     | "body"
     | "bodySmall"
     | "caption"
-    | "button";
+    | "button"
+    | "bold";
   color?:
     | "primary"
     | "secondary"
@@ -49,9 +50,7 @@ export const Text: React.FC<TextProps> = ({
   ];
 
   return (
-    <RNText
-      style={textStyle}
-      {...props}>
+    <RNText style={textStyle} {...props}>
       {children}
     </RNText>
   );

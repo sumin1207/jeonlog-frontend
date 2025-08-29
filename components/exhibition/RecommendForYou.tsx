@@ -22,10 +22,13 @@ const RecommendForYou = () => {
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
 
+  const itemContentWidth = width * 0.5;
+  const imageHeight = itemContentWidth * 1.336;
+  const itemWidth = itemContentWidth + 20; // item width + margin
   // 카드 크기 조정 - 이미지에서 보이는 것처럼
-  const itemContentWidth = width * 0.35; // 화면 너비의 35%로 조정
-  const imageHeight = itemContentWidth * 1.2; // 이미지 높이 비율 조정
-  const itemWidth = itemContentWidth + 20; // 아이템 너비 + 좌우 마진
+  //  const itemContentWidth = width * 0.35; // 화면 너비의 35%로 조정
+  //  const imageHeight = itemContentWidth * 1.2; // 이미지 높이 비율 조정
+  //  const itemWidth = itemContentWidth + 20; // 아이템 너비 + 좌우 마진
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -41,12 +44,13 @@ const RecommendForYou = () => {
                 : Colors.background.card,
           },
         ]}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <View style={styles.imageContainer}>
           <Image
             source={item.image}
             style={[styles.image, { height: imageHeight }]}
-            resizeMode='cover'
+            resizeMode="cover"
           />
         </View>
 
@@ -61,7 +65,8 @@ const RecommendForYou = () => {
                     : Colors.text.primary,
               },
             ]}
-            numberOfLines={2}>
+            numberOfLines={2}
+          >
             {item.title}
           </Text>
 
@@ -76,7 +81,8 @@ const RecommendForYou = () => {
                       : Colors.text.secondary,
                 },
               ]}
-              numberOfLines={1}>
+              numberOfLines={1}
+            >
               {item.location}
             </Text>
           )}
@@ -92,7 +98,8 @@ const RecommendForYou = () => {
                       : Colors.text.secondary,
                 },
               ]}
-              numberOfLines={1}>
+              numberOfLines={1}
+            >
               {item.date}
             </Text>
           )}
@@ -112,8 +119,8 @@ const RecommendForYou = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment='center'
-        decelerationRate='normal'
+        snapToAlignment="center"
+        decelerationRate="normal"
         contentContainerStyle={{
           paddingLeft: (width - itemContentWidth) / 2 - 125,
           paddingRight: 10,
@@ -135,8 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 3,
+    borderBottomColor: "#f1f1f1",
+    borderBottomWidth: 7,
     marginBottom: 10,
   },
 
