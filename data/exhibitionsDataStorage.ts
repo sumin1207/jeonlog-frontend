@@ -2,6 +2,7 @@ export const exhibitionData = {
   "1": {
     id: "1",
     title: "일본미술, 네 가지 시선",
+    museumName: "국립중앙박물관",
     location: "국립중앙박물관",
     address: "서울특별시 용산구 서빙고로 137",
     date: "2025.06.17 - 2025.08.10",
@@ -21,6 +22,7 @@ export const exhibitionData = {
   "2": {
     id: "2",
     title: "현대카드 컬쳐프로젝트29: 톰 삭스 전",
+    museumName: "DDP 뮤지엄",
     location: "DDP 뮤지엄 전시 1관(지하 2층)",
     address: "서울 중구 을지로 281",
     date: "2025.04.25 - 2025.09.07",
@@ -45,6 +47,7 @@ export const exhibitionData = {
     id: "3",
     title: "어른이 보호구역",
     subtitle: "DDP SHOWROOM: 어른이 보호구역",
+    museumName: "DDP 뮤지엄",
     location: "동대문디자인플라자(DDP) 디자인랩 1층 DDP 쇼룸 스테이지",
     address: "서울 중구 을지로 281",
     date: "2025.07.28 - 2025.08.30",
@@ -67,6 +70,7 @@ export const exhibitionData = {
     subtitle:
       "프래그런스 위드 플래닛(FRAGRANCE WITH PLANET)스토리텔링 팝업 전시",
     location: "동대문디자인플라자(DDP) B2층 B the B 다운타운",
+    museumName: "DDP 뮤지엄",
     address: "서울 중구 을지로 281",
     date: "2025.07.18 - 2025.08.31",
     time: "12:00 - 20:00 (매일)",
@@ -86,6 +90,7 @@ export const exhibitionData = {
     title: "What’s your favorite chair",
     subtitle:
       "전시 <What’s your favorite chair> DDP 매거진 라이브러리 x 매거진<C>",
+    museumName: "DDP 뮤지엄",
     location: "동대문디자인플라자(DDP) 디자인랩 3층 디자인홀",
     address: "서울 중구 을지로 281",
     date: "2025.07.17 - 2025.08.30",
@@ -107,6 +112,7 @@ export const exhibitionData = {
     id: "6",
     title: "시대의 언어",
     subtitle: "시대의 언어",
+    museumName: "DDP 뮤지엄",
     location: "동대문디자인플라자(DDP)뮤지엄 3층 둘레길갤러리",
     address: "서울 중구 을지로 281",
     date: "2025.07.14 - 2025.10.10",
@@ -126,6 +132,7 @@ export const exhibitionData = {
     id: "7",
     title: "DDP 디자인 쇼윈도: 2024 ddp 디자인론칭페어",
     subtitle: "DDP 디자인 쇼윈도: 2024 ddp 디자인론칭페어",
+    museumName: "DDP 뮤지엄",
     location: "국립중앙박물관",
     address: "서울 중구 을지로 281",
     date: "2024.12.18 - 2025.11.30",
@@ -149,6 +156,7 @@ export const exhibitionData = {
   "8": {
     id: "8",
     title: "이탈리아 국립 카포디몬테 미술관 19세기 컬렉션: 나폴리를 거닐다",
+    museumName: "마이아트뮤지엄",
     location: "마이아트뮤지엄",
     address: "서울특별시 강남구 테헤란로 518 섬유센터빌딩 B1 (대치동 994-31)",
     date: "2025.8.1 - 2025.11.30 (10.6 추석 당일만 휴관 / 연중무휴)",
@@ -173,7 +181,8 @@ export const exhibitionData = {
   "9": {
     id: "9",
     title: "미셸 앙리:VIVID",
-    location: "마이아트뮤지엄",
+    museumName: "모다갤러리",
+    location: "모다갤러리",
     address: "서울 용산구 녹사평대로 132 3층, 4층 (이태원동 34-158)",
     date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
     time: "월-일 10:30 - 19:00 (입장마감 18:30)",
@@ -187,7 +196,7 @@ export const exhibitionData = {
       //설명 포스터 이미지 삽입
       require("../assets/images/exhibitionPoster/exhibition12_explain.jpg"),
     ],
-    sponsor: "마이아트뮤지엄",
+    sponsor: "모다갤러리",
     phone: "02-567-8878",
     email: "mamu@myartmuseum.kr",
     website: "http://www.myartmuseum.co.kr/",

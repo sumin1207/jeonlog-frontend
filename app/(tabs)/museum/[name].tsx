@@ -13,11 +13,13 @@ import { Ionicons } from "@expo/vector-icons";
 import TopBar from "@/components/ui/TopBar";
 import { NaverMap } from "@/components/ui";
 import { useTheme } from "@/contexts/ThemeContext";
+import { exhibitionData } from "@/data/exhibitionsDataStorage";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 export default function MuseumDetailScreen() {
-  const { name } = useLocalSearchParams<{ name: string }>();
+  const { name: rawName } = useLocalSearchParams<{ name: string }>();
+  const name = decodeURIComponent(rawName || "");
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -83,7 +85,7 @@ export default function MuseumDetailScreen() {
         },
       ],
     },
-    "DDP 뮤지엄": {
+    ddp: {
       name: "DDP 뮤지엄",
       headerImage: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
       museumEmblem: undefined,
@@ -238,7 +240,7 @@ export default function MuseumDetailScreen() {
     },
     송은: {
       name: "송은",
-      headerImage: require("../../../assets/images/museumBackground/songeunBg.jpg"),
+      headerImage: require("../../../assets/images/museumBackground/songeunBg.jpg"), //배경사진 다시 구해야함
       museumEmblem: require("../../../assets/images/museumEmblem/songeunEmblem.jpg"),
       address: "06016 서울 강남구 도산대로 441 (청담동)",
       latitude: 37.520087,
@@ -257,7 +259,7 @@ export default function MuseumDetailScreen() {
     },
     푸투라서울: {
       name: "푸투라서울",
-      headerImage: require("../../../assets/images/museumBackground/futuraBg.png"),
+      headerImage: require("../../../assets/images/museumBackground/futuraBg.png"), //배경사진 조정필요
       museumEmblem: require("../../../assets/images/museumEmblem/futuraEmblem.png"),
       address: "서울 종로구 북촌로 61",
       latitude: 37.582455,
@@ -276,7 +278,7 @@ export default function MuseumDetailScreen() {
     },
     아르코미술관: {
       name: "아르코미술관",
-      headerImage: require("../../../assets/images/museumBackground/arkoBg.jpg"),
+      headerImage: require("../../../assets/images/museumBackground/arkoBg.jpg"), //배경사진 애매
       museumEmblem: require("../../../assets/images/museumEmblem/arkoEmblem.jpg"),
       address: "03087 서울 종로구 동숭길 3 (동숭동, 한국문화예술진흥원)",
       latitude: 37.582076,
@@ -294,8 +296,8 @@ export default function MuseumDetailScreen() {
       exhibitions: [{}],
     },
     예술의전당: {
-      name: "예술의전당",
-      headerImage: require("../../../assets/images/museumBackground/sacBg.jpg"),
+      name: "예술의 전당",
+      headerImage: require("../../../assets/images/museumBackground/sacBg.jpg"), //배경사진 애매
       museumEmblem: require("../../../assets/images/museumEmblem/sacEmblem.png"),
       address: "서울특별시 서초구 남부순환로 2406 예술의전당",
       latitude: 37.479966,
@@ -315,6 +317,10 @@ export default function MuseumDetailScreen() {
   };
 
   const museum = museumData[name as keyof typeof museumData];
+
+  const filteredExhibitions = Object.values(exhibitionData).filter(
+    (exhibition) => museum && exhibition.museumName === museum.name
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -584,10 +590,7 @@ export default function MuseumDetailScreen() {
         <TopBar />
         <View style={styles.errorContainer}>
           <Text
-            style={[
-              styles.errorText,
-              { color: theme === "dark" ? "#fff" : "#333" },
-            ]}
+            style={[styles.errorText, { color: theme === "dark" ? "#fff" : "#333" }]}
           >
             박물관 정보를 찾을 수 없습니다.
           </Text>
@@ -726,10 +729,7 @@ export default function MuseumDetailScreen() {
           {/* 9. 주차요금 */}
           {museum.parkingFee && (
             <View
-              style={[
-                styles.infoSection,
-                { borderBottomWidth: 0, paddingBottom: 0 },
-              ]}
+              style={[styles.infoSection, { borderBottomWidth: 0, paddingBottom: 0 }]}
             >
               <Text style={styles.infoLabel}>주차요금</Text>
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
@@ -768,15 +768,15 @@ export default function MuseumDetailScreen() {
         {/* 현재 전시 */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            현재 전시 ({museum.exhibitions.length}개)
+            현재 전시 ({filteredExhibitions.length}개)
           </Text>
 
-          {museum.exhibitions.map((exhibition, index) => (
+          {filteredExhibitions.map((exhibition, index) => (
             <TouchableOpacity
               key={exhibition.id}
-              style={[
+              style={[ 
                 styles.exhibitionItem,
-                index === museum.exhibitions.length - 1 && {
+                index === filteredExhibitions.length - 1 && {
                   borderBottomWidth: 0,
                 },
               ]}
