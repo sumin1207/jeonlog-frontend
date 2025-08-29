@@ -14,8 +14,99 @@ import TopBar from "@/components/ui/TopBar";
 import { NaverMap } from "@/components/ui";
 import { useTheme } from "@/contexts/ThemeContext";
 import { exhibitionData } from "@/data/exhibitionsDataStorage";
+import { organizeExhibitionsByDate } from "@/data/organizeByDate";
 
 const { width: screenWidth } = Dimensions.get("window");
+
+const ExhibitionList = ({ title, exhibitions, router, theme }) => {
+  if (!exhibitions || exhibitions.length === 0) {
+    return null;
+  }
+
+  const styles = StyleSheet.create({
+    section: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      margin: 15,
+      marginBottom: 20,
+      borderRadius: 16,
+      padding: 20,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 20,
+      letterSpacing: 0.5,
+    },
+    exhibitionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === "dark" ? "#333" : "#eee",
+    },
+    exhibitionImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginRight: 15,
+    },
+    exhibitionInfo: {
+      flex: 1,
+    },
+    exhibitionTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 4,
+    },
+    exhibitionDate: {
+      fontSize: 14,
+      color: theme === "dark" ? "#ccc" : "#666",
+    },
+  });
+
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>
+        {title} ({exhibitions.length}개)
+      </Text>
+      {exhibitions.map((exhibition, index) => (
+        <TouchableOpacity
+          key={exhibition.id}
+          style={[ 
+            styles.exhibitionItem,
+            index === exhibitions.length - 1 && { borderBottomWidth: 0 },
+          ]}
+          onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
+          activeOpacity={0.7}
+        >
+          <Image
+            source={exhibition.image}
+            style={styles.exhibitionImage}
+            resizeMode="cover"
+          />
+          <View style={styles.exhibitionInfo}>
+            <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
+            <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme === "dark" ? "#ccc" : "#666"}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};
 
 export default function MuseumDetailScreen() {
   const { name: rawName } = useLocalSearchParams<{ name: string }>();
@@ -156,7 +247,7 @@ export default function MuseumDetailScreen() {
       parking: "소피텔 앰배서더 서울 호텔 주차장 이용",
       parkingFee: "호텔 주차료 정책에 따름",
       subway: "2호선 잠실나루역, 8호선 몽촌토성역",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     뮤지엄한미: {
       name: "뮤지엄한미",
@@ -178,7 +269,7 @@ export default function MuseumDetailScreen() {
       parkingFee: "주차장 없음",
       subway:
         "시청역 4번 출구 혹은 광화문역 2번 출구 - 종로 11번 마을버스 환승 - 삼청공원 정류소 하차",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     환기미술관: {
       name: "환기미술관",
@@ -197,7 +288,7 @@ export default function MuseumDetailScreen() {
       parking: "소규모 주차장 운영",
       parkingFee: "주차료 별도",
       subway: "3호선 경복궁역, 부암동 방향 버스 이용",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     세화미술관: {
       name: "세화미술관",
@@ -217,7 +308,7 @@ export default function MuseumDetailScreen() {
         "흥국생명빌딩 지하주차장 이용 (전시 관람객에 한해 2시간 무료주차)",
       parkingFee: "2시간 무료, 이후 유료",
       subway: "5호선 광화문역 6번 출구로 나와 약 250m 직진",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     한원미술관: {
       name: "한원미술관",
@@ -236,7 +327,7 @@ export default function MuseumDetailScreen() {
       parking: "소규모 주차장 운영",
       parkingFee: "무료",
       subway: "3호선 남부터미널역, 2호선 서초역에서 도보",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     송은: {
       name: "송은",
@@ -255,7 +346,7 @@ export default function MuseumDetailScreen() {
       parking: "교통약자 외 주차장 이용 불가",
       parkingFee: "주차 불가",
       subway: "수인분당선 압구정로데오역 4번 출구, 도보 10분",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     푸투라서울: {
       name: "푸투라서울",
@@ -274,7 +365,7 @@ export default function MuseumDetailScreen() {
       parking: "주차장 없음, 대중교통 이용",
       parkingFee: "주차장 없음",
       subway: "3호선 안국역에서 도보 15분",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     아르코미술관: {
       name: "아르코미술관",
@@ -293,7 +384,7 @@ export default function MuseumDetailScreen() {
       parking: "대중교통 이용 권장",
       parkingFee: "별도 문의",
       subway: "4호선 혜화역 2번 출구, 도보 2분",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
     예술의전당: {
       name: "예술의 전당",
@@ -312,14 +403,18 @@ export default function MuseumDetailScreen() {
       parking: "대형 주차장 운영",
       parkingFee: "유료 (시간당 요금제)",
       subway: "3호선 남부터미널역 5번 출구에서 셔틀버스 이용 또는 도보 15분",
-      exhibitions: [{}],
+      exhibitions: [{}]
     },
   };
 
   const museum = museumData[name as keyof typeof museumData];
 
-  const filteredExhibitions = Object.values(exhibitionData).filter(
+  const allMuseumExhibitions = Object.values(exhibitionData).filter(
     (exhibition) => museum && exhibition.museumName === museum.name
+  );
+
+  const { ongoing, upcoming, past } = organizeExhibitionsByDate(
+    allMuseumExhibitions
   );
 
   const styles = StyleSheet.create({
@@ -486,56 +581,6 @@ export default function MuseumDetailScreen() {
       lineHeight: 20,
       marginTop: 10,
     },
-    section: {
-      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
-      margin: 15,
-      marginBottom: 20,
-      borderRadius: 16,
-      padding: 20,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.15,
-      shadowRadius: 8,
-      elevation: 8,
-      borderWidth: 1,
-      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
-    },
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: "700",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 20,
-      letterSpacing: 0.5,
-    },
-    exhibitionItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === "dark" ? "#333" : "#eee",
-    },
-    exhibitionImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      marginRight: 15,
-    },
-    exhibitionInfo: {
-      flex: 1,
-    },
-    exhibitionTitle: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: theme === "dark" ? "#fff" : "#1c3519",
-      marginBottom: 4,
-    },
-    exhibitionDate: {
-      fontSize: 14,
-      color: theme === "dark" ? "#ccc" : "#666",
-    },
     errorContainer: {
       flex: 1,
       justifyContent: "center",
@@ -590,7 +635,8 @@ export default function MuseumDetailScreen() {
         <TopBar />
         <View style={styles.errorContainer}>
           <Text
-            style={[styles.errorText, { color: theme === "dark" ? "#fff" : "#333" }]}
+            style={[styles.errorText, { color: theme === "dark" ? "#fff" : "#333" }]
+            }
           >
             박물관 정보를 찾을 수 없습니다.
           </Text>
@@ -729,7 +775,10 @@ export default function MuseumDetailScreen() {
           {/* 9. 주차요금 */}
           {museum.parkingFee && (
             <View
-              style={[styles.infoSection, { borderBottomWidth: 0, paddingBottom: 0 }]}
+              style={[ 
+                styles.infoSection,
+                { borderBottomWidth: 0, paddingBottom: 0 },
+              ]}
             >
               <Text style={styles.infoLabel}>주차요금</Text>
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
@@ -765,41 +814,24 @@ export default function MuseumDetailScreen() {
           </View>
         </View>
 
-        {/* 현재 전시 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            현재 전시 ({filteredExhibitions.length}개)
-          </Text>
-
-          {filteredExhibitions.map((exhibition, index) => (
-            <TouchableOpacity
-              key={exhibition.id}
-              style={[ 
-                styles.exhibitionItem,
-                index === filteredExhibitions.length - 1 && {
-                  borderBottomWidth: 0,
-                },
-              ]}
-              onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
-              activeOpacity={0.7}
-            >
-              <Image
-                source={exhibition.image}
-                style={styles.exhibitionImage}
-                resizeMode="cover"
-              />
-              <View style={styles.exhibitionInfo}>
-                <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
-                <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={theme === "dark" ? "#ccc" : "#666"}
-              />
-            </TouchableOpacity>
-          ))}
-        </View>
+        <ExhibitionList
+          title="현재 전시"
+          exhibitions={ongoing}
+          router={router}
+          theme={theme}
+        />
+        <ExhibitionList
+          title="예정된 전시"
+          exhibitions={upcoming}
+          router={router}
+          theme={theme}
+        />
+        <ExhibitionList
+          title="지난 전시"
+          exhibitions={past}
+          router={router}
+          theme={theme}
+        />
       </ScrollView>
     </View>
   );
