@@ -54,7 +54,8 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}>
+      activeOpacity={0.8}
+    >
       {loading ? (
         <ActivityIndicator
           color={
@@ -62,7 +63,7 @@ export const Button: React.FC<ButtonProps> = ({
               ? Colors.primary.contrast
               : Colors.primary.main
           }
-          size='small'
+          size="small"
         />
       ) : (
         <Text style={textStyleCombined}>{title}</Text>

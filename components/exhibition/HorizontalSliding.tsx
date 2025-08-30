@@ -25,8 +25,8 @@ const HorizontalSliding = () => {
   const router = useRouter();
 
   // Calculate dynamic dimensions - 현재 크기 유지
-  const itemContentWidth = width * 0.5;
-  const imageHeight = itemContentWidth * 1.336;
+  const itemContentWidth = width * 0.35;
+  const imageHeight = itemContentWidth * 1.2;
   const itemWidth = itemContentWidth + 20; // item width + margin
 
   const renderItem = useCallback(
@@ -43,12 +43,13 @@ const HorizontalSliding = () => {
                 : Colors.background.card,
           },
         ]}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <View style={styles.imageContainer}>
           <Image
             source={item.image}
             style={[styles.image, { height: imageHeight }]}
-            resizeMode='cover'
+            resizeMode="cover"
           />
         </View>
 
@@ -63,7 +64,8 @@ const HorizontalSliding = () => {
                     : Colors.text.primary,
               },
             ]}
-            numberOfLines={2}>
+            numberOfLines={2}
+          >
             {item.title}
           </Text>
 
@@ -78,7 +80,8 @@ const HorizontalSliding = () => {
                       : Colors.text.secondary,
                 },
               ]}
-              numberOfLines={1}>
+              numberOfLines={1}
+            >
               {item.location}
             </Text>
           )}
@@ -94,7 +97,8 @@ const HorizontalSliding = () => {
                       : Colors.text.primary,
                 },
               ]}
-              numberOfLines={1}>
+              numberOfLines={1}
+            >
               {item.date}
             </Text>
           )}
@@ -114,8 +118,8 @@ const HorizontalSliding = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment='center'
-        decelerationRate='normal'
+        snapToAlignment="center"
+        decelerationRate="normal"
         contentContainerStyle={{
           paddingLeft: (width - itemContentWidth) / 2 - 100,
           paddingRight: 10,
@@ -137,8 +141,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 3,
+    borderBottomColor: "#f1f1f1",
+    borderBottomWidth: 7,
   },
 
   itemContainer: {

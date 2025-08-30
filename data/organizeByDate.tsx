@@ -1,8 +1,7 @@
-import { exhibitionData } from "./exhibitionsDataStorage";
-//지난 전시, 진행 중 전시, 예정된 전시 구분
 export interface Exhibition {
   id: string;
   title: string;
+  museumName?: string;
   location: string;
   address: string;
   date: string;
@@ -28,7 +27,9 @@ interface OrganizedExhibitions {
   upcoming: Exhibition[];
 }
 
-const organizeExhibitionsByDate = (): OrganizedExhibitions => {
+export const organizeExhibitionsByDate = (
+  exhibitions: Exhibition[]
+): OrganizedExhibitions => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -38,49 +39,25 @@ const organizeExhibitionsByDate = (): OrganizedExhibitions => {
     upcoming: [],
   };
 
-  for (const key in exhibitionData) {
-    const exhibition = exhibitionData[key as keyof typeof exhibitionData];
-    const dateRange = exhibition.date.split(" - ");
-
-    const startDateStr = dateRange[0].trim();
-    let endDateStr =
-      dateRange.length > 1 ? dateRange[1].trim().split(" (")[0] : startDateStr;
-
-    const startDateParts = startDateStr
-      .split(".")
-      .map((part) => parseInt(part, 10));
-    let endDateParts = endDateStr.split(".").map((part) => parseInt(part, 10));
-
-    const startYear = startDateParts[0];
-
-    if (endDateParts.length < 3) {
-      endDateParts.unshift(startYear);
-    }
-
-    const startDate = new Date(
-      startDateParts[0],
-      startDateParts[1] - 1,
-      startDateParts[2]
+  exhibitions.forEach((exhibition) => {
+    const dateMatch = exhibition.date.match(
+      /(\d{4}\.\d{1,2}\.\d{1,2})\s*-\s*(\d{4}\.\d{1,2}\.\d{1,2})/
     );
-    const endDate = new Date(
-      endDateParts[0],
-      endDateParts[1] - 1,
-      endDateParts[2]
-    );
+    if (dateMatch) {
+      const startDate = new Date(dateMatch[1].replace(/\./g, "-"));
+      const endDate = new Date(dateMatch[2].replace(/\./g, "-"));
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
 
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
-
-    if (endDate < today) {
-      organized.past.push(exhibition);
-    } else if (startDate > today) {
-      organized.upcoming.push(exhibition);
-    } else {
-      organized.ongoing.push(exhibition);
+      if (endDate < today) {
+        organized.past.push(exhibition);
+      } else if (startDate > today) {
+        organized.upcoming.push(exhibition);
+      } else {
+        organized.ongoing.push(exhibition);
+      }
     }
-  }
+  });
 
   return organized;
 };
-
-export const organizedExhibitions = organizeExhibitionsByDate();
