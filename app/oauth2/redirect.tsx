@@ -4,14 +4,11 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../../components/context/AuthContext";
-import {
-  isTokenValid,
-  extractUserInfoFromToken,
-} from "../../services/authService";
+import { getBackendUrl } from "../../constants/Config";
 
 export default function OAuth2Redirect() {
   const router = useRouter();
-  const { token } = useLocalSearchParams();
+  const { code, state, error } = useLocalSearchParams();
   const { login } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
@@ -21,57 +18,35 @@ export default function OAuth2Redirect() {
   useEffect(() => {
     const handleOAuth2Redirect = async () => {
       try {
-        if (token) {
-          console.log("🔐 OAuth2 리디렉트로 받은 JWT 토큰:", token);
-          console.log("📝 토큰 길이:", (token as string).length);
+        console.log("🔍 OAuth2 리다이렉트 파라미터:", { code, state, error });
+
+        // 에러가 있는 경우
+        if (error) {
+          console.error("❌ OAuth2 인증 에러:", error);
+          setStatus("error");
+          setMessage("인증 중 오류가 발생했습니다.");
+          setTimeout(() => {
+            router.replace("/");
+          }, 2000);
+          return;
+        }
+
+        // 인증 코드가 있는 경우
+        if (code) {
           console.log(
-            "🔍 토큰 형식 확인:",
-            (token as string).substring(0, 20) + "..."
+            "🔑 인증 코드 받음:",
+            (code as string).substring(0, 20) + "..."
           );
 
-          // JWT 토큰 유효성 검증
-          if (!isTokenValid(token as string)) {
-            console.error("❌ JWT 토큰이 유효하지 않습니다");
-            setStatus("error");
-            setMessage("유효하지 않은 토큰입니다. 다시 로그인해주세요.");
-            setTimeout(() => {
-              router.replace("/(tabs)/home");
-            }, 2000);
-            return;
-          }
+          // state 파라미터로 로그인 타입 확인
+          const loginType = state === "naver_login" ? "naver" : "google";
+          console.log("🔍 로그인 타입:", loginType);
 
-          // 토큰에서 사용자 정보 추출
-          const userInfoFromToken = extractUserInfoFromToken(token as string);
-          console.log("👤 토큰에서 추출한 사용자 정보:", userInfoFromToken);
+          // 백엔드로 인증 코드 전송하여 JWT 토큰 받기
+          await exchangeCodeForToken(code as string, loginType);
 
-          // JWT 토큰을 AsyncStorage에 저장
-          await AsyncStorage.setItem("jwt_token", token as string);
-          console.log("✅ JWT 토큰 AsyncStorage 저장 완료");
-
-          // 저장된 토큰 확인
-          const savedToken = await AsyncStorage.getItem("jwt_token");
-          console.log("🔍 저장된 토큰 확인:", savedToken ? "성공" : "실패");
-          if (savedToken) {
-            console.log("🔍 저장된 토큰 길이:", savedToken.length);
-            console.log(
-              "🔍 저장된 토큰 일부:",
-              savedToken.substring(0, 50) + "..."
-            );
-          }
-
-          // 추출한 사용자 정보로 AuthContext 업데이트
-          const userInfo = {
-            id: userInfoFromToken?.sub || "temp_id",
-            name: userInfoFromToken?.email?.split("@")[0] || "사용자",
-            email: userInfoFromToken?.email || "user@example.com",
-            loginType: "google" as const,
-            accessToken: token as string,
-          };
-
-          // AuthContext에 로그인 상태 업데이트
-          login(userInfo);
-          console.log("✅ AuthContext 로그인 상태 업데이트 완료");
-          console.log("🔍 AuthContext 상태 확인 - userInfo:", userInfo);
+          setStatus("success");
+          setMessage("로그인 성공!");
 
           // 잠시 대기 후 홈 화면으로 이동
           setTimeout(() => {
@@ -79,27 +54,95 @@ export default function OAuth2Redirect() {
             router.replace("/(tabs)/home");
           }, 1500);
         } else {
-          console.error("❌ 토큰이 없습니다");
+          console.error("❌ 인증 코드가 없습니다");
           setStatus("error");
-          setMessage("로그인에 실패했습니다. 다시 시도해주세요.");
+          setMessage("인증 코드를 받지 못했습니다. 다시 시도해주세요.");
 
           setTimeout(() => {
-            router.replace("/(tabs)/home");
+            router.replace("/");
           }, 2000);
         }
       } catch (error) {
-        console.error("❌ OAuth2 리디렉트 처리 중 에러:", error);
+        console.error("❌ OAuth2 리다이렉트 처리 중 에러:", error);
         setStatus("error");
         setMessage("로그인 처리 중 오류가 발생했습니다.");
 
         setTimeout(() => {
-          router.replace("/(tabs)/home");
+          router.replace("/");
         }, 2000);
       }
     };
 
     handleOAuth2Redirect();
-  }, [token, router, login]);
+  }, [code, state, error, router, login]);
+
+  // 인증 코드를 백엔드로 전송하여 JWT 토큰 받기
+  const exchangeCodeForToken = async (code: string, loginType: string) => {
+    try {
+      console.log("🔄 백엔드로 인증 코드 전송 중...");
+
+      const backendUrl = getBackendUrl();
+      console.log("🔗 백엔드 URL:", backendUrl);
+
+      const response = await fetch(`${backendUrl}/api/users/login`, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          provider: loginType,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("✅ 서버 응답:", data);
+
+      // JWT 토큰을 AsyncStorage에 저장
+      if (data.token) {
+        await AsyncStorage.setItem("jwt_token", data.token);
+        console.log("💾 JWT 토큰 저장 완료");
+
+        // 사용자 정보도 함께 저장 (서버에서 제공하는 경우)
+        if (data.user) {
+          await AsyncStorage.setItem("user_info", JSON.stringify(data.user));
+          console.log("💾 사용자 정보 저장 완료:", data.user);
+
+          // AuthContext에 사용자 정보 업데이트
+          login({
+            id: data.user.id || "unknown",
+            name: data.user.name || data.user.email?.split("@")[0] || "사용자",
+            email: data.user.email || "unknown@example.com",
+            profileImage: data.user.profileImage,
+            loginType: loginType as "google" | "naver",
+            accessToken: data.token,
+          });
+        } else {
+          // 서버에서 사용자 정보를 제공하지 않는 경우 기본값 사용
+          const userInfo = {
+            id: "unknown",
+            name: "사용자",
+            email: "unknown@example.com",
+            loginType: loginType as "google" | "naver",
+            accessToken: data.token,
+          };
+          login(userInfo);
+        }
+      } else {
+        console.error("❌ 서버에서 토큰을 받지 못했습니다");
+        throw new Error("서버에서 토큰을 받지 못했습니다");
+      }
+    } catch (error) {
+      console.error("❌ 토큰 교환 에러:", error);
+      throw error;
+    }
+  };
 
   const renderContent = () => {
     switch (status) {

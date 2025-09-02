@@ -24,34 +24,6 @@ const popularSearchTerms = [
   "요시고 사진전",
 ];
 
-// 임시 검색 데이터
-const mockExhibitions = [
-  {
-    id: "1",
-    title: "일본미술, 네 가지 시선",
-    location: "국립중앙박물관",
-    date: "2025.06.17 - 2025.08.10",
-    category: "전시",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-  {
-    id: "2",
-    title: "톰 삭스 전",
-    location: "DDP 뮤지엄",
-    date: "2025.08.01 - 2025.09.30",
-    category: "전시",
-    image: require("../../assets/images/exhibitionPoster/exhibition2.png"),
-  },
-  {
-    id: "4",
-    title: "현대미술 특별전",
-    location: "MMCA",
-    date: "2024.01.20 - 2024.05.20",
-    category: "전시",
-    image: require("../../assets/images/exhibitionPoster/exhibition1.png"),
-  },
-];
-
 // 박물관/미술관 데이터
 const museumData = {
   국립중앙박물관: {
@@ -142,6 +114,8 @@ export default function SearchScreen() {
   const router = useRouter();
   const [apiResults, setApiResults] = useState<any[]>([]);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [exhibitionResults, setExhibitionResults] = useState<any[]>([]);
+  const [exhibitionError, setExhibitionError] = useState<string | null>(null);
 
   // 검색 기록 로드
   useEffect(() => {
@@ -281,8 +255,8 @@ export default function SearchScreen() {
 
     console.log("✅ 상태 업데이트 완료");
 
-    // API 검색 실행
-    fetchSearchResults(query);
+    // 전시회 검색 API 실행
+    fetchExhibitionSearchResults(query);
   };
 
   // 검색 실행 함수 예시 (검색어로 API 호출)
@@ -304,12 +278,46 @@ export default function SearchScreen() {
     }
   };
 
+  // 전시회 검색 API 호출 함수
+  const fetchExhibitionSearchResults = async (query: string) => {
+    setExhibitionError(null);
+    setExhibitionResults([]);
+    setIsLoading(true);
+    try {
+      console.log("🔍 전시회 검색 API 호출 시작:", query);
+      const res = await searchService.get("/exhibitions/search", {
+        params: { query },
+      });
+      console.log("✅ 전시회 검색 API 응답:", res.data);
+
+      if (res.data.success && res.data.data) {
+        setExhibitionResults(res.data.data);
+        console.log("📊 전시회 검색 결과 개수:", res.data.data.length);
+      } else {
+        setExhibitionError("검색 결과를 가져올 수 없습니다.");
+      }
+    } catch (err: any) {
+      console.log("❌ 전시회 검색 API 오류:", err);
+      if (err.response) {
+        setExhibitionError(
+          `${err.response.status} - ${err.response.data?.error || "서버 오류"}`
+        );
+      } else {
+        setExhibitionError("네트워크 오류");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // 검색 페이지 초기화 함수
   const resetSearchPage = () => {
     setSearchQuery("");
     setSearchResults([]);
     setApiResults([]);
     setApiError(null);
+    setExhibitionResults([]);
+    setExhibitionError(null);
     setIsLoading(false);
     setIsSearchFocused(false);
     setShowHistory(false);
@@ -404,33 +412,90 @@ export default function SearchScreen() {
         </View>
       </View>
 
-      {apiResults.length > 0 && (
+      {/* 전시회 검색 결과 표시 */}
+      {exhibitionResults.length > 0 && (
         <View style={SearchStyles.resultsSection}>
-          <Text style={SearchStyles.resultsTitle}>검색 결과</Text>
-          {apiResults.map((result, index) => (
+          <Text style={SearchStyles.resultsTitle}>
+            전시회 검색 결과 ({exhibitionResults.length}개)
+          </Text>
+          {exhibitionResults.map((exhibition, index) => (
             <TouchableOpacity
-              key={index}
+              key={exhibition.id || index}
               style={SearchStyles.resultItem}
               onPress={() => {
-                console.log("검색 결과 클릭:", result);
-                // 여기에 상세 페이지로 이동하는 로직 추가
+                console.log("전시회 검색 결과 클릭:", exhibition);
+                // 전시회 상세 페이지로 이동
+                router.push(`/exhibition/${exhibition.id}`);
               }}>
-              <Text style={SearchStyles.resultTitle}>{result.title}</Text>
-              {result.description && (
-                <Text style={SearchStyles.resultDescription}>
-                  {result.description}
-                </Text>
-              )}
-              {result.location && (
-                <Text style={SearchStyles.resultLocation}>
-                  📍 {result.location}
-                </Text>
-              )}
-              {result.date && (
-                <Text style={SearchStyles.resultDate}>📅 {result.date}</Text>
-              )}
+              <View style={SearchStyles.exhibitionCard}>
+                <View style={SearchStyles.exhibitionInfo}>
+                  <Text style={SearchStyles.resultTitle}>
+                    {exhibition.title}
+                  </Text>
+                  {exhibition.description && (
+                    <Text style={SearchStyles.resultDescription}>
+                      {exhibition.description}
+                    </Text>
+                  )}
+                  <View style={SearchStyles.exhibitionDetails}>
+                    {exhibition.location && (
+                      <Text style={SearchStyles.resultLocation}>
+                        📍 {exhibition.location}
+                      </Text>
+                    )}
+                    {exhibition.startDate && exhibition.endDate && (
+                      <Text style={SearchStyles.resultDate}>
+                        📅 {exhibition.startDate} - {exhibition.endDate}
+                      </Text>
+                    )}
+                    {exhibition.price && (
+                      <Text style={SearchStyles.resultPrice}>
+                        💰 {exhibition.price}
+                      </Text>
+                    )}
+                    {exhibition.operatingHours && (
+                      <Text style={SearchStyles.resultHours}>
+                        🕒 {exhibition.operatingHours}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={SearchStyles.exhibitionActions}>
+                    <View style={SearchStyles.likeSection}>
+                      <Ionicons
+                        name={exhibition.isLiked ? "heart" : "heart-outline"}
+                        size={16}
+                        color={exhibition.isLiked ? "#ff6b6b" : "#999"}
+                      />
+                      <Text style={SearchStyles.likeCount}>
+                        {exhibition.likeCount || 0}
+                      </Text>
+                    </View>
+                    {exhibition.isBookmarked && (
+                      <Ionicons
+                        name='bookmark'
+                        size={16}
+                        color='#4ecdc4'
+                      />
+                    )}
+                  </View>
+                </View>
+              </View>
             </TouchableOpacity>
           ))}
+        </View>
+      )}
+
+      {/* 전시회 검색 오류 표시 */}
+      {exhibitionError && (
+        <View style={SearchStyles.errorSection}>
+          <Text style={SearchStyles.errorText}>❌ {exhibitionError}</Text>
+        </View>
+      )}
+
+      {/* 로딩 상태 표시 */}
+      {isLoading && (
+        <View style={SearchStyles.loadingSection}>
+          <Text style={SearchStyles.loadingText}>🔍 검색 중...</Text>
         </View>
       )}
     </View>

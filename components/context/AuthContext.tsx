@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getStoredToken,
   extractUserInfoFromToken,
@@ -71,11 +72,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
             );
 
             if (userInfoFromToken) {
+              // 저장된 사용자 정보가 있는지 확인
+              let storedUserInfo = null;
+              try {
+                const storedUserInfoStr = await AsyncStorage.getItem(
+                  "user_info"
+                );
+                if (storedUserInfoStr) {
+                  storedUserInfo = JSON.parse(storedUserInfoStr);
+                  console.log(
+                    "🔍 AuthContext: 저장된 사용자 정보:",
+                    storedUserInfo
+                  );
+                }
+              } catch (error) {
+                console.log("⚠️ 저장된 사용자 정보 로드 실패:", error);
+              }
+
               const user: UserInfo = {
-                id: userInfoFromToken.sub || "unknown",
-                name: userInfoFromToken.email?.split("@")[0] || "사용자",
-                email: userInfoFromToken.email || "unknown@example.com",
-                loginType: "google", // 기본값, 필요시 수정
+                id: storedUserInfo?.id || userInfoFromToken.sub || "unknown",
+                name:
+                  storedUserInfo?.name ||
+                  userInfoFromToken.email?.split("@")[0] ||
+                  "사용자",
+                email:
+                  storedUserInfo?.email ||
+                  userInfoFromToken.email ||
+                  "unknown@example.com",
+                profileImage: storedUserInfo?.profileImage,
+                loginType: storedUserInfo?.loginType || "google", // 기본값, 필요시 수정
                 accessToken: token,
               };
 
@@ -113,7 +138,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log("🔐 로그인 완료:", user.email);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // 저장된 토큰과 사용자 정보 제거
+      await AsyncStorage.removeItem("jwt_token");
+      await AsyncStorage.removeItem("user_info");
+      console.log("🗑️ 저장된 인증 정보 제거 완료");
+    } catch (error) {
+      console.error("❌ 로그아웃 중 저장된 정보 제거 에러:", error);
+    }
+
     setUserInfo(null);
     setIsLoggedIn(false);
     console.log("🚪 로그아웃 완료");

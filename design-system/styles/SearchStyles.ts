@@ -170,4 +170,47 @@ export const SearchStyles = StyleSheet.create({
     color: Colors.text.secondary,
     marginTop: Spacing.xs,
   },
+
+  // 전시회 검색 결과 전용 스타일
+  exhibitionCard: {
+    backgroundColor: Colors.background.light,
+    borderRadius: BorderRadius.card.medium,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    ...Shadows.sm,
+  },
+  exhibitionInfo: {
+    flex: 1,
+  },
+  exhibitionDetails: {
+    marginTop: Spacing.sm,
+  },
+  resultPrice: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+    marginTop: Spacing.xs,
+  },
+  resultHours: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+    marginTop: Spacing.xs,
+  },
+  exhibitionActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.light,
+  },
+  likeSection: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  likeCount: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+    marginLeft: Spacing.xs,
+  },
 });
