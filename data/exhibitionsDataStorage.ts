@@ -58,7 +58,7 @@ export const exhibitionData = {
       "그네 타며 힐링하는 미디어 아트 전시부터 귀염뽀짝 캐릭터들과 체험, 굿즈까지! 쉼이 필요한 어른이들, 여기서 잠깐 쉬어가요",
     explanation:
       "🎠그네와 미디어 아트가 만나다. 몽환적인 사운드와 함께 그네를 타며 중력·속도·시간 등 과학법칙 속 인문철학을 예술적으로 체험하는 전시 🎵 미디어아트 레이블 ‘VERSEDAY’와 뮤지션 ‘오혁’의 협업으로 만들어졌어요! 그네 한 번 타면… 자꾸 생각날 걸요? 😎 💫 서브 콘텐츠 🐾 귀여운 캐릭터들과 체험 + 굿즈존 우주먼지(@pettydust ), 왈맹이(@waalmaeng ), 파파고파파(@papa.go.papa ), 헐랭이물개(@nopaper.studio )가 어른이들의 마음을 지켜주러 DDP 쇼룸에 왔어요! 캐릭터랑 놀고, 굿즈는 맘껏 쇼핑 고고~ “충동구매는 어른이보호구역에서 감사합니다“ 🎁 ",
-    image: require("../assets/images/exhibitionPoster/exhibition6.png"),
+    image: require("../assets/images/exhibitionPoster/exhibition3.png"),
     sponsor: "VERSEDAY",
     phone: "02-1234-5678",
     website: "www.museum.go.kr",
@@ -80,7 +80,7 @@ export const exhibitionData = {
       "자연과 사람사이에 옳게, 재미있게 향을 즐기는 방법을 탐험합니다.",
     explanation:
       " 샌달우드, 가이악, 오우드, 로즈우드.. 모두 향수로 인한 멸종위기 식물인 것을 아시나요? \n\n 30년이 넘은 나무들을 뿌리째 쓰러뜨려야 우드 오일이 소량 얻어져요. 수액을 얻기위한 과한 인위상해로 나무들이 말라죽고 야생 허브들은 윤리적 수확비율을 지키지 않고 채취되고 있습니다. 동물들을 죽여 향을 얻어내기도 합니다. 세계적으로 향기에 사용되는 80,000종의 동식물 중 15,000종이 멸종위험에 처해있어요. \n\n <FRAGRANCE WITH PLANET>전은 옳게. 재미있게. 향을 즐기는 방법을 발견하고 탐험하는 프라포투투의 여정을 담았습니다.\n\n 전시는 향을 즐길 때 지켜야 할 책임감이 우리를 가두기보다는 크리에이티브의 원천이 될 수 있음을, 그리고 어떻게 디자인이 그것을 가능하게 하는지 보여줍니다.",
-    image: require("../assets/images/exhibitionPoster/exhibition7.png"),
+    image: require("../assets/images/exhibitionPoster/exhibition4.png"),
     sponsor: "BtheB",
     phone: "02-2153-0770",
     website: "https://btheb.sba.kr/",
@@ -102,7 +102,7 @@ export const exhibitionData = {
     explanation:
       "🪑세계 최초의 의자 전문 잡지, 매거진 <C>" +
       "\n\n매거진 <C>는 그란데클립과 매거진 <B>가 매호 아이콘 체어를 선정해 이를 중심으로 한 디자인, 라이프스타일을 소개하는 체어 다큐멘터리 매거진입니다. 관련 산업과 대중의 삶에 큰 영향을 끼친 유명 의자부터 거리의 익명성 있는 의자까지 고루 다루며, 디자이너·브랜드·제조사·컬렉터, 그리고 그 의자에 앉는 사람들의 라이프스타일과 동시대적 맥락을 함께 조명합니다. 아이콘 체어의 선정 기준은 조형적 원본성, 기술적 혁신, 산업적 영향력, 그리고 대중의 라이프스타일에 끼친 영향이며, 마지막으로 가장 중요한 기준은 바로 ‘변하지 않는 가치’를 지니고 있느냐입니다. 인스타그램 @chair.magazine.c\n\n1호 장 프루베의 스탠더드 체어, 제조 비트라 \n2호 미하엘 토네트의 14번 의자, 제조 톤 \n3호 필립 스탁의 루이 고스트, 제조 카르텔 \n4호 르 코르뷔지에 & 샤를로트 페리앙 & 피에르 잔느레의 포퇴유 그랑 콩포르, 제조 까시나\n5호 이츠오 오쿠야마의 K 체어, 제조 가리모쿠 \n*2024년 창간, 연간 4회, 한글과 영어판 발행 및 전세계 배포\n\n왜 의자인가?\n\n의자는 단지 앉기 위한 도구를 넘어섭니다. 의자를 통해 우리는 현대의 라이프스타일은 물론 건축, 디자인, 그리고 그 공간에서 살아가는 사람들을 이해할 수 있습니다. 의자는 기술과 문화, 예술이 교차하는 지점이자, 가구·패션·리빙·F&B 등 현대인의 삶 전반으로 확장되는 관문 같은 오브제입니다. 또한 건축가와 디자이너들이 한 번쯤은 꼭 디자인해보고 싶어 하는 대상이자, 20세기 디자인 역사 속 특정 스타일과 트렌드를 대표하는 아이콘으로 자리매김 했습니다. \n\n의자만큼 구조와 형태, 재료 면에서 창의적 실험이 가능한 오브제는 드뭅니다. 이것이 바로 건축가와 디자이너들이 의자를 끊임없이 디자인하는 이유일 것입니다. 사람들의 높은 관심을 보여주는 흥미로운 통계도 있습니다. 예술·디자인 전문 출판사 파이돈이 발행한 <999개의 디자인 클래식>에서 의자는 총 297개로, 전체의 약 30%를 차지한다. 2위를 차지한 조명(77개)과 비교해도 그 비중은 압도적입니다. 밀라노 디자인 위크 같은 세계적 디자인 행사에서 가장 눈에 띄는 신제품이 의자인 것도 이와 무관하지 않습니다. \n\n주요 콘텐츠\n\n전시존: 매거진 <C>가 소개하는 디자인 아이콘 매거진 <C> 1호~5호(스탠더드 체어, 14번 의자, 루이 고스트, 포퇴유 그랑 콩포르, K체어)에서 깊이 있게 다룬 전문 콘텐츠와 현지 에서 촬영한 사진을 함께 소개합니다. \n\n앉는 디자인: 매거진 <C>가 소개한 아이코닉 체어와 이를 재해석한 국내 디자이너의 의자를 비롯해 DDP가 소장하고 있는 아이코닉 체어를 직접 살펴봅니다.",
-    image: require("../assets/images/exhibitionPoster/exhibition8.png"),
+    image: require("../assets/images/exhibitionPoster/exhibition5.png"),
     curator: "매거진 <C>",
     sponsor: "서울디자인재단",
     phone: "02-2153-0000",
@@ -123,7 +123,7 @@ export const exhibitionData = {
       "과거 아날로그 사물을 통해 기술과 디자인의 감성과 철학을 살피고, AI와 함께 미래 디자인 언어를 상상하는 전시입니다.",
     explanation:
       "기술의 발전은 인간의 삶을 혁신적으로 변화시켜 왔습니다. 그러나 그 변화의 속도만큼이나, 우리는 종종 한 시대를 함께 살아온 사물들과 그 사물이 품고 있던 감성과 의미를 잊곤 합니다. 이 전시는 타자기, 라디오, 텔레비전, 전화기 등 1920년대부터 최근까지 사용되었던 아날로그 시대의 생활디자인 사물들을 통해, 기술이 인간의 일상과 감각, 그리고 디자인 언어에 어떤 흔적을 남겼는지를 되짚어 봅니다. \n\n이 사물들은 단순한 도구를 넘어, 각 시대의 기술과 문화, 그리고 사용자의 감성을 반영하는 ‘시대의 언어’였습니다. 타자기의 기계적 리듬, 라디오의 따뜻한 음색, 다이얼 전화기의 손끝 감각은 그 시대 사람들의 삶의 방식과 소통의 방식을 말해주는 디자인 언어이자 감각적 기호였습니다.\n\n오늘날 스마트폰 하나로 많은 기능이 통합된 현실 속에서, 다양한 기기들이 개별적으로 존재하던 시절의 경험은 점차 희미해지고 있습니다. 그러나 바로 그 ‘잊힌 언어’ 속에 인간과 기술, 사물 사이의 섬세한 상호작용과 디자인 철학이 담겨 있습니다.\n\n이번 전시는 인공지능(AI)이 기획 과정에 직접 참여함으로써, 과거의 기술 언어를 오늘의 기술 언어로 재해석하는 실험적 시도를 담고 있습니다. 전시의 형식 자체가 하나의 메시지가 되며, 기술과 디자인이 어떻게 시대의 말하기 방식—곧 언어—로 작동해왔는지를 보여줍니다.\n\nDDP가 소장한 생활디자인 사물들을 통해, 우리는 기술의 진보와 그 이면에 숨겨진 감각과 감성, 그리고 인간 중심의 디자인 철학을 다시금 마주하게 됩니다. [시대의 언어]가 과거의 사물을 통해 현재를 성찰하고, AI와 함께 미래의 언어를 상상하는 장이 되기를 바랍니다.",
-    image: require("../assets/images/exhibitionPoster/exhibition9.png"),
+    image: require("../assets/images/exhibitionPoster/exhibition6.png"),
     sponsor: "DDP 뮤지엄",
     phone: "02-2153-0000",
     website: "ddp.or.kr",
@@ -145,9 +145,9 @@ export const exhibitionData = {
       "DDP 디자인 쇼윈도는 서울디자인재단과 협력한 디자인&디자이너를 보여주기 위한 공간입니다.\n\n두 번째 주제는 올해로 6회를 맞는 <ddp 디자인론칭페어>로, 디자이너의 새로운 아이디어와 제조기업의 똑똑한 노하우가 만나 시너지를 내는 디자인신제품 개발 사업입니다.\n\n이번 쇼윈도 공간은 디자이너와 제조기업이 만나 발산되는 시너지와 무한한 가능성을 “확장”이라는 키워드로 표현했습니다.\n\n<DDP 디자인 쇼윈도>에 들러 베스트디자인 수상작을 직접 만나보세요!",
     explanationImages: [
       //설명 포스터 이미지 삽입
-      require("../assets/images/exhibitionPoster/exhibition10_explain.png"),
+      require("../assets/images/exhibitionPoster/exhibition7_explain.png"),
     ],
-    image: require("../assets/images/exhibitionPoster/exhibition10.png"),
+    image: require("../assets/images/exhibitionPoster/exhibition7.png"),
     sponsor: "DDP 뮤지엄",
     phone: "02-2153-0000",
     website: "ddp.or.kr",
@@ -166,12 +166,12 @@ export const exhibitionData = {
     description: "19th Century Collection from the Capodimonte Museu",
     explanation:
       "마이아트뮤지엄은 《이탈리아 국립 카포디몬테 19세기 컬렉션: 나폴리를 거닐다》 전시를 2025년 8월 1일부터 11월 30일까지 개최한다. “나폴리를 보고 죽어라 Vedi Napoli e poi muori.” 18세기부터 유럽의 예술가와 지식인들 사이에서 회자된 이 말은, 나폴리가 감탄과 찬사의 대상이었던 특별한 장소였음을 보여준다. 찬란한 햇살과 유서 깊은 유산, 그리고 활기찬 일상이 어우러진 이 도시는 오랜 시간 동안 수많은 예술가들에게 깊은 영감을 주었다. 이번 전시는 이러한 나폴리의 정서와 풍경이 19세기 회화 속에서 어떻게 구현되었는지를 조망하는 전시다. 이탈리아 국립 나폴리 카포디몬테 미술관과 협력하여, 그들이 소장한 19세기 회화 컬렉션을 통해 이탈리아 남부가 겪은 사회의 변화와 그 시대의 삶을 펼쳐 보인다. 19세기 나폴리는 군주제에서 이탈리아 통일(1861년)로 이어지는 역사적 전환기를 겪었다. 이러한 격동의 시대 속에서 회화는 변화하는 사회의 기록이었다. 이 시기의 작가들은 신고전주의, 낭만주의, 사실주의를 거쳐, 서민과 하층민 등의 삶을 있는 그대로 담아내려는 베리즈모(Verismo)까지 다양한 표현 방식을 시도했다. 특히 베리즈모는 프랑스 사실주의와 유사하면서도, 이탈리아 남부 특유의 사회 구조와 정서를 고스란히 담아냈다.비록 우리는 그 시대의 나폴리를 직접 걸어보지 못했지만, 전시 속에서 마주하는 인물과 풍경, 남쪽 햇살 아래 반짝이는 바다를 통해 낯설지만 어딘가 익숙한 그리움을 경험하게 될 것이다. 이번 전시가 관람객들에게 나폴리라는 도시가 간직한 이야기 속을 거니는 특별한 여정으로 기억되기를 기대한다.",
-    image: require("../assets/images/exhibitionPoster/exhibition11.jpg"),
+    image: require("../assets/images/exhibitionPoster/exhibition8.jpg"),
     explanationImages: [
       //설명 포스터 이미지 삽입
-      require("../assets/images/exhibitionPoster/exhibition11_explain1.jpg"),
-      require("../assets/images/exhibitionPoster/exhibition11_explain2.jpg"),
-      require("../assets/images/exhibitionPoster/exhibition11_explain3.jpg"),
+      require("../assets/images/exhibitionPoster/exhibition8_explain1.jpg"),
+      require("../assets/images/exhibitionPoster/exhibition8_explain2.jpg"),
+      require("../assets/images/exhibitionPoster/exhibition8_explain3.jpg"),
     ],
     sponsor: "마이아트뮤지엄",
     phone: "02-567-8878",
@@ -191,14 +191,71 @@ export const exhibitionData = {
     description: "내면을 오롯이 그림으로 나타낸 미셸 앙리의 강렬한 표현",
     explanation:
       "프랑스를 대표하는 저명한 현대 화가 미셸 앙리의 주요 회화 약 100여 점을 만나볼 수 있는 전시. 화려하고 감각적인 색채, 부드럽고 유연한 붓질로 자연과 일상을 따뜻하게 담아낸 작품을 통해, 미셸 앙리의 시선을 오롯이 느낄 수 있다. 전시는 ‘VIVID’라는 키워드 아래 색채적 깊이와 감성을 공간적으로 풀어내며 관람객에게 몰입감 있는 미술 경험을 제공한다. 오디오 도슨트(손호영 참여), 키즈 프로그램, 전시 연계 굿즈도 마련되어 있다.",
-    image: require("../assets/images/exhibitionPoster/exhibition12.gif"),
+    image: require("../assets/images/exhibitionPoster/exhibition9.gif"),
     explanationImages: [
       //설명 포스터 이미지 삽입
-      require("../assets/images/exhibitionPoster/exhibition12_explain.jpg"),
+      require("../assets/images/exhibitionPoster/exhibition9_explain.jpg"),
     ],
     sponsor: "모다갤러리",
     phone: "02-567-8878",
     email: "mamu@myartmuseum.kr",
     website: "http://www.myartmuseum.co.kr/",
+  },
+  "10": {
+    id: "10",
+    title: "마나 모아나-신성한 바다의 예술, 오세아니아",
+    museumName: "국립중앙박물관",
+    location: "국립중앙박물관 특별전시실2",
+    address: "서울특별시 용산구 서빙고로 137",
+    date: "2025.04.30 - 2025.09.14",
+    time: "10:00 - 18:00 (월요일 휴관)",
+    price: "무료",
+    category: "전시",
+    description: "오세아니아 신성한 바다의 예술을 소개하는 특별전",
+    explanation:
+      "국립중앙박물관 특별전시실2에서 열리는 신성한 바다를 주제로 한 오세아니아 예술작품 전시입니다.",
+    exhibits: "오세아니아 신성한 바다 관련 예술품 다수",
+    image: require("../assets/images/exhibitionPoster/exhibition10.jpg"),
+    sponsor: "국립중앙박물관",
+    phone: "02-2077-9000",
+    website: "www.museum.go.kr",
+  },
+  "11": {
+    id: "11",
+    title: "각角진 백자 이야기",
+    museumName: "국립중앙박물관",
+    location: "분청사기·백자실",
+    address: "서울특별시 용산구 서빙고로 137",
+    date: "2025.08.26 - 2026.06.21",
+    time: "10:00 - 18:00 (월요일 휴관)",
+    price: "무료",
+    category: "전시",
+    description: "각진 모양의 백자 도자기에 대한 이야기와 미적 가치 조명",
+    explanation:
+      "조선시대 각진 백자 도자기의 특징과 변천사를 소개하며, 조선 도자기의 미적 아름다움과 역사적 의미를 살펴볼 수 있는 전시입니다.",
+    exhibits: "조선 각진 백자 주요 작품 다수",
+    image: require("../assets/images/exhibitionPoster/exhibition11.jpg"),
+    sponsor: "국립중앙박물관",
+    phone: "02-2077-9000",
+    website: "www.museum.go.kr",
+  },
+  "12": {
+    id: "12",
+    title: "두 발로 세계를 제패하다",
+    museumName: "국립중앙박물관",
+    location: "상설전시관 2층 기증1실",
+    address: "서울특별시 용산구 서빙고로 137",
+    date: "2025.07.25 - 2025.12.28",
+    time: "10:00 - 18:00 (월요일 휴관)",
+    price: "무료",
+    category: "전시",
+    description: "세계 탐험과 정복을 주제로 한 역사 전시",
+    explanation:
+      "상설전시관 2층 기증1실에서 인류의 역사적 세계 탐험과 문화 교류를 조명하는 전시입니다.",
+    exhibits: "세계 탐험 관련 유물 다수",
+    image: require("../assets/images/exhibitionPoster/exhibition12.png"),
+    sponsor: "국립중앙박물관",
+    phone: "02-2077-9000",
+    website: "www.museum.go.kr",
   },
 };
