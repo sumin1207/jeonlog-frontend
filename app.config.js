@@ -3,6 +3,7 @@ import "dotenv/config";
 export default ({ config }) => {
   return {
     ...config,
+
     extra: {
       EXPO_NAVER_CLIENT_ID: process.env.NAVER_CLIENT_ID,
       EXPO_NAVER_CLIENT_SECRET: process.env.NAVER_CLIENT_SECRET,

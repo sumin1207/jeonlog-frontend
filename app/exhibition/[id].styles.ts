@@ -20,7 +20,7 @@ export const style = (theme: string) => {
       alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: Spacing.screenPadding,
-      paddingVertical: Spacing.md,
+      paddingBottom: Spacing.md,
     },
     backButton: {
       padding: Spacing.sm,
@@ -55,7 +55,7 @@ export const style = (theme: string) => {
     titleSection: {
       marginBottom: Spacing.xxl,
       color: themeColors.text.primary,
-      fontWeight: Typography.fontWeight.bold,
+      fontWeight: Typography.fontWeight.semibold,
     },
 
     titleRow: {
@@ -68,8 +68,8 @@ export const style = (theme: string) => {
       flex: 1,
     },
     title: {
-      fontSize: Typography.text.h1.fontSize,
-      fontWeight: Typography.text.h1.fontWeight,
+      fontSize: Typography.text.h2.fontSize,
+      fontWeight: Typography.text.h2.fontWeight,
       marginBottom: Spacing.sm,
       color: themeColors.text.primary,
     },

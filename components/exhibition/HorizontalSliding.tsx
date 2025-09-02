@@ -26,7 +26,7 @@ const HorizontalSliding = () => {
 
   // Calculate dynamic dimensions - 현재 크기 유지
   const itemContentWidth = width * 0.35;
-  const imageHeight = itemContentWidth * 1.2;
+  const imageHeight = itemContentWidth * 1.336;
   const itemWidth = itemContentWidth + 20; // item width + margin
 
   const renderItem = useCallback(
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     resizeMode: "cover",
+    borderRadius: 12,
   },
 
   contentContainer: {
