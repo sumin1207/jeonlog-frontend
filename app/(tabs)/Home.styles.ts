@@ -41,6 +41,10 @@ export const style = (theme: string) => {
       color: themeColors.text.primary,
       textAlign: "center",
       letterSpacing: -0.5,
+      borderTopWidth: 1,
+      borderTopColor:
+        theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray300,
+      paddingTop: Spacing.lg,
     },
 
     skeletonContainer: {
@@ -55,11 +59,12 @@ export const style = (theme: string) => {
 
     tabContainer: {
       borderTopWidth: 1,
-      borderTopColor: "f1f1f1",
+      borderTopColor:
+        theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray300,
       flexDirection: "row",
       marginBottom: Spacing.lg,
       backgroundColor: "transparent",
-      borderRadius: BorderRadius.button.pill,
+      borderRadius: 0, //BorderRadius.button.pill,
       padding: 0,
       marginHorizontal: 0,
       marginLeft: 0,
