@@ -81,7 +81,7 @@ const ExhibitionList = ({ title, exhibitions, router, theme }) => {
       {exhibitions.map((exhibition, index) => (
         <TouchableOpacity
           key={exhibition.id}
-          style={[ 
+          style={[
             styles.exhibitionItem,
             index === exhibitions.length - 1 && { borderBottomWidth: 0 },
           ]}
@@ -117,6 +117,7 @@ export default function MuseumDetailScreen() {
   // 박물관/미술관 데이터 (나중에 props나 context로 전달받을 수 있음)
   const museumData = {
     국립중앙박물관: {
+      //완료
       name: "국립중앙박물관",
       headerImage: require("../../../assets/images/museumBackground/bg1.jpg"),
       museumEmblem: require("../../../assets/images/museumEmblem/logo1.png"),
@@ -136,18 +137,12 @@ export default function MuseumDetailScreen() {
       parking: "400번, 502번",
       parkingFee:
         "승용차(15인승 이하)기준 기본요금 2000원, 매 30분당 500원(1일최대 10,000원)",
-      exhibitions: [
-        {
-          id: "1",
-          title: "일본미술, 네 가지 시선",
-          date: "2025.06.17 - 2025.08.10",
-          image: require("../../../assets/images/exhibitionPoster/exhibition1.png"),
-        },
-      ],
+      exhibitions: [{}],
       subway:
         "4호선\n경의중앙선(문산-용문)\n이촌역 2번 출구 방향 '박물관 나들길' <=> '박물관 서문'\n이촌역 2번출구 <=> 박물관 서문",
     },
     마이아트뮤지엄: {
+      //배경 사진 아쉽
       name: "마이아트뮤지엄",
       headerImage: require("../../../assets/images/museumBackground/myArtMuseumBg.jpg"), //수정
       museumEmblem: require("../../../assets/images/museumEmblem/myArtMuseumEmblem.png"),
@@ -178,8 +173,8 @@ export default function MuseumDetailScreen() {
     },
     ddp: {
       name: "DDP 뮤지엄",
-      headerImage: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
-      museumEmblem: undefined,
+      headerImage: require("../../../assets/images/museumBackground/ddpBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/ddpEmblem.jpg"),
       address: "서울 중구 을지로 281",
       latitude: 37.566535,
       longitude: 127.009422,
@@ -193,19 +188,12 @@ export default function MuseumDetailScreen() {
       parking: undefined,
       parkingFee: undefined,
       subway: undefined,
-      exhibitions: [
-        {
-          id: "2",
-          title: "톰 삭스 전",
-          date: "2025.08.01 - 2025.09.30",
-          image: require("../../../assets/images/exhibitionPoster/exhibition2.png"),
-        },
-      ],
+      exhibitions: [{}],
     },
 
     모다갤러리: {
       name: "모다갤러리",
-      headerImage: undefined,
+      headerImage: undefined, //배경사진 뭐하지
       museumEmblem: require("../../../assets/images/museumEmblem/modaEmblem.png"),
       address: "서울특별시 용산구 녹사평대로 132 3, 4층 (이태원동)",
       latitude: 37.534013,
@@ -221,18 +209,11 @@ export default function MuseumDetailScreen() {
       parking: "전용 주차장 없음, 대중교통 이용 권장",
       parkingFee: undefined,
       subway: "6호선 이태원역 인근",
-      exhibitions: [
-        {
-          id: "12",
-          title: "미셸 앙리:VIVID",
-          date: "2025.8.12 - 2025.12.14 (매주 월요일 정기휴무)",
-          image: require("../../../assets/images/exhibitionPoster/exhibition12.gif"),
-        },
-      ],
+      exhibitions: [{}],
     },
     뮤지엄209: {
       name: "뮤지엄209",
-      headerImage: undefined,
+      headerImage: undefined, //배경사진 뭐하지
       museumEmblem: require("../../../assets/images/museumEmblem/museum209Emblem.jpg"),
       address: "서울특별시 송파구 잠실로 209 소피텔 앰배서더 서울 호텔 3층",
       latitude: 37.514219,
@@ -247,11 +228,11 @@ export default function MuseumDetailScreen() {
       parking: "소피텔 앰배서더 서울 호텔 주차장 이용",
       parkingFee: "호텔 주차료 정책에 따름",
       subway: "2호선 잠실나루역, 8호선 몽촌토성역",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     뮤지엄한미: {
       name: "뮤지엄한미",
-      headerImage: undefined,
+      headerImage: undefined, //require("../../../assets/images/museumBackground/museumHanmiBackground.jpg"), //출처 이슈
       museumEmblem: require("../../../assets/images/museumEmblem/museumHanmiEmblem.png"),
       address:
         "서울특별시 종로구 삼청로 9길 45 (본관), 서울특별시 종로구 삼청로 11길 11 (별관)",
@@ -269,12 +250,12 @@ export default function MuseumDetailScreen() {
       parkingFee: "주차장 없음",
       subway:
         "시청역 4번 출구 혹은 광화문역 2번 출구 - 종로 11번 마을버스 환승 - 삼청공원 정류소 하차",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     환기미술관: {
       name: "환기미술관",
       headerImage: undefined, //require("../../../assets/images/museumBackground/whankiBg.jpg"),
-      museumEmblem: undefined, //require("../../../assets/images/museumEmblem/whankiEmblem.png"),
+      museumEmblem: require("../../../assets/images/museumEmblem/whankiEmblem.jpg"),
       address: "서울시 종로구 자하문로40길 63",
       latitude: 37.59431,
       longitude: 126.96892,
@@ -288,11 +269,11 @@ export default function MuseumDetailScreen() {
       parking: "소규모 주차장 운영",
       parkingFee: "주차료 별도",
       subway: "3호선 경복궁역, 부암동 방향 버스 이용",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     세화미술관: {
       name: "세화미술관",
-      headerImage: undefined, //require("../../../assets/images/museumBackground/sehwaBg.jpg"),
+      headerImage: require("../../../assets/images/museumBackground/sehwaBg.jpg"),
       museumEmblem: require("../../../assets/images/museumEmblem/sehwaEmblem.png"),
       address: "서울시 종로구 새문안로 68 흥국생명빌딩 2층",
       latitude: 37.570863,
@@ -308,12 +289,12 @@ export default function MuseumDetailScreen() {
         "흥국생명빌딩 지하주차장 이용 (전시 관람객에 한해 2시간 무료주차)",
       parkingFee: "2시간 무료, 이후 유료",
       subway: "5호선 광화문역 6번 출구로 나와 약 250m 직진",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     한원미술관: {
       name: "한원미술관",
-      headerImage: undefined, //require("../../../assets/images/museumBackground/hanwonBg.jpeg"),
-      museumEmblem: undefined, //require("../../../assets/images/museumEmblem/hanwonEmblem.png"),
+      headerImage: require("../../../assets/images/museumBackground/hanwonBg.jpg"),
+      museumEmblem: require("../../../assets/images/museumEmblem/hanwonEmblem.png"),
       address: "서울특별시 서초구 서초동 1449-12",
       latitude: 37.480649,
       longitude: 127.012856,
@@ -327,7 +308,7 @@ export default function MuseumDetailScreen() {
       parking: "소규모 주차장 운영",
       parkingFee: "무료",
       subway: "3호선 남부터미널역, 2호선 서초역에서 도보",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     송은: {
       name: "송은",
@@ -346,7 +327,7 @@ export default function MuseumDetailScreen() {
       parking: "교통약자 외 주차장 이용 불가",
       parkingFee: "주차 불가",
       subway: "수인분당선 압구정로데오역 4번 출구, 도보 10분",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     푸투라서울: {
       name: "푸투라서울",
@@ -365,7 +346,7 @@ export default function MuseumDetailScreen() {
       parking: "주차장 없음, 대중교통 이용",
       parkingFee: "주차장 없음",
       subway: "3호선 안국역에서 도보 15분",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     아르코미술관: {
       name: "아르코미술관",
@@ -384,7 +365,7 @@ export default function MuseumDetailScreen() {
       parking: "대중교통 이용 권장",
       parkingFee: "별도 문의",
       subway: "4호선 혜화역 2번 출구, 도보 2분",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
     예술의전당: {
       name: "예술의 전당",
@@ -403,7 +384,7 @@ export default function MuseumDetailScreen() {
       parking: "대형 주차장 운영",
       parkingFee: "유료 (시간당 요금제)",
       subway: "3호선 남부터미널역 5번 출구에서 셔틀버스 이용 또는 도보 15분",
-      exhibitions: [{}]
+      exhibitions: [{}],
     },
   };
 
@@ -413,9 +394,8 @@ export default function MuseumDetailScreen() {
     (exhibition) => museum && exhibition.museumName === museum.name
   );
 
-  const { ongoing, upcoming, past } = organizeExhibitionsByDate(
-    allMuseumExhibitions
-  );
+  const { ongoing, upcoming, past } =
+    organizeExhibitionsByDate(allMuseumExhibitions);
 
   const styles = StyleSheet.create({
     container: {
@@ -635,8 +615,10 @@ export default function MuseumDetailScreen() {
         <TopBar />
         <View style={styles.errorContainer}>
           <Text
-            style={[styles.errorText, { color: theme === "dark" ? "#fff" : "#333" }]
-            }
+            style={[
+              styles.errorText,
+              { color: theme === "dark" ? "#fff" : "#333" },
+            ]}
           >
             박물관 정보를 찾을 수 없습니다.
           </Text>
@@ -775,7 +757,7 @@ export default function MuseumDetailScreen() {
           {/* 9. 주차요금 */}
           {museum.parkingFee && (
             <View
-              style={[ 
+              style={[
                 styles.infoSection,
                 { borderBottomWidth: 0, paddingBottom: 0 },
               ]}

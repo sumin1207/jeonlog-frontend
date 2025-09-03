@@ -16,9 +16,10 @@ import { useExhibition } from "../../contexts/ExhibitionContext";
 import { ExhibitionDetailSkeleton } from "@/components/ui/Skeleton";
 import AutoHeightImage from "@/components/ui/AutoHeightImage";
 import WriteRecordButton from "../(tabs)/mypage/exhibition/WriteRecordButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; //노치 가리는 문제
 
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
-import { style } from "././[id].styles"; 
+import { style } from "././[id].styles";
 
 export default function ExhibitionDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -28,6 +29,7 @@ export default function ExhibitionDetailScreen() {
     useExhibition();
   const [loading, setLoading] = useState(true);
   const styles = style(theme);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const loadExhibition = async () => {
@@ -51,7 +53,7 @@ export default function ExhibitionDetailScreen() {
           { backgroundColor: theme === "dark" ? "#1a1a1a" : "#ffffff" },
         ]}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backButton}
@@ -87,10 +89,9 @@ export default function ExhibitionDetailScreen() {
   }
 
   return (
-    <View
-      style={styles.container}>
+    <View style={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}
@@ -219,9 +220,7 @@ export default function ExhibitionDetailScreen() {
 
           {/* 기본 정보 */}
           <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>
-              기본 정보
-            </Text>
+            <Text style={styles.sectionTitle}>기본 정보</Text>
 
             <View style={styles.infoItem}>
               {/*<Ionicons
@@ -238,17 +237,8 @@ export default function ExhibitionDetailScreen() {
                 >
                   장소
                 </Text>
-                <Text
-                  style={
-                    styles.infoValue}
-                >
-                  {exhibition.location}
-                </Text>
-                <Text
-                  style={
-                    styles.infoAddress}>
-                  ({exhibition.address})
-                </Text>
+                <Text style={styles.infoValue}>{exhibition.location}</Text>
+                <Text style={styles.infoAddress}>({exhibition.address})</Text>
               </View>
             </View>
 
@@ -268,13 +258,7 @@ export default function ExhibitionDetailScreen() {
                 >
                   기간
                 </Text>
-                <Text
-                  style={
-                    styles.infoValue
-                    }
-                >
-                  {exhibition.date}
-                </Text>
+                <Text style={styles.infoValue}>{exhibition.date}</Text>
               </View>
             </View>
 
@@ -293,13 +277,7 @@ export default function ExhibitionDetailScreen() {
                 >
                   관람시간
                 </Text>
-                <Text
-                  style={
-                    styles.infoValue
-                    }
-                >
-                  {exhibition.time}
-                </Text>
+                <Text style={styles.infoValue}>{exhibition.time}</Text>
               </View>
             </View>
 
@@ -319,11 +297,7 @@ export default function ExhibitionDetailScreen() {
                   >
                     전시품
                   </Text>
-                  <Text
-                    style={
-                      styles.infoValue
-                      }
-                  >
+                  <Text style={styles.infoValue}>
                     {(exhibition as any).exhibits}
                   </Text>
                 </View>
@@ -433,9 +407,7 @@ export default function ExhibitionDetailScreen() {
                 color={theme === "dark" ? "#ccc" : "#666"}
               /> */}
               <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>
-                  주최
-                </Text>
+                <Text style={styles.infoLabel}>주최</Text>
                 <Text
                   style={[
                     styles.infoValue,
@@ -454,9 +426,7 @@ export default function ExhibitionDetailScreen() {
                 color={theme === "dark" ? "#ccc" : "#666"}
               /> */}
               <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>
-                  문의
-                </Text>
+                <Text style={styles.infoLabel}>문의</Text>
                 <TouchableOpacity
                   onPress={() => Linking.openURL(`tel:${exhibition.phone}`)}
                 >
@@ -490,7 +460,7 @@ export default function ExhibitionDetailScreen() {
             </View>
 
             <View style={styles.infoItem}>
-             {/* <Ionicons
+              {/* <Ionicons
                 name="globe"
                 size={20}
                 color={theme === "dark" ? "#ccc" : "#666"}
@@ -523,5 +493,4 @@ export default function ExhibitionDetailScreen() {
       </ScrollView>
     </View>
   );
-};
-
+}
