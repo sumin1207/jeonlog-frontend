@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, Image } from "react-native";
+import { SafeAreaView, View, TextInput, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
@@ -329,10 +329,7 @@ export default function SearchScreen() {
   // fetchSearchResults(query);
 
   return (
-    <View style={SearchStyles.container}>
-      {/* 상단 바 */}
-      <TopBar />
-
+    <SafeAreaView style={SearchStyles.container}>
       {/* 검색 입력 필드 */}
       <View style={SearchStyles.searchInputSection}>
         <TouchableOpacity
@@ -498,6 +495,6 @@ export default function SearchScreen() {
           <Text style={SearchStyles.loadingText}>🔍 검색 중...</Text>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
