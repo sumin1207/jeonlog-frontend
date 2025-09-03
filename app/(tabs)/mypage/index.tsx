@@ -9,6 +9,7 @@ import { useAuth } from "../../../components/context/AuthContext";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 import { Text, Button, Container, Row, Column } from "../../../design-system";
 import { MyPageStyles } from "../../../design-system/styles";
+import { Colors } from "../../../design-system/theme";
 
 export default function MyPageScreen() {
   const router = useRouter();
@@ -168,7 +169,15 @@ export default function MyPageScreen() {
               onPress={() => router.push("/(tabs)/mypage/edit-profile")}
               variant="secondary"
               size="small"
-              style={{ flex: 1, paddingVertical: 6 }}
+              style={{
+                flex: 1,
+                paddingVertical: 6,
+                backgroundColor: Colors.neutral.gray200,
+                borderWidth: 0,
+              }}
+              textStyle={{
+                color: Colors.text.primary,
+              }}
             />
             <Button
               title="북마크한 전시"
@@ -177,7 +186,16 @@ export default function MyPageScreen() {
               }
               variant="secondary"
               size="small"
-              style={{ flex: 1, marginLeft: 8, paddingVertical: 6 }}
+              style={{
+                flex: 1,
+                marginLeft: 8,
+                paddingVertical: 6,
+                backgroundColor: Colors.neutral.gray200,
+                borderWidth: 0,
+              }}
+              textStyle={{
+                color: Colors.text.primary,
+              }}
             />
           </Row>
           <TouchableOpacity style={MyPageStyles.iconButton}>
