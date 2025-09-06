@@ -4,7 +4,7 @@
     "slug": "jeonlog",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/mainIcon.png",
     "scheme": "jeonlog",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,20 +17,54 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.jeonlog.jeonlog",
+      "icon": "./assets/images/mainIcon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.jpg"
     },
-    "plugins": ["expo-router", "expo-web-browser"],
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/mainIcon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "EXPO_NAVER_CLIENT_ID": "dhvkt5hnea",
+      "EXPO_NAVER_CLIENT_SECRET": "xQi3uFel67g1GgSOiAnfv6fCZ0eys6XCETi7urK0",
+      "EXPO_GOOGLE_CLIENT_ID": "565177569555-b7gj3b75pqldhsdosot9lfo0cbjhr8gd.apps.googleusercontent.com",
+      "EXPO_GOOGLE_CLIENT_SECRET": "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",
+      "EXPO_NAVER_MAP_API_KEY": "dhvkt5hnea",
+      "EXPO_BACKEND_URL": "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com",
+      "router": {},
+      "eas": {
+        "projectId": "9b83d693-796f-49c3-a2be-63cfc53d2763"
+      }
+    },
+    "owner": "lastro"
   }
 }

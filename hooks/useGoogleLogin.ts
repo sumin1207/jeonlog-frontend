@@ -30,9 +30,16 @@ const useGoogleLogin = () => {
     userInfoEndpoint: "https://www.googleapis.com/oauth2/v2/userinfo",
   };
 
+  // 백엔드 JWT 토큰 교환 URL
+  const backendTokenExchangeUrl =
+    "https://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/redirect?token";
+
   const redirectUri =
     Platform.OS === "web"
-      ? "http://localhost:8081"
+      ? process.env.EXPO_PUBLIC_NGROK_URL ||
+        (typeof window !== "undefined"
+          ? window.location.origin
+          : "http://localhost:8081")
       : AuthSession.makeRedirectUri();
 
   // 리디렉트 URI 검증
@@ -53,6 +60,7 @@ const useGoogleLogin = () => {
     promptAsync,
     request,
     response,
+    backendTokenExchangeUrl,
   };
 };
 

@@ -24,9 +24,9 @@ export const getNaverMapApiKey = (): string => {
 
 // 백엔드 서버 URL 가져오기
 export const getBackendUrl = (): string => {
-  // 배포된 서버 URL을 직접 사용
+  // CORS 문제 해결을 위해 HTTPS 사용 시도
   const backendUrl =
-    "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com";
+    "https://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com";
 
   return backendUrl;
 };
