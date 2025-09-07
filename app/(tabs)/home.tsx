@@ -5,8 +5,9 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Animated,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import HorizontalSliding from "@/components/exhibition/HorizontalSliding";
 import RecommendForYou from "@/components/exhibition/RecommendForYou";
 import TopBar from "@/components/ui/TopBar";
@@ -27,6 +28,7 @@ export default function HomeScreen() {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("20-30대");
   const router = useRouter();
   const style = getThemedStyle(theme); // Get styles based on the current theme
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   // AuthContext 상태 확인
   useEffect(() => {
@@ -290,13 +292,44 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
+  const topBarOpacity = scrollY.interpolate({
+    inputRange: [0, 80],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+
+  const topBarTranslateY = scrollY.interpolate({
+    inputRange: [0, 80],
+    outputRange: [0, -80],
+    extrapolate: "clamp",
+  });
+
   return (
     <View style={style.container}>
-      <TopBar />
-      <ScrollView
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            opacity: topBarOpacity,
+            transform: [{ translateY: topBarTranslateY }],
+          },
+        ]}
+      >
+        <TopBar />
+      </Animated.View>
+      <Animated.ScrollView
         style={style.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: Spacing.xxl }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingTop: 80, paddingBottom: Spacing.xxl }}
       >
         {/* 기존 콘텐츠 */}
         <Text style={style.title1}>나를 위한 전시 추천</Text>
@@ -373,7 +406,7 @@ export default function HomeScreen() {
             showsVerticalScrollIndicator={false}
           />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
