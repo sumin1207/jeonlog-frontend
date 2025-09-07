@@ -1,19 +1,31 @@
 import { useRouter } from "expo-router";
-import { View, Text, SafeAreaView, Image, Button, Alert } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  Button,
+  Alert,
+  TextInput,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
-import NaverLoginButton from "../components/auth/NaverLoginButton";
-import GoogleLoginButton from "../components/auth/GoogleLoginButton";
-import { checkServerConnection } from "../services/authService";
+import { SocialLoginButtons } from "../components/auth";
+import {
+  checkServerConnection,
+  authService,
+  userService,
+} from "../services/authService";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn, isLoading, login } = useAuth();
   const [serverStatus, setServerStatus] = useState<
     "checking" | "connected" | "disconnected"
   >("checking");
   const [showServerOptions, setShowServerOptions] = useState(false);
   const [serverError, setServerError] = useState<string>("");
+  const [tokenInput, setTokenInput] = useState<string>("");
 
   const backgroundColor = "#1c3519";
 
@@ -71,18 +83,106 @@ export default function LoginPage() {
     checkServer();
   }, []);
 
-  // 이미 로그인된 사용자는 홈화면으로 자동 리다이렉트
+  // 이미 로그인된 사용자는 온보딩 카테고리로 자동 리다이렉트
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
-      console.log("🔍 이미 로그인된 사용자입니다. 홈화면으로 이동합니다.");
-      router.replace("/(tabs)/home");
+      console.log(
+        "🔍 이미 로그인된 사용자입니다. 온보딩 카테고리로 이동합니다."
+      );
+      router.replace("/onboarding/category");
     }
   }, [isLoggedIn, isLoading, router]);
 
   const handleLoginSuccess = () => {
-    console.log("🎉 로그인 성공! 홈화면으로 이동합니다.");
-    // 로그인 성공 시 홈화면으로 리다이렉트
-    router.replace("/(tabs)/home");
+    console.log("🎉 로그인 성공! 온보딩 카테고리로 이동합니다.");
+    // 로그인 성공 시 온보딩 카테고리로 리다이렉트
+    router.replace("/onboarding/category");
+  };
+
+  // JWT 토큰 유효성 검사
+  const isValidJWT = (token: string): boolean => {
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        return false;
+      }
+
+      try {
+        const decodedPayload = JSON.parse(atob(parts[1]));
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (decodedPayload.exp && decodedPayload.exp <= currentTime) {
+          return false;
+        }
+
+        return true;
+      } catch (decodeError) {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // JWT 토큰으로 직접 로그인 처리 (개발용)
+  const handleTokenLogin = async (token: string) => {
+    try {
+      if (!isValidJWT(token)) {
+        Alert.alert("토큰 오류", "유효하지 않은 JWT 토큰입니다.");
+        return;
+      }
+
+      await authService.saveToken(token);
+
+      const tokenParts = token.split(".");
+      let userEmail = "unknown@user.com";
+
+      try {
+        const payload = JSON.parse(atob(tokenParts[1]));
+        userEmail = payload.sub || payload.email || "unknown@user.com";
+      } catch (e) {
+        // JWT에서 이메일 추출 실패
+      }
+
+      // 사용자 정보 조회 시도
+      try {
+        const userData = await userService.getCurrentUser();
+        if (userData) {
+          const userInfoWithLoginType = {
+            ...userData,
+            loginType: "google" as const, // Default, actual provider is unknown here
+          };
+          login(userInfoWithLoginType);
+
+          Alert.alert(
+            "로그인 성공",
+            `JWT 토큰으로 로그인되었습니다!\n\nID: ${userData.id}\n이메일: ${userData.email}\n이름: ${userData.name}`
+          );
+          router.replace("/onboarding/category");
+          return;
+        }
+      } catch (corsError) {
+        // CORS 에러 시 JWT에서 추출한 정보로 로그인
+      }
+
+      const extractedUserData = {
+        email: userEmail,
+        name: userEmail.split("@")[0],
+        id: userEmail,
+        loginType: "google" as const, // Default, actual provider is unknown here
+      };
+
+      await authService.saveUserInfo(extractedUserData);
+      login(extractedUserData);
+
+      Alert.alert(
+        "로그인 성공",
+        `JWT 토큰으로 로그인되었습니다!\n\n이메일: ${userEmail}`
+      );
+      router.replace("/onboarding/category");
+    } catch (error) {
+      Alert.alert("로그인 실패", "토큰이 유효하지 않습니다.");
+    }
   };
 
   // 로딩 중이거나 이미 로그인된 경우 로딩 화면 표시
@@ -256,8 +356,68 @@ export default function LoginPage() {
             </Text>
           </View>
         )}
-        <NaverLoginButton onSuccess={handleLoginSuccess} />
-        <GoogleLoginButton onSuccess={handleLoginSuccess} />
+        <SocialLoginButtons onSuccess={handleLoginSuccess} />
+
+        {/* 개발용 JWT 토큰 입력 기능 */}
+        {__DEV__ && (
+          <View
+            style={{
+              margin: 20,
+              padding: 15,
+              backgroundColor: "#f8f9fa",
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: "#e9ecef",
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "bold",
+                marginBottom: 10,
+                color: "#495057",
+              }}>
+              🔧 개발용: JWT 토큰 직접 입력
+            </Text>
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: "#ced4da",
+                borderRadius: 4,
+                padding: 10,
+                marginBottom: 10,
+                backgroundColor: "white",
+                fontSize: 12,
+                fontFamily: "monospace",
+              }}
+              placeholder='JWT 토큰을 여기에 붙여넣으세요'
+              multiline
+              numberOfLines={4}
+              value={tokenInput}
+              onChangeText={setTokenInput}
+            />
+            <Button
+              title='토큰으로 로그인'
+              onPress={() => {
+                if (tokenInput.trim()) {
+                  handleTokenLogin(tokenInput.trim());
+                } else {
+                  Alert.alert("알림", "JWT 토큰을 입력해주세요.");
+                }
+              }}
+              disabled={!tokenInput.trim()}
+            />
+            <Text
+              style={{
+                fontSize: 11,
+                color: "#6c757d",
+                lineHeight: 16,
+                marginTop: 8,
+              }}>
+              백엔드에서 받은 JWT 토큰을 위에 붙여넣고 "토큰으로 로그인" 버튼을
+              클릭하세요.
+            </Text>
+          </View>
+        )}
 
         {/* 서버 연결 실패 시 안내 메시지 */}
         {serverStatus === "disconnected" && (

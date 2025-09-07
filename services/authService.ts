@@ -4,23 +4,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getBackendUrl } from "../constants/Config";
 
-// 저장된 JWT 토큰 가져오기
-export const getStoredToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem("jwt_token");
-    if (token) {
-      console.log("🔐 저장된 JWT 토큰:", token);
-      console.log("📝 토큰 길이:", token.length);
-      console.log("🔍 토큰 형식 확인:", token.substring(0, 20) + "...");
-    } else {
-      console.log("⚠️ 저장된 JWT 토큰이 없습니다");
-    }
-    return token;
-  } catch (error) {
-    console.error("❌ 토큰 가져오기 에러:", error);
-    return null;
-  }
-};
+// 저장된 JWT 토큰 가져오기 (기존 함수 제거됨 - 아래 authService.getToken 사용)
 
 // 저장된 JWT 토큰 제거 (로그아웃 시)
 export const removeStoredToken = async () => {
@@ -36,53 +20,13 @@ export const removeStoredToken = async () => {
   }
 };
 
-// JWT 토큰이 유효한지 확인 (클라이언트 측 기본 검증)
-export const isTokenValid = (token: string): boolean => {
-  if (!token) return false;
+// JWT 토큰이 유효한지 확인 (기존 함수 제거됨 - 아래 isTokenValid 사용)
 
-  try {
-    // JWT 토큰 구조 확인 (header.payload.signature)
-    const parts = token.split(".");
-    if (parts.length !== 3) return false;
-
-    // payload 디코딩하여 만료 시간 확인
-    const payload = JSON.parse(atob(parts[1]));
-    const currentTime = Date.now() / 1000;
-
-    if (payload.exp && payload.exp < currentTime) {
-      console.log("⚠️ JWT 토큰이 만료되었습니다");
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("❌ JWT 토큰 검증 에러:", error);
-    return false;
-  }
-};
-
-// 토큰에서 사용자 정보 추출
-export const extractUserInfoFromToken = (token: string) => {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-
-    const payload = JSON.parse(atob(parts[1]));
-    return {
-      email: payload.email,
-      sub: payload.sub,
-      exp: payload.exp,
-      iat: payload.iat,
-    };
-  } catch (error) {
-    console.error("❌ 토큰에서 사용자 정보 추출 에러:", error);
-    return null;
-  }
-};
+// 토큰에서 사용자 정보 추출 (기존 함수 제거됨 - 아래 extractUserInfoFromToken 사용)
 
 // 백엔드 API 호출을 위한 헤더 생성
 export const createAuthHeaders = async () => {
-  const token = await getStoredToken();
+  const token = await AsyncStorage.getItem("jwt_token");
   if (!token) {
     throw new Error("인증 토큰이 없습니다");
   }
@@ -201,7 +145,7 @@ export const fetchUserProfile = async () => {
 // 토큰 갱신
 export const refreshToken = async () => {
   try {
-    const token = await getStoredToken();
+    const token = await AsyncStorage.getItem("jwt_token");
     if (!token) {
       throw new Error("저장된 토큰이 없습니다");
     }
@@ -228,4 +172,158 @@ export const refreshToken = async () => {
     console.error("❌ 토큰 갱신 에러:", error);
     throw error;
   }
+};
+
+// AuthContext에서 사용하는 헬퍼 함수들
+export const getStoredToken = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem("jwt_token");
+  } catch (error) {
+    return null;
+  }
+};
+
+export const extractUserInfoFromToken = (token: string) => {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const payload = JSON.parse(atob(parts[1]));
+    return {
+      sub: payload.sub,
+      email: payload.email || payload.sub,
+      exp: payload.exp,
+      iat: payload.iat,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+export const isTokenValid = (token: string): boolean => {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    const payload = JSON.parse(atob(parts[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    // exp가 있고 현재 시간보다 미래인지 확인
+    if (payload.exp && payload.exp <= currentTime) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// JWT 토큰 관리 서비스
+export const authService = {
+  // JWT 토큰 저장
+  async saveToken(token: string) {
+    await AsyncStorage.setItem("jwt_token", token);
+  },
+
+  // JWT 토큰 가져오기
+  async getToken(): Promise<string | null> {
+    return await AsyncStorage.getItem("jwt_token");
+  },
+
+  // 사용자 정보 저장
+  async saveUserInfo(userInfo: any) {
+    await AsyncStorage.setItem("user_info", JSON.stringify(userInfo));
+  },
+
+  // 사용자 정보 가져오기
+  async getUserInfo(): Promise<any | null> {
+    const userInfo = await AsyncStorage.getItem("user_info");
+    return userInfo ? JSON.parse(userInfo) : null;
+  },
+
+  // 로그아웃 (토큰과 사용자 정보 삭제)
+  async logout() {
+    await AsyncStorage.removeItem("jwt_token");
+    await AsyncStorage.removeItem("user_info");
+  },
+
+  // 로그인 상태 확인
+  async isLoggedIn(): Promise<boolean> {
+    const token = await this.getToken();
+    return token !== null;
+  },
+};
+
+// 사용자 정보 조회 서비스 (API 명세서 기반)
+export const userService = {
+  async getCurrentUser() {
+    const token = await authService.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(
+        "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/users/me",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          mode: "cors",
+        }
+      );
+
+      if (response.status === 200) {
+        const userData = await response.json();
+        const formattedUserData = {
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+        };
+
+        await authService.saveUserInfo(formattedUserData);
+        return formattedUserData;
+      } else if (response.status === 401) {
+        await authService.logout();
+        return null;
+      } else if (response.status === 500) {
+        return null;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  },
+};
+
+// API 요청 서비스 (JWT 토큰 자동 포함)
+export const apiService = {
+  async request(url: string, options: RequestInit = {}) {
+    const token = await authService.getToken();
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    };
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401) {
+      await authService.logout();
+    }
+
+    return response;
+  },
 };

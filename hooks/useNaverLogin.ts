@@ -1,66 +1,52 @@
-import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Platform } from "react-native";
-import Constants from "expo-constants";
-
-const { EXPO_NAVER_CLIENT_ID } = Constants.expoConfig?.extra as {
-  EXPO_NAVER_CLIENT_ID: string;
-};
+import * as AuthSession from "expo-auth-session";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const useNaverLogin = () => {
-  const CLIENT_ID = EXPO_NAVER_CLIENT_ID;
+  // 백엔드 OAuth 콜백 URL 사용 (배포된 URL)
+  const redirectUri =
+    "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/redirect";
 
-  // CLIENT_ID 검증
-  if (!CLIENT_ID) {
-    console.error("❌ EXPO_NAVER_CLIENT_ID가 설정되지 않았습니다!");
-    console.error("🔍 app.config.js 또는 .env 파일을 확인해주세요.");
-  } else {
-    console.log(
-      "✅ Naver Client ID 확인됨:",
-      CLIENT_ID.substring(0, 10) + "..."
-    );
-  }
+  const handleBackendOAuth = async () => {
+    try {
+      // 백엔드 OAuth 시작 URL (배포된 URL)
+      const backendOAuthUrl =
+        "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/authorization/naver";
 
-  const discovery = {
-    authorizationEndpoint: "https://nid.naver.com/oauth2.0/authorize",
-    tokenEndpoint: "https://nid.naver.com/oauth2.0/token",
-    revocationEndpoint: "https://nid.naver.com/oauth2.0/token",
-    userInfoEndpoint: "https://openapi.naver.com/v1/nid/me",
+      const result = await WebBrowser.openAuthSessionAsync(
+        backendOAuthUrl,
+        redirectUri
+      );
+
+      if (result.type === "success" && result.url) {
+        // URL에서 JWT 토큰과 사용자 정보 추출
+        const tokenMatch = result.url.match(/token=([^&]+)/);
+        const userMatch = result.url.match(/user=([^&]+)/);
+
+        if (tokenMatch && userMatch) {
+          const jwtToken = tokenMatch[1];
+          const userData = JSON.parse(decodeURIComponent(userMatch[1]));
+
+          return {
+            type: "success",
+            token: jwtToken,
+            user: userData,
+          };
+        }
+      }
+      return result;
+    } catch (error) {
+      return {
+        type: "error",
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
   };
 
-  // 백엔드 JWT 토큰 교환 URL
-  const backendTokenExchangeUrl =
-    "https://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/redirect?token";
-
-  const redirectUri =
-    Platform.OS === "web"
-      ? process.env.EXPO_PUBLIC_NGROK_URL ||
-        (typeof window !== "undefined"
-          ? window.location.origin
-          : "http://localhost:8081")
-      : AuthSession.makeRedirectUri();
-
-  // 리디렉트 URI 검증
-  console.log("🌐 Platform:", Platform.OS);
-  console.log("🔗 Redirect URI:", redirectUri);
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: CLIENT_ID,
-      redirectUri: redirectUri,
-      scopes: ["openid", "profile", "email"],
-      responseType: AuthSession.ResponseType.Code,
-    },
-    discovery
-  );
-
   return {
-    promptAsync,
-    request,
-    response,
-    backendTokenExchangeUrl,
+    promptAsync: handleBackendOAuth,
   };
 };
 
