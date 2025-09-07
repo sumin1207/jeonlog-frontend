@@ -58,6 +58,53 @@ export const getAllExhibitions = async () => {
   }
 };
 
+// 전시 상세 조회 (JWT 토큰 포함)
+export const getExhibitionById = async (id: number) => {
+  const url = `http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/exhibitions/${id}`;
+
+  try {
+    console.log("🔍 전시 상세 조회 API 요청 URL:", url);
+
+    // JWT 토큰 가져오기
+    const token = await AsyncStorage.getItem("jwt_token");
+    console.log("🔑 JWT 토큰 존재 여부:", !!token);
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+
+    // JWT 토큰이 있으면 Authorization 헤더에 추가
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+      console.log("🔑 JWT 토큰 추가됨");
+    } else {
+      console.log("⚠️ JWT 토큰이 없습니다");
+    }
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers,
+      mode: "cors",
+    });
+
+    console.log("🔍 전시 상세 조회 API 응답 상태:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ 전시 상세 조회 API 오류 응답:", errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("🔍 전시 상세 조회 API 응답 데이터:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ 전시 상세 조회 API 오류:", error);
+    throw error;
+  }
+};
+
 export const searchExhibitions = async (
   query: string,
   options?: {

@@ -14,6 +14,7 @@ import { exhibitionData } from "../../data/exhibitionsDataStorage";
 import searchService, {
   searchExhibitions,
   getAllExhibitions,
+  getExhibitionById,
 } from "../../services/searchService";
 import { Text, Container } from "../../design-system";
 import { SearchStyles } from "../../design-system/styles";
@@ -229,6 +230,30 @@ export default function SearchScreen() {
     }
   };
 
+  // 전시 상세 조회 테스트 함수
+  const testGetExhibitionById = async (id: number = 1) => {
+    try {
+      // 로그인 상태 확인
+      const token = await AsyncStorage.getItem("jwt_token");
+      if (!token) {
+        setExhibitionError("API 테스트를 위해서는 로그인이 필요합니다.");
+        return;
+      }
+
+      console.log("🧪 전시 상세 조회 API 테스트 시작, ID:", id);
+      const result = await getExhibitionById(id);
+      console.log("✅ 전시 상세 조회 API 테스트 성공:", result);
+      setExhibitionResults([result]); // 단일 결과를 배열로 변환
+    } catch (error) {
+      console.error("❌ 전시 상세 조회 API 테스트 실패:", error);
+      if (error instanceof Error && error.message.includes("401")) {
+        setExhibitionError("인증이 필요합니다. 다시 로그인해주세요.");
+      } else {
+        setExhibitionError("전시 상세 정보를 가져올 수 없습니다.");
+      }
+    }
+  };
+
   // 검색 실행 함수 (API 호출 통합)
   const executeSearch = (query: string) => {
     console.log("🚀 === executeSearch 함수 시작 ===");
@@ -378,11 +403,28 @@ export default function SearchScreen() {
           ]}
           onPress={testGetAllExhibitions}>
           <Text
-            style={[
-              SearchStyles.popularText,
-              { color: "white", textAlign: "center" },
-            ]}>
+            style={{
+              ...SearchStyles.popularText,
+              color: "white",
+              textAlign: "center",
+            }}>
             🧪 전체 전시 목록 API 테스트
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            SearchStyles.popularItem,
+            { backgroundColor: "#34C759", padding: 10, marginBottom: 10 },
+          ]}
+          onPress={() => testGetExhibitionById(1)}>
+          <Text
+            style={{
+              ...SearchStyles.popularText,
+              color: "white",
+              textAlign: "center",
+            }}>
+            🧪 전시 상세 조회 API 테스트 (ID: 1)
           </Text>
         </TouchableOpacity>
       </View>

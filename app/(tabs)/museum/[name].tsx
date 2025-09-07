@@ -616,6 +616,27 @@ export default function MuseumDetailScreen() {
       borderBottomWidth: 1,
       borderBottomColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
     },
+    section: {
+      backgroundColor: theme === "dark" ? "#2a2a2a" : "#fff",
+      margin: 15,
+      marginBottom: 20,
+      borderRadius: 16,
+      padding: 20,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
+      borderWidth: 1,
+      borderColor: theme === "dark" ? "#3a3a3a" : "#f0f0f0",
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: theme === "dark" ? "#fff" : "#1c3519",
+      marginBottom: 20,
+      letterSpacing: 0.5,
+    },
   });
 
   if (!museum) {
