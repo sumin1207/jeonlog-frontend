@@ -23,13 +23,42 @@ export default ({ config }) => {
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.POST_NOTIFICATIONS",
       ],
+      // 딥링크를 위한 intent filters
+      intentFilters: [
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: "https",
+              host: "jeonlog.app",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
+        {
+          action: "VIEW",
+          data: [
+            {
+              scheme: "com.jeonlog.jeonlog",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
+      ],
     },
 
     // iOS 설정
     ios: {
       ...config.ios,
       supportsTablet: true,
+      bundleIdentifier: "com.jeonlog.jeonlog",
+      // 딥링크를 위한 URL schemes
+      associatedDomains: ["applinks:jeonlog.app"],
     },
+
+    // 딥링크 스키마 설정
+    scheme: "com.jeonlog.jeonlog",
 
     // 스플래시 화면
     splash: {

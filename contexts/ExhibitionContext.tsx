@@ -6,6 +6,8 @@ import React, {
   useEffect,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { bookmarkService } from "../services/bookmarkService";
+import { useAuth } from "../components/context/AuthContext";
 
 interface ExhibitionState {
   BookmarkedExhibitions: string[];
@@ -22,6 +24,8 @@ interface ExhibitionContextType {
   myLogs: any[]; // State for authored logs
   myDrafts: { [key: string]: any };
   toggleBookmarked: (exhibitionId: string) => void;
+  toggleBookmarkedWithAPI: (exhibitionId: string) => Promise<void>; // API 연동된 북마크 토글
+  loadBookmarksFromAPI: () => Promise<void>; // API에서 북마크 목록 로드
   toggleThumbsUp: (exhibitionId: string) => void;
   toggleVisited: (exhibitionId: string) => void;
   markAsVisited: (exhibitionId: string) => void;
@@ -29,7 +33,10 @@ interface ExhibitionContextType {
   deleteMyLog: (exhibitionId: string) => Promise<void>; // Function to delete a log
   saveDraft: (exhibitionId: string, draftData: any) => Promise<void>;
   deleteDraft: (exhibitionId: string) => Promise<void>;
-  toggleLogLikes: (exhibitionId: string, action: 'increment' | 'decrement') => void;
+  toggleLogLikes: (
+    exhibitionId: string,
+    action: "increment" | "decrement"
+  ) => void;
   isBookmarked: (exhibitionId: string) => boolean;
   isThumbsUp: (exhibitionId: string) => boolean;
   isVisited: (exhibitionId: string) => boolean;
@@ -58,6 +65,7 @@ const DRAFTS_STORAGE_KEY = "exhibition_drafts";
 export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
   children,
 }) => {
+  const { isLoggedIn } = useAuth();
   const [state, setState] = useState<ExhibitionState>({
     BookmarkedExhibitions: [],
     thumbsUpExhibitions: [],
@@ -156,6 +164,64 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     }));
   };
 
+  // API 연동된 북마크 토글 함수
+  const toggleBookmarkedWithAPI = async (exhibitionId: string) => {
+    if (!isLoggedIn) {
+      throw new Error("로그인이 필요합니다. 로그인 후 다시 시도해주세요.");
+    }
+
+    try {
+      const isCurrentlyBookmarked =
+        state.BookmarkedExhibitions.includes(exhibitionId);
+
+      if (isCurrentlyBookmarked) {
+        // 북마크 제거
+        await bookmarkService.removeBookmark(parseInt(exhibitionId));
+        setState((prev) => ({
+          ...prev,
+          BookmarkedExhibitions: prev.BookmarkedExhibitions.filter(
+            (id) => id !== exhibitionId
+          ),
+        }));
+      } else {
+        // 북마크 추가
+        await bookmarkService.addBookmark(parseInt(exhibitionId));
+        setState((prev) => ({
+          ...prev,
+          BookmarkedExhibitions: [...prev.BookmarkedExhibitions, exhibitionId],
+        }));
+      }
+    } catch (error) {
+      console.error("북마크 토글 에러:", error);
+      // 에러 발생 시 사용자에게 알림 (토스트 메시지 등)
+      throw error;
+    }
+  };
+
+  // API에서 북마크 목록 로드
+  const loadBookmarksFromAPI = async () => {
+    if (!isLoggedIn) {
+      console.log("로그인되지 않아 북마크 목록을 로드할 수 없습니다.");
+      return;
+    }
+
+    try {
+      const bookmarks = await bookmarkService.getBookmarks();
+      // API 응답에서 전시 ID 배열 추출 (API 응답 구조에 따라 조정 필요)
+      const bookmarkIds = bookmarks.map(
+        (bookmark: any) =>
+          bookmark.exhibitionId?.toString() || bookmark.id?.toString()
+      );
+      setState((prev) => ({
+        ...prev,
+        BookmarkedExhibitions: bookmarkIds,
+      }));
+    } catch (error) {
+      console.error("북마크 목록 로드 에러:", error);
+      // 에러 발생 시 기존 로컬 상태 유지
+    }
+  };
+
   const toggleThumbsUp = (exhibitionId: string) => {
     setState((prev) => ({
       ...prev,
@@ -240,14 +306,18 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
     }
   };
 
-  const toggleLogLikes = (exhibitionId: string, action: 'increment' | 'decrement') => {
+  const toggleLogLikes = (
+    exhibitionId: string,
+    action: "increment" | "decrement"
+  ) => {
     setState((prev) => {
       let calculatedLikesForStorage = 0; // AsyncStorage에 저장할 값을 캡처하기 위한 변수
 
       const updatedMyLogs = prev.myLogs.map((log) => {
         if (log.id === exhibitionId) {
           const currentLikes = log.likes || 0;
-          let newLikes = action === 'increment' ? currentLikes + 1 : currentLikes - 1;
+          let newLikes =
+            action === "increment" ? currentLikes + 1 : currentLikes - 1;
           if (newLikes < 0) newLikes = 0; // 좋아요는 0 미만이 될 수 없음
           calculatedLikesForStorage = newLikes; // 계산된 값을 캡처
           return { ...log, likes: newLikes };
@@ -257,13 +327,17 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
 
       // AsyncStorage 업데이트 로직을 setState 콜백 내에서 실행
       // 이렇게 하면 calculatedLikesForStorage 값이 정확히 캡처됩니다.
-      AsyncStorage.getItem("exhibition_records").then(json => {
-        const records = json ? JSON.parse(json) : {};
-        if (records[exhibitionId]) {
-          records[exhibitionId].likes = calculatedLikesForStorage; // 캡처된 값을 사용
-          AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
-        }
-      }).catch(e => console.error("Failed to update log likes in AsyncStorage", e));
+      AsyncStorage.getItem("exhibition_records")
+        .then((json) => {
+          const records = json ? JSON.parse(json) : {};
+          if (records[exhibitionId]) {
+            records[exhibitionId].likes = calculatedLikesForStorage; // 캡처된 값을 사용
+            AsyncStorage.setItem("exhibition_records", JSON.stringify(records));
+          }
+        })
+        .catch((e) =>
+          console.error("Failed to update log likes in AsyncStorage", e)
+        );
 
       return { ...prev, myLogs: updatedMyLogs };
     });
@@ -294,6 +368,8 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
         myLogs: state.myLogs,
         myDrafts: state.myDrafts,
         toggleBookmarked,
+        toggleBookmarkedWithAPI,
+        loadBookmarksFromAPI,
         toggleThumbsUp,
         toggleVisited,
         markAsVisited,

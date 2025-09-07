@@ -14,6 +14,7 @@ import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../components/context/AuthContext";
 import { ExhibitionCardSkeleton } from "@/components/ui/Skeleton";
+import { BookmarkButton } from "@/components/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { style as getThemedStyle } from "./Home.styles"; // Import styles from Home.styles.ts
@@ -224,7 +225,7 @@ export default function HomeScreen() {
   };
 
   const renderRecommendationCard = ({ item }: { item: any }) => (
-    <TouchableOpacity
+    <View
       style={[
         style.recommendationCard,
         {
@@ -233,14 +234,14 @@ export default function HomeScreen() {
               ? Colors.background.cardDark
               : Colors.background.card,
         },
-      ]}
-      onPress={() => router.push(`/exhibition/${item.id}` as any)}
-      activeOpacity={0.7}
-    >
-      <View style={style.cardContent}>
+      ]}>
+      <TouchableOpacity
+        style={style.cardContent}
+        onPress={() => router.push(`/exhibition/${item.id}` as any)}
+        activeOpacity={0.7}>
         <View style={style.imagePlaceholder}>
           <Ionicons
-            name="image-outline"
+            name='image-outline'
             size={40}
             color={
               theme === "dark" ? Colors.neutral.gray600 : Colors.neutral.gray300
@@ -257,8 +258,7 @@ export default function HomeScreen() {
                     ? Colors.text.dark.primary
                     : Colors.text.primary,
               },
-            ]}
-          >
+            ]}>
             {item.title}
           </Text>
           <Text
@@ -270,8 +270,7 @@ export default function HomeScreen() {
                     ? Colors.text.dark.secondary
                     : Colors.text.secondary,
               },
-            ]}
-          >
+            ]}>
             {item.location}
           </Text>
           <Text
@@ -283,13 +282,20 @@ export default function HomeScreen() {
                     ? Colors.text.dark.secondary
                     : Colors.text.secondary,
               },
-            ]}
-          >
+            ]}>
             {item.date}
           </Text>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      <BookmarkButton
+        exhibitionId={item.id}
+        size={20}
+        color={theme === "dark" ? "#ccc" : "#666"}
+        activeColor='#FF6B6B'
+        style={{ position: "absolute", top: 8, right: 8 }}
+        showAlert={false}
+      />
+    </View>
   );
 
   const topBarOpacity = scrollY.interpolate({
@@ -317,8 +323,7 @@ export default function HomeScreen() {
             opacity: topBarOpacity,
             transform: [{ translateY: topBarTranslateY }],
           },
-        ]}
-      >
+        ]}>
         <TopBar />
       </Animated.View>
       <Animated.ScrollView
@@ -329,8 +334,7 @@ export default function HomeScreen() {
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
-        contentContainerStyle={{ paddingTop: 80, paddingBottom: Spacing.xxl }}
-      >
+        contentContainerStyle={{ paddingTop: 80, paddingBottom: Spacing.xxl }}>
         {/* 기존 콘텐츠 */}
         <Text style={style.title1}>나를 위한 전시 추천</Text>
         <RecommendForYou />
@@ -345,14 +349,12 @@ export default function HomeScreen() {
               key={tab}
               style={style.tab}
               onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}
-            >
+              activeOpacity={0.7}>
               <Text
                 style={[
                   style.tabText,
                   activeTab === tab && style.activeTabText,
-                ]}
-              >
+                ]}>
                 {tab}
               </Text>
               {activeTab === tab && <View style={style.activeTabIndicator} />}
@@ -377,16 +379,14 @@ export default function HomeScreen() {
                       : style.ageFilterButtonUnselected,
                   ]}
                   onPress={() => setSelectedAgeGroup(ageGroup)}
-                  activeOpacity={0.7}
-                >
+                  activeOpacity={0.7}>
                   <Text
                     style={[
                       style.ageFilterText,
                       selectedAgeGroup === ageGroup
                         ? style.ageFilterTextSelected
                         : style.ageFilterTextUnselected,
-                    ]}
-                  >
+                    ]}>
                     {ageGroup}
                   </Text>
                 </TouchableOpacity>

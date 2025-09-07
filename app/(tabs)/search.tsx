@@ -1,11 +1,20 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { SafeAreaView, View, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { exhibitionData } from "../../data/exhibitionsDataStorage";
-import searchService from "../../services/searchService";
+import searchService, {
+  searchExhibitions,
+  getAllExhibitions,
+} from "../../services/searchService";
 import { Text, Container } from "../../design-system";
 import { SearchStyles } from "../../design-system/styles";
 import TopBar from "@/components/ui/TopBar";
@@ -196,6 +205,30 @@ export default function SearchScreen() {
     }, 1000);
   };
 
+  // 전체 전시 목록 테스트 함수
+  const testGetAllExhibitions = async () => {
+    try {
+      // 로그인 상태 확인
+      const token = await AsyncStorage.getItem("jwt_token");
+      if (!token) {
+        setExhibitionError("API 테스트를 위해서는 로그인이 필요합니다.");
+        return;
+      }
+
+      console.log("🧪 전체 전시 목록 API 테스트 시작");
+      const result = await getAllExhibitions();
+      console.log("✅ 전체 전시 목록 API 테스트 성공:", result);
+      setExhibitionResults(result);
+    } catch (error) {
+      console.error("❌ 전체 전시 목록 API 테스트 실패:", error);
+      if (error instanceof Error && error.message.includes("401")) {
+        setExhibitionError("인증이 필요합니다. 다시 로그인해주세요.");
+      } else {
+        setExhibitionError("전체 전시 목록을 가져올 수 없습니다.");
+      }
+    }
+  };
+
   // 검색 실행 함수 (API 호출 통합)
   const executeSearch = (query: string) => {
     console.log("🚀 === executeSearch 함수 시작 ===");
@@ -237,22 +270,34 @@ export default function SearchScreen() {
     setExhibitionError(null);
     setExhibitionResults([]);
     setIsLoading(true);
-    try {
-      console.log("🔍 전시회 검색 API 호출 시작:", query);
-      const res = await searchService.get("/exhibitions/search", {
-        params: { query },
-      });
-      console.log("✅ 전시회 검색 API 응답:", res.data);
 
-      if (res.data.success && res.data.data) {
-        setExhibitionResults(res.data.data);
-        console.log("📊 전시회 검색 결과 개수:", res.data.data.length);
+    try {
+      // 로그인 상태 확인
+      const token = await AsyncStorage.getItem("jwt_token");
+      if (!token) {
+        setExhibitionError("검색을 위해서는 로그인이 필요합니다.");
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("🔍 전시회 검색 API 호출 시작:", query);
+      const res = await searchExhibitions(query, {
+        filter: "title,artist",
+        location: "서울",
+      });
+      console.log("✅ 전시회 검색 API 응답:", res);
+
+      if (res.success && res.data) {
+        setExhibitionResults(res.data);
+        console.log("📊 전시회 검색 결과 개수:", res.data.length);
       } else {
         setExhibitionError("검색 결과를 가져올 수 없습니다.");
       }
     } catch (err: any) {
       console.log("❌ 전시회 검색 API 오류:", err);
-      if (err.response) {
+      if (err.message && err.message.includes("401")) {
+        setExhibitionError("인증이 필요합니다. 다시 로그인해주세요.");
+      } else if (err.response) {
         setExhibitionError(
           `${err.response.status} - ${err.response.data?.error || "서버 오류"}`
         );
@@ -322,6 +367,24 @@ export default function SearchScreen() {
             style={SearchStyles.searchInputIcon}
           />
         </View>
+      </View>
+
+      {/* 테스트 버튼 섹션 */}
+      <View style={SearchStyles.popularSection}>
+        <TouchableOpacity
+          style={[
+            SearchStyles.popularItem,
+            { backgroundColor: "#007AFF", padding: 10, marginBottom: 10 },
+          ]}
+          onPress={testGetAllExhibitions}>
+          <Text
+            style={[
+              SearchStyles.popularText,
+              { color: "white", textAlign: "center" },
+            ]}>
+            🧪 전체 전시 목록 API 테스트
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* 인기 검색어 섹션 */}

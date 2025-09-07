@@ -43,9 +43,14 @@ const SocialLoginButtons = ({ onSuccess }: SocialLoginButtonsProps) => {
   ) => {
     setIsLoading(true);
     try {
+      console.log(`🔍 ${provider} 로그인 시작`);
       const result = await providerPromptAsync();
 
+      console.log(`🔍 ${provider} 로그인 결과:`, result);
+
       if (result.type === "success" && result.token && result.user) {
+        console.log(`✅ ${provider} 로그인 성공, 토큰 저장 중...`);
+
         await authService.saveToken(result.token);
         await authService.saveUserInfo(result.user);
 
@@ -53,19 +58,40 @@ const SocialLoginButtons = ({ onSuccess }: SocialLoginButtonsProps) => {
           ...result.user,
           loginType: provider,
         };
+
+        console.log(
+          `✅ ${provider} 사용자 정보 저장 완료:`,
+          userInfoWithLoginType.email
+        );
         login(userInfoWithLoginType);
-        router.replace("/");
 
         if (onSuccess) {
           onSuccess();
         }
+      } else if (result.type === "cancel") {
+        console.log(`ℹ️ ${provider} 로그인 취소됨`);
+        // 사용자가 취소한 경우 알림을 표시하지 않음
       } else {
-        Alert.alert("로그인 실패", "소셜 로그인에 실패했습니다.");
+        console.log(
+          `❌ ${provider} 로그인 실패:`,
+          result.error || "알 수 없는 오류"
+        );
+        Alert.alert(
+          "로그인 실패",
+          `${
+            provider === "google" ? "구글" : "네이버"
+          } 로그인에 실패했습니다.\n\n${
+            result.error || "알 수 없는 오류가 발생했습니다."
+          }`
+        );
       }
     } catch (error) {
+      console.error(`❌ ${provider} 로그인 에러:`, error);
       Alert.alert(
         "로그인 실패",
-        "로그인 중 오류가 발생했습니다.\n\n" +
+        `${
+          provider === "google" ? "구글" : "네이버"
+        } 로그인 중 오류가 발생했습니다.\n\n` +
           (error instanceof Error ? error.message : String(error))
       );
     } finally {

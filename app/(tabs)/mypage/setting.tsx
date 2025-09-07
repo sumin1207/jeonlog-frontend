@@ -14,7 +14,11 @@ import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
 import { clearLocalUserData } from "../../../services/userService";
-import { removeStoredToken } from "../../../services/authService";
+import {
+  authService,
+  logoutFromBackend,
+  deleteAccountFromBackend,
+} from "../../../services/authService";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 import { Text, Container } from "../../../design-system";
 import { Colors } from "../../../design-system/theme";
@@ -70,22 +74,67 @@ export default function MyPageSettingScreen() {
   ).length;
 
   const handleLogout = async () => {
-    await removeStoredToken();
-    clearLocalUserData();
-    logout();
-    Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.", [
-      { text: "확인", onPress: () => router.replace("/") },
-    ]);
-    router.replace("/");
+    try {
+      // 백엔드 로그아웃 API 호출
+      const backendSuccess = await logoutFromBackend();
+
+      // 로컬 데이터 정리
+      await authService.logout();
+      clearLocalUserData();
+      logout();
+
+      // 홈으로 리다이렉트
+      router.replace("/");
+
+      if (backendSuccess) {
+        Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.");
+      } else {
+        Alert.alert(
+          "로그아웃 완료",
+          "로그아웃이 완료되었습니다.\n(서버 연결에 문제가 있을 수 있습니다)"
+        );
+      }
+    } catch (error) {
+      console.error("로그아웃 에러:", error);
+      // 에러가 발생해도 로컬 로그아웃은 진행
+      await authService.logout();
+      clearLocalUserData();
+      logout();
+      router.replace("/");
+      Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.");
+    }
   };
 
   const handleDeleteAccount = async () => {
-    clearLocalUserData();
-    Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.", [
-      { text: "확인", onPress: () => router.replace("/") },
-    ]);
-    logout();
-    router.replace("/");
+    try {
+      // 백엔드 회원탈퇴 API 호출
+      const backendSuccess = await deleteAccountFromBackend();
+
+      // 로컬 데이터 정리
+      await authService.logout();
+      clearLocalUserData();
+      logout();
+
+      // 홈으로 리다이렉트
+      router.replace("/");
+
+      if (backendSuccess) {
+        Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.");
+      } else {
+        Alert.alert(
+          "회원탈퇴 완료",
+          "회원탈퇴가 완료되었습니다.\n(서버 연결에 문제가 있을 수 있습니다)"
+        );
+      }
+    } catch (error) {
+      console.error("회원탈퇴 에러:", error);
+      // 에러가 발생해도 로컬 데이터는 정리
+      await authService.logout();
+      clearLocalUserData();
+      logout();
+      router.replace("/");
+      Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.");
+    }
   };
 
   const handleBackPress = () => {

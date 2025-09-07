@@ -11,11 +11,13 @@ import {
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
 import { SocialLoginButtons } from "../components/auth";
+import ServerConfigModal from "../components/auth/ServerConfigModal";
 import {
   checkServerConnection,
   authService,
   userService,
 } from "../services/authService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,15 +26,27 @@ export default function LoginPage() {
     "checking" | "connected" | "disconnected"
   >("checking");
   const [showServerOptions, setShowServerOptions] = useState(false);
+  const [showServerConfigModal, setShowServerConfigModal] = useState(false);
   const [serverError, setServerError] = useState<string>("");
   const [tokenInput, setTokenInput] = useState<string>("");
+  const [currentServerUrl, setCurrentServerUrl] = useState<string>("");
 
   const backgroundColor = "#1c3519";
 
-  // 서버 연결 상태 확인
+  // 서버 URL 로드 및 연결 상태 확인
   useEffect(() => {
-    const checkServer = async () => {
+    const loadServerConfig = async () => {
       try {
+        // 저장된 커스텀 서버 URL 확인
+        const customServerUrl = await AsyncStorage.getItem("custom_server_url");
+        const defaultServerUrl =
+          "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com";
+        const serverUrl = customServerUrl || defaultServerUrl;
+
+        setCurrentServerUrl(serverUrl);
+        console.log("🔍 사용할 서버 URL:", serverUrl);
+
+        // 서버 연결 상태 확인
         setServerStatus("checking");
         console.log("🔍 서버 연결 상태 확인 시작");
 
@@ -45,9 +59,13 @@ export default function LoginPage() {
           setServerError("서버에 연결할 수 없습니다");
           Alert.alert(
             "서버 연결 실패",
-            "서버에 연결할 수 없습니다.\n\n가능한 원인:\n• 서버가 일시적으로 다운됨\n• 네트워크 연결 문제\n• 서버 URL 설정 오류\n\n잠시 후 다시 시도해주세요.",
+            "서버에 연결할 수 없습니다.\n\n가능한 원인:\n• 서버가 일시적으로 다운됨\n• 네트워크 연결 문제\n• 서버 URL 설정 오류\n\n잠시 후 다시 시도하거나 서버 설정을 확인해주세요.",
             [
-              { text: "다시 시도", onPress: () => checkServer() },
+              { text: "다시 시도", onPress: () => loadServerConfig() },
+              {
+                text: "서버 설정",
+                onPress: () => setShowServerConfigModal(true),
+              },
               { text: "확인" },
             ]
           );
@@ -75,12 +93,18 @@ export default function LoginPage() {
         Alert.alert(
           "연결 오류",
           `서버 연결 확인 중 오류가 발생했습니다:\n\n${errorMessage}`,
-          [{ text: "확인" }]
+          [
+            { text: "확인" },
+            {
+              text: "서버 설정",
+              onPress: () => setShowServerConfigModal(true),
+            },
+          ]
         );
       }
     };
 
-    checkServer();
+    loadServerConfig();
   }, []);
 
   // 이미 로그인된 사용자는 온보딩 카테고리로 자동 리다이렉트
@@ -275,7 +299,7 @@ export default function LoginPage() {
               <Button
                 title='서버 설정'
                 color='#FF6B35'
-                onPress={() => setShowServerOptions(!showServerOptions)}
+                onPress={() => setShowServerConfigModal(true)}
               />
             </View>
           )}
@@ -364,32 +388,45 @@ export default function LoginPage() {
             style={{
               margin: 20,
               padding: 15,
-              backgroundColor: "#f8f9fa",
+              backgroundColor: "rgba(255,255,255,0.1)",
               borderRadius: 8,
               borderWidth: 1,
-              borderColor: "#e9ecef",
+              borderColor: "rgba(255,255,255,0.2)",
             }}>
             <Text
               style={{
                 fontSize: 14,
                 fontWeight: "bold",
                 marginBottom: 10,
-                color: "#495057",
+                color: "#fff",
+                textAlign: "center",
               }}>
               🔧 개발용: JWT 토큰 직접 입력
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                color: "#ffcccb",
+                marginBottom: 10,
+                textAlign: "center",
+                lineHeight: 16,
+              }}>
+              💡 일반 사용자는 위의 소셜 로그인 버튼을 사용하세요
             </Text>
             <TextInput
               style={{
                 borderWidth: 1,
-                borderColor: "#ced4da",
+                borderColor: "rgba(255,255,255,0.3)",
                 borderRadius: 4,
                 padding: 10,
                 marginBottom: 10,
-                backgroundColor: "white",
+                backgroundColor: "rgba(255,255,255,0.1)",
                 fontSize: 12,
                 fontFamily: "monospace",
+                color: "#fff",
               }}
               placeholder='JWT 토큰을 여기에 붙여넣으세요'
+              placeholderTextColor='rgba(255,255,255,0.5)'
               multiline
               numberOfLines={4}
               value={tokenInput}
@@ -397,6 +434,7 @@ export default function LoginPage() {
             />
             <Button
               title='토큰으로 로그인'
+              color='#FF6B35'
               onPress={() => {
                 if (tokenInput.trim()) {
                   handleTokenLogin(tokenInput.trim());
@@ -409,9 +447,10 @@ export default function LoginPage() {
             <Text
               style={{
                 fontSize: 11,
-                color: "#6c757d",
+                color: "rgba(255,255,255,0.7)",
                 lineHeight: 16,
                 marginTop: 8,
+                textAlign: "center",
               }}>
               백엔드에서 받은 JWT 토큰을 위에 붙여넣고 "토큰으로 로그인" 버튼을
               클릭하세요.
@@ -465,6 +504,33 @@ export default function LoginPage() {
           title='개발용: 온보딩 카테고리로 이동'
           color='#FF6B35'
           onPress={() => router.replace("/onboarding/category")}
+        />
+
+        {/* 서버 설정 모달 */}
+        <ServerConfigModal
+          visible={showServerConfigModal}
+          onClose={() => setShowServerConfigModal(false)}
+          onServerChange={(newServerUrl) => {
+            setCurrentServerUrl(newServerUrl);
+            // 서버 변경 후 다시 연결 확인
+            const checkServer = async () => {
+              setServerStatus("checking");
+              try {
+                const isConnected = await checkServerConnection();
+                setServerStatus(isConnected ? "connected" : "disconnected");
+                if (!isConnected) {
+                  setServerError("서버에 연결할 수 없습니다");
+                } else {
+                  setServerError("");
+                }
+              } catch (error) {
+                setServerStatus("disconnected");
+                setServerError("서버 연결 확인 실패");
+              }
+            };
+            checkServer();
+          }}
+          currentServerUrl={currentServerUrl}
         />
       </View>
     </SafeAreaView>

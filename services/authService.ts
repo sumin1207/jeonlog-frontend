@@ -57,22 +57,6 @@ export const fetchUserInfo = async () => {
   }
 };
 
-// 백엔드에서 로그아웃 처리
-export const logoutFromBackend = async () => {
-  try {
-    const headers = await createAuthHeaders();
-    await fetch(`${getBackendUrl()}/api/users/logout`, {
-      method: "POST",
-      headers,
-    });
-  } catch (error) {
-    console.error("❌ 백엔드 로그아웃 에러:", error);
-  } finally {
-    // 로컬 토큰 제거
-    await removeStoredToken();
-  }
-};
-
 // 타임아웃이 있는 fetch 함수
 const fetchWithTimeout = async (
   url: string,
@@ -95,18 +79,31 @@ const fetchWithTimeout = async (
   }
 };
 
+// 커스텀 서버 URL 가져오기
+export const getCustomServerUrl = async (): Promise<string> => {
+  try {
+    const customUrl = await AsyncStorage.getItem("custom_server_url");
+    return customUrl || getBackendUrl();
+  } catch (error) {
+    console.error("❌ 커스텀 서버 URL 가져오기 실패:", error);
+    return getBackendUrl();
+  }
+};
+
 // 서버 연결 상태 확인 (CORS 문제로 인해 간소화)
 export const checkServerConnection = async (): Promise<boolean> => {
   try {
-    const backendUrl = getBackendUrl();
+    const backendUrl = await getCustomServerUrl();
     console.log("🔍 서버 연결 확인 중:", backendUrl);
 
     // CORS 문제로 인해 실제 연결 확인 대신 서버 URL 유효성만 확인
     if (
       backendUrl &&
-      backendUrl.includes(
+      (backendUrl.includes(
         "jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com"
-      )
+      ) ||
+        backendUrl.includes("localhost") ||
+        backendUrl.includes("http"))
     ) {
       console.log("✅ 서버 URL이 올바르게 설정됨");
       return true;
@@ -326,4 +323,50 @@ export const apiService = {
 
     return response;
   },
+};
+
+// 로그아웃 API 호출
+export const logoutFromBackend = async () => {
+  try {
+    const response = await apiService.request(
+      "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/users/logout",
+      {
+        method: "POST",
+      }
+    );
+
+    if (response.ok) {
+      console.log("✅ 백엔드 로그아웃 성공");
+      return true;
+    } else {
+      console.log("⚠️ 백엔드 로그아웃 실패:", response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ 백엔드 로그아웃 에러:", error);
+    return false;
+  }
+};
+
+// 회원탈퇴 API 호출
+export const deleteAccountFromBackend = async () => {
+  try {
+    const response = await apiService.request(
+      "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/users/delete",
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (response.ok) {
+      console.log("✅ 백엔드 회원탈퇴 성공");
+      return true;
+    } else {
+      console.log("⚠️ 백엔드 회원탈퇴 실패:", response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ 백엔드 회원탈퇴 에러:", error);
+    return false;
+  }
 };

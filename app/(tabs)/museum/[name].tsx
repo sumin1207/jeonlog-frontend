@@ -18,7 +18,17 @@ import { organizeExhibitionsByDate } from "@/data/organizeByDate";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-const ExhibitionList = ({ title, exhibitions, router, theme }) => {
+const ExhibitionList = ({
+  title,
+  exhibitions,
+  router,
+  theme,
+}: {
+  title: string;
+  exhibitions: any[];
+  router: any;
+  theme: string;
+}) => {
   if (!exhibitions || exhibitions.length === 0) {
     return null;
   }
@@ -86,19 +96,18 @@ const ExhibitionList = ({ title, exhibitions, router, theme }) => {
             index === exhibitions.length - 1 && { borderBottomWidth: 0 },
           ]}
           onPress={() => router.push(`/exhibition/${exhibition.id}` as any)}
-          activeOpacity={0.7}
-        >
+          activeOpacity={0.7}>
           <Image
             source={exhibition.image}
             style={styles.exhibitionImage}
-            resizeMode="cover"
+            resizeMode='cover'
           />
           <View style={styles.exhibitionInfo}>
             <Text style={styles.exhibitionTitle}>{exhibition.title}</Text>
             <Text style={styles.exhibitionDate}>{exhibition.date}</Text>
           </View>
           <Ionicons
-            name="chevron-forward"
+            name='chevron-forward'
             size={20}
             color={theme === "dark" ? "#ccc" : "#666"}
           />
@@ -618,15 +627,13 @@ export default function MuseumDetailScreen() {
             style={[
               styles.errorText,
               { color: theme === "dark" ? "#fff" : "#333" },
-            ]}
-          >
+            ]}>
             박물관 정보를 찾을 수 없습니다.
           </Text>
           <TouchableOpacity
             style={styles.errorBackButton}
             onPress={() => router.back()}
-            activeOpacity={0.7}
-          >
+            activeOpacity={0.7}>
             <Text style={styles.backButtonText}>돌아가기</Text>
           </TouchableOpacity>
         </View>
@@ -644,10 +651,9 @@ export default function MuseumDetailScreen() {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
+          activeOpacity={0.7}>
           <Ionicons
-            name="chevron-back"
+            name='chevron-back'
             size={24}
             color={theme === "dark" ? "#fff" : "#000"}
           />
@@ -657,13 +663,15 @@ export default function MuseumDetailScreen() {
         <Text style={styles.navTitle}>{museum.name}</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}>
         {/* 박물관 이미지 */}
         <View style={styles.imageSection}>
           <Image
             source={museum.headerImage}
             style={styles.museumImage}
-            resizeMode="cover"
+            resizeMode='cover'
           />
         </View>
 
@@ -676,23 +684,27 @@ export default function MuseumDetailScreen() {
                 <Image
                   source={museum.museumEmblem}
                   style={styles.museumEmblemIcon}
-                  resizeMode="contain"
+                  resizeMode='contain'
                 />
               )}
             </View>
             <View style={styles.secondRow}>
               <Text style={styles.locationText}>전시장소</Text>
               <View style={styles.rightIconsContainer}>
-                <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  activeOpacity={0.7}>
                   <Ionicons
-                    name="heart-outline"
+                    name='heart-outline'
                     size={24}
                     color={theme === "dark" ? "#fff" : "#000"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+                <TouchableOpacity
+                  style={styles.iconButton}
+                  activeOpacity={0.7}>
                   <Ionicons
-                    name="share-outline"
+                    name='share-outline'
                     size={24}
                     color={theme === "dark" ? "#fff" : "#000"}
                   />
@@ -760,8 +772,7 @@ export default function MuseumDetailScreen() {
               style={[
                 styles.infoSection,
                 { borderBottomWidth: 0, paddingBottom: 0 },
-              ]}
-            >
+              ]}>
               <Text style={styles.infoLabel}>주차요금</Text>
               <Text style={styles.infoText}>{museum.parkingFee}</Text>
             </View>
@@ -776,7 +787,7 @@ export default function MuseumDetailScreen() {
           <View style={styles.locationInfo}>
             <View style={styles.infoRow}>
               <Ionicons
-                name="location-outline"
+                name='location-outline'
                 size={16}
                 color={theme === "dark" ? "#ccc" : "#666"}
               />
@@ -797,19 +808,19 @@ export default function MuseumDetailScreen() {
         </View>
 
         <ExhibitionList
-          title="현재 전시"
+          title='현재 전시'
           exhibitions={ongoing}
           router={router}
           theme={theme}
         />
         <ExhibitionList
-          title="예정된 전시"
+          title='예정된 전시'
           exhibitions={upcoming}
           router={router}
           theme={theme}
         />
         <ExhibitionList
-          title="지난 전시"
+          title='지난 전시'
           exhibitions={past}
           router={router}
           theme={theme}

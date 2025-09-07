@@ -13,6 +13,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 import { Colors } from "../../design-system/theme";
 import { Spacing } from "../../design-system/theme";
+import { BookmarkButton } from "../ui";
 
 const { width } = Dimensions.get("window");
 
@@ -31,8 +32,7 @@ const HorizontalSliding = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      <TouchableOpacity
-        onPress={() => router.push(`/exhibition/${item.id}` as any)}
+      <View
         style={[
           styles.itemContainer,
           {
@@ -42,54 +42,23 @@ const HorizontalSliding = () => {
                 ? Colors.background.cardDark
                 : Colors.background.card,
           },
-        ]}
-        activeOpacity={0.8}
-      >
-        <View style={styles.imageContainer}>
-          <Image
-            source={item.image}
-            style={[styles.image, { height: imageHeight }]}
-            resizeMode="cover"
-          />
-        </View>
+        ]}>
+        <TouchableOpacity
+          onPress={() => router.push(`/exhibition/${item.id}` as any)}
+          style={{ flex: 1 }}
+          activeOpacity={0.8}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={item.image}
+              style={[styles.image, { height: imageHeight }]}
+              resizeMode='cover'
+            />
+          </View>
 
-        <View style={styles.contentContainer}>
-          <Text
-            style={[
-              styles.title,
-              {
-                color:
-                  theme === "dark"
-                    ? Colors.text.dark.primary
-                    : Colors.text.primary,
-              },
-            ]}
-            numberOfLines={2}
-          >
-            {item.title}
-          </Text>
-
-          {item.location && (
+          <View style={styles.contentContainer}>
             <Text
               style={[
-                styles.location,
-                {
-                  color:
-                    theme === "dark"
-                      ? Colors.text.dark.secondary
-                      : Colors.text.secondary,
-                },
-              ]}
-              numberOfLines={1}
-            >
-              {item.location}
-            </Text>
-          )}
-
-          {item.date && (
-            <Text
-              style={[
-                styles.date,
+                styles.title,
                 {
                   color:
                     theme === "dark"
@@ -97,13 +66,52 @@ const HorizontalSliding = () => {
                       : Colors.text.primary,
                 },
               ]}
-              numberOfLines={1}
-            >
-              {item.date}
+              numberOfLines={2}>
+              {item.title}
             </Text>
-          )}
-        </View>
-      </TouchableOpacity>
+
+            {item.location && (
+              <Text
+                style={[
+                  styles.location,
+                  {
+                    color:
+                      theme === "dark"
+                        ? Colors.text.dark.secondary
+                        : Colors.text.secondary,
+                  },
+                ]}
+                numberOfLines={1}>
+                {item.location}
+              </Text>
+            )}
+
+            {item.date && (
+              <Text
+                style={[
+                  styles.date,
+                  {
+                    color:
+                      theme === "dark"
+                        ? Colors.text.dark.primary
+                        : Colors.text.primary,
+                  },
+                ]}
+                numberOfLines={1}>
+                {item.date}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+        <BookmarkButton
+          exhibitionId={item.id}
+          size={18}
+          color={theme === "dark" ? "#ccc" : "#666"}
+          activeColor='#FF6B6B'
+          style={{ position: "absolute", top: 8, right: 8 }}
+          showAlert={false}
+        />
+      </View>
     ),
     [theme, router, itemContentWidth, imageHeight]
   );
@@ -118,8 +126,8 @@ const HorizontalSliding = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={itemWidth}
-        snapToAlignment="center"
-        decelerationRate="normal"
+        snapToAlignment='center'
+        decelerationRate='normal'
         contentContainerStyle={{
           paddingLeft: (width - itemContentWidth) / 2 - 100,
           paddingRight: 10,
