@@ -162,4 +162,8 @@ export const MyPageStyles = StyleSheet.create({
     fontSize: Typography.text.body.fontSize,
     fontWeight: Typography.text.body.fontWeight,
   },
+  visitedSection: {
+    padding: Spacing.screenPadding,
+    paddingTop: Spacing.md,
+  },
 });
