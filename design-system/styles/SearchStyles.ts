@@ -151,10 +151,16 @@ export const SearchStyles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   resultTitle: {
-    fontSize: Typography.text.body.fontSize,
-    fontWeight: Typography.text.body.fontWeight,
+    fontSize: Typography.text.h4.fontSize,
+    fontWeight: Typography.text.h4.fontWeight,
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
+  },
+  resultArtist: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
+    fontStyle: "italic",
   },
   resultDescription: {
     fontSize: Typography.text.bodySmall.fontSize,
@@ -175,15 +181,20 @@ export const SearchStyles = StyleSheet.create({
   exhibitionCard: {
     backgroundColor: Colors.background.light,
     borderRadius: BorderRadius.card.medium,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
     ...Shadows.sm,
+    borderWidth: 1,
+    borderColor: Colors.border.light,
   },
   exhibitionInfo: {
     flex: 1,
   },
   exhibitionDetails: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.md,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.light,
   },
   resultPrice: {
     fontSize: Typography.text.bodySmall.fontSize,
@@ -212,5 +223,64 @@ export const SearchStyles = StyleSheet.create({
     fontSize: Typography.text.bodySmall.fontSize,
     color: Colors.text.secondary,
     marginLeft: Spacing.xs,
+  },
+
+  // 검색 기록 관련 스타일
+  historyHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+  },
+  clearHistoryText: {
+    fontSize: Typography.text.bodySmall.fontSize,
+    color: Colors.text.secondary,
+  },
+  historyItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  historyText: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.primary,
+    flex: 1,
+    marginLeft: Spacing.sm,
+  },
+  deleteButton: {
+    padding: Spacing.xs,
+  },
+
+  // 빈 검색 결과 스타일
+  emptySection: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: Spacing.xl * 2,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  emptyTitle: {
+    fontSize: Typography.text.h4.fontSize,
+    fontWeight: Typography.text.h4.fontWeight,
+    color: Colors.text.primary,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  emptyDescription: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.secondary,
+    textAlign: "center",
+  },
+
+  // 빈 검색 기록 스타일
+  emptyHistorySection: {
+    paddingVertical: Spacing.xl,
+    alignItems: "center",
+  },
+  emptyHistoryText: {
+    fontSize: Typography.text.body.fontSize,
+    color: Colors.text.secondary,
   },
 });
