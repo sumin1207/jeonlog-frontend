@@ -37,26 +37,6 @@ export const createAuthHeaders = async () => {
   };
 };
 
-// 백엔드에서 사용자 정보 가져오기
-export const fetchUserInfo = async () => {
-  try {
-    const headers = await createAuthHeaders();
-    const response = await fetch(`${getBackendUrl()}/api/user/profile`, {
-      method: "GET",
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("❌ 사용자 정보 가져오기 에러:", error);
-    throw error;
-  }
-};
-
 // 타임아웃이 있는 fetch 함수
 const fetchWithTimeout = async (
   url: string,
@@ -302,6 +282,33 @@ export const userService = {
   },
 };
 
+// 토큰 자동 갱신 함수
+export const autoRefreshToken = async (): Promise<string | null> => {
+  try {
+    const currentToken = await authService.getToken();
+    if (!currentToken) return null;
+
+    // 토큰 만료 시간 확인
+    const tokenInfo = extractUserInfoFromToken(currentToken);
+    if (!tokenInfo || !tokenInfo.exp) return currentToken;
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeUntilExpiry = tokenInfo.exp - currentTime;
+
+    // 토큰이 5분 이내에 만료되면 갱신
+    if (timeUntilExpiry < 300) {
+      console.log("🔄 토큰 갱신 필요, 갱신 중...");
+      const newToken = await refreshToken();
+      return newToken;
+    }
+
+    return currentToken;
+  } catch (error) {
+    console.error("❌ 토큰 자동 갱신 실패:", error);
+    return null;
+  }
+};
+
 // API 요청 서비스 (JWT 토큰 자동 포함)
 export const apiService = {
   async request(url: string, options: RequestInit = {}) {
@@ -323,6 +330,36 @@ export const apiService = {
 
     return response;
   },
+};
+
+// API 요청 시 자동으로 토큰 갱신하는 래퍼 함수
+export const apiRequestWithAutoRefresh = async (
+  url: string,
+  options: RequestInit = {}
+) => {
+  const token = await autoRefreshToken();
+  if (!token) {
+    throw new Error("인증 토큰이 없습니다");
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+    ...options.headers,
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  if (response.status === 401) {
+    // 토큰이 만료된 경우 로그아웃
+    await authService.logout();
+    throw new Error("인증이 만료되었습니다. 다시 로그인해주세요.");
+  }
+
+  return response;
 };
 
 // 로그아웃 API 호출
@@ -352,7 +389,7 @@ export const logoutFromBackend = async () => {
 export const deleteAccountFromBackend = async () => {
   try {
     const response = await apiService.request(
-      "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/users/delete",
+      "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/api/users/",
       {
         method: "DELETE",
       }

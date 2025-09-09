@@ -7,22 +7,21 @@ WebBrowser.maybeCompleteAuthSession();
 
 const useNaverLogin = () => {
   // 앱의 딥링크 스키마 설정
-  const redirectUri = Linking.createURL("oauth/naver");
+  const redirectUri = Linking.createURL("oauth2/redirect");
 
-  const handleBackendOAuth = async () => {
+  const handleNaverLogin = async () => {
     try {
-      // 백엔드 OAuth 시작 URL (배포된 URL)
+      // 백엔드 OAuth2 시작 URL
       const backendOAuthUrl =
         "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/authorization/naver";
 
       console.log("🔍 Naver OAuth 시작:", backendOAuthUrl);
-      console.log("🔍 리다이렉트 URI:", redirectUri);
+      console.log("🔍 리디렉트 URI:", redirectUri);
 
       const result = await WebBrowser.openAuthSessionAsync(
         backendOAuthUrl,
         redirectUri,
         {
-          // 브라우저에서 앱으로 자동 리다이렉트 설정
           showInRecents: false,
           preferEphemeralSession: true,
         }
@@ -33,10 +32,11 @@ const useNaverLogin = () => {
       if (result.type === "success" && result.url) {
         console.log("🔍 성공 URL:", result.url);
 
-        // URL에서 JWT 토큰과 사용자 정보 추출
+        // URL에서 토큰과 사용자 정보 추출
         const url = new URL(result.url);
         const token = url.searchParams.get("token");
         const user = url.searchParams.get("user");
+        const state = url.searchParams.get("state");
 
         if (token && user) {
           const userData = JSON.parse(decodeURIComponent(user));
@@ -76,7 +76,7 @@ const useNaverLogin = () => {
   };
 
   return {
-    promptAsync: handleBackendOAuth,
+    promptAsync: handleNaverLogin,
   };
 };
 

@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { useAuth } from "../../components/context/AuthContext";
+import {
+  authService,
+  extractUserInfoFromToken,
+  isTokenValid,
+} from "../../services/authService";
 
 export default function OAuth2Redirect() {
   const router = useRouter();
@@ -13,7 +18,7 @@ export default function OAuth2Redirect() {
   const [message, setMessage] = useState("로그인 처리 중...");
 
   useEffect(() => {
-    const handle = async () => {
+    const handleOAuthRedirect = async () => {
       if (error) {
         setStatus("error");
         setMessage("인증 오류가 발생했습니다.");
@@ -22,26 +27,51 @@ export default function OAuth2Redirect() {
       }
 
       if (token && typeof token === "string") {
-        console.log("🔑 토큰 수신:", token.substring(0, 20) + "...");
+        try {
+          console.log("🔑 JWT 토큰 수신:", token.substring(0, 20) + "...");
 
-        // state 값으로 로그인 타입 추정
-        let loginType: "google" | "naver" = "google";
-        if (state === "naver_login") loginType = "naver";
+          // JWT 토큰 유효성 검증
+          const isValidToken = isTokenValid(token);
+          if (!isValidToken) {
+            throw new Error("유효하지 않은 토큰입니다.");
+          }
 
-        const tempUser = {
-          id: `${loginType}_user_${Date.now()}`,
-          name: loginType === "naver" ? "네이버 사용자" : "구글 사용자",
-          email: `user@${loginType}.com`,
-          profileImage: undefined,
-          loginType,
-          accessToken: token,
-        };
+          // 토큰 저장
+          await authService.saveToken(token);
 
-        login(tempUser);
-        setStatus("success");
-        setMessage("로그인 성공!");
+          // 사용자 정보 추출 (JWT에서)
+          const userInfo = extractUserInfoFromToken(token);
+          if (userInfo) {
+            // state 값으로 로그인 타입 추정
+            let loginType: "google" | "naver" = "google";
+            if (state === "naver_login") loginType = "naver";
 
-        setTimeout(() => router.replace("/(tabs)/home"), 1500);
+            const userData = {
+              id: userInfo.sub || `${loginType}_user_${Date.now()}`,
+              name:
+                (userInfo as any).name ||
+                (loginType === "naver" ? "네이버 사용자" : "구글 사용자"),
+              email: userInfo.email || `user@${loginType}.com`,
+              profileImage: undefined,
+              loginType,
+              accessToken: token,
+            };
+
+            await authService.saveUserInfo(userData);
+            login(userData);
+          } else {
+            throw new Error("사용자 정보를 추출할 수 없습니다.");
+          }
+
+          setStatus("success");
+          setMessage("로그인 성공!");
+          setTimeout(() => router.replace("/(tabs)/home"), 1500);
+        } catch (error) {
+          console.error("❌ 토큰 처리 에러:", error);
+          setStatus("error");
+          setMessage("토큰 처리 중 오류가 발생했습니다.");
+          setTimeout(() => router.replace("/"), 1500);
+        }
       } else {
         setStatus("error");
         setMessage("토큰이 전달되지 않았습니다.");
@@ -49,7 +79,7 @@ export default function OAuth2Redirect() {
       }
     };
 
-    handle();
+    handleOAuthRedirect();
   }, [token, state, error, login, router]);
 
   return (

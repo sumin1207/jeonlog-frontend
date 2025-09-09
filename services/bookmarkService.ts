@@ -85,7 +85,7 @@ export const getBookmarks = async () => {
   try {
     const token = await AsyncStorage.getItem("jwt_token");
     const headers = await createAuthHeaders();
-    const response = await fetch(`${getBackendUrl()}/api/user/bookmarks`, {
+    const response = await fetch(`${getBackendUrl()}/api/users/bookmarks`, {
       method: "GET",
       headers: {
         ...headers,
