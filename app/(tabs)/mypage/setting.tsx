@@ -83,8 +83,10 @@ export default function MyPageSettingScreen() {
       clearLocalUserData();
       logout();
 
-      // 홈으로 리다이렉트
-      router.replace("/");
+      // 로그인 페이지로 리다이렉트 (AuthContext 상태 변경 후)
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
 
       if (backendSuccess) {
         Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.");
@@ -100,7 +102,9 @@ export default function MyPageSettingScreen() {
       await authService.logout();
       clearLocalUserData();
       logout();
-      router.replace("/");
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
       Alert.alert("로그아웃 완료", "로그아웃이 완료되었습니다.");
     }
   };
@@ -115,8 +119,10 @@ export default function MyPageSettingScreen() {
       clearLocalUserData();
       logout();
 
-      // 홈으로 리다이렉트
-      router.replace("/");
+      // 로그인 페이지로 리다이렉트 (AuthContext 상태 변경 후)
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
 
       if (backendSuccess) {
         Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.");
@@ -132,7 +138,9 @@ export default function MyPageSettingScreen() {
       await authService.logout();
       clearLocalUserData();
       logout();
-      router.replace("/");
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
       Alert.alert("회원탈퇴 완료", "회원탈퇴가 완료되었습니다.");
     }
   };

@@ -29,41 +29,6 @@ export default function BookmarkedExhibitionsScreen() {
     const loadBookmarks = async () => {
       try {
         setIsLoading(true);
-
-        // 먼저 토큰 상태 확인
-        console.log("🔑 토큰 상태 확인 시작");
-        const tokenStatus = await bookmarkService.checkTokenStatus();
-        console.log("🔑 토큰 상태 결과:", tokenStatus);
-
-        if (!tokenStatus.hasToken) {
-          console.error("❌ 토큰이 없습니다. 로그인이 필요합니다.");
-          return;
-        }
-
-        // 여러 URL 테스트
-        console.log("🧪 여러 URL 테스트 시작");
-        const multiTestResult = await bookmarkService.testMultipleUrls();
-        console.log("🧪 여러 URL 테스트 결과:", multiTestResult);
-
-        if (multiTestResult.success) {
-          console.log("✅ 작동하는 URL 발견:", multiTestResult.workingUrl);
-        } else {
-          console.error("❌ 모든 URL 테스트 실패:", multiTestResult.error);
-          return;
-        }
-
-        // 기본 API 연결 테스트
-        console.log("🧪 기본 API 연결 테스트 시작");
-        const testResult = await bookmarkService.testApiConnection();
-        console.log("🧪 기본 API 연결 테스트 결과:", testResult);
-
-        if (!testResult.success) {
-          console.error("❌ 기본 API 연결 실패:", testResult.error);
-          return;
-        }
-
-        // API 연결이 성공하면 북마크 목록 로드
-        console.log("📡 북마크 목록 로드 시작");
         await loadBookmarksFromAPI();
       } catch (error) {
         console.error("북마크 목록 로드 실패:", error);
@@ -127,7 +92,7 @@ export default function BookmarkedExhibitionsScreen() {
               color={Colors.text.primary}
             />
           </Pressable>
-          <Text style={BookmarkedStyles.headerTitle}>찜한 전시</Text>
+          <Text style={BookmarkedStyles.headerTitle}>북마크한 전시</Text>
           <View style={{ width: 24 }} />
         </View>
         <View
@@ -164,7 +129,7 @@ export default function BookmarkedExhibitionsScreen() {
           />
         </Pressable>
         <Text style={BookmarkedStyles.headerTitle}>
-          찜한 전시 ({bookmarkedExhibitionsData.length}개)
+          북마크한 전시 ({bookmarkedExhibitionsData.length}개)
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -178,7 +143,9 @@ export default function BookmarkedExhibitionsScreen() {
         />
       ) : (
         <View style={BookmarkedStyles.emptyContainer}>
-          <Text style={BookmarkedStyles.emptyText}>찜한 전시가 없습니다.</Text>
+          <Text style={BookmarkedStyles.emptyText}>
+            북마크한 전시가 없습니다.
+          </Text>
         </View>
       )}
     </Container>

@@ -16,8 +16,8 @@ export const getApiKeys = () => {
 export const getNaverMapApiKey = (): string => {
   const extra = Constants.expoConfig?.extra;
 
-  // NAVER_CLIENT_ID를 네이버맵 API 키로 사용
-  const apiKey = extra?.EXPO_NAVER_CLIENT_ID;
+  // EXPO_NAVER_MAP_API_KEY를 네이버맵 API 키로 사용
+  const apiKey = extra?.EXPO_NAVER_MAP_API_KEY;
 
   return apiKey || "";
 };

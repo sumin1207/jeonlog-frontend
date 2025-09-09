@@ -1,5 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as Linking from "expo-linking";
 
@@ -11,23 +11,43 @@ const useNaverLogin = () => {
 
   const handleNaverLogin = async () => {
     try {
-      // 백엔드 OAuth2 시작 URL
-      const backendOAuthUrl =
-        "http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/oauth2/authorization/naver";
+      // 네이버 OAuth2 URL로 직접 접근
+      const naverOAuthUrl =
+        "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=BdCBy0EeGReTY_t0yT5m&scope=name%20email&state=pQ1WMGyjhF2OUXoVeatru3pdT__Ay1MAojmf4MqjIjg%3D&redirect_uri=http://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com/login/oauth2/code/naver";
 
-      console.log("🔍 Naver OAuth 시작:", backendOAuthUrl);
+      console.log("🔍 Naver OAuth 팝업 시작:", naverOAuthUrl);
       console.log("🔍 리디렉트 URI:", redirectUri);
 
-      const result = await WebBrowser.openAuthSessionAsync(
-        backendOAuthUrl,
-        redirectUri,
-        {
-          showInRecents: false,
-          preferEphemeralSession: true,
-        }
-      );
+      let result;
+      try {
+        result = await WebBrowser.openAuthSessionAsync(
+          naverOAuthUrl,
+          redirectUri,
+          {
+            showInRecents: false,
+            preferEphemeralSession: true,
+            presentationStyle:
+              WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+          }
+        );
 
-      console.log("🔍 OAuth 결과:", result);
+        console.log("🔍 Naver OAuth 팝업 결과:", result);
+      } catch (webBrowserError) {
+        console.log("⚠️ WebBrowser 실패, Linking으로 대체:", webBrowserError);
+
+        // WebBrowser가 실패하면 Linking으로 대체
+        Alert.alert("로그인", "네이버 로그인 페이지로 이동합니다.", [
+          { text: "취소", style: "cancel" },
+          {
+            text: "이동",
+            onPress: () => {
+              Linking.openURL(naverOAuthUrl);
+            },
+          },
+        ]);
+
+        return { type: "cancel" };
+      }
 
       if (result.type === "success" && result.url) {
         console.log("🔍 성공 URL:", result.url);
@@ -55,12 +75,10 @@ const useNaverLogin = () => {
           };
         }
       } else if (result.type === "cancel") {
-        console.log("ℹ️ 사용자가 로그인을 취소함");
-        return {
-          type: "cancel",
-        };
+        console.log("ℹ️ Naver 로그인 취소됨");
+        return { type: "cancel" };
       } else {
-        console.log("❌ OAuth 실패:", result);
+        console.log("❌ Naver OAuth 실패");
         return {
           type: "error",
           error: "OAuth 인증에 실패했습니다",

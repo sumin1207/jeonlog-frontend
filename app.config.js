@@ -111,8 +111,9 @@ export default ({ config }) => {
       EXPO_BACKEND_URL:
         process.env.EXPO_BACKEND_URL ||
         "https://jeonlog-env.eba-qstxpqtg.ap-northeast-2.elasticbeanstalk.com",
-      EXPO_PUBLIC_NGROK_URL:
-        process.env.EXPO_PUBLIC_NGROK_URL || "http://localhost:8081",
+      EXPO_NAVER_MAP_CLIENT_SECRET:
+        process.env.EXPO_NAVER_MAP_CLIENT_SECRET ||
+        "xQi3uFel67g1GgSOiAnfv6fCZ0eys6XCETi7urK0",
       eas: {
         projectId: "9b83d693-796f-49c3-a2be-63cfc53d2763",
       },

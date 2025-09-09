@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme, ThemeType } from "../../../contexts/ThemeContext";
 import { useExhibition } from "../../../contexts/ExhibitionContext";
 import { useAuth } from "../../../components/context/AuthContext";
+import { SocialLoginButtons } from "../../../components/auth";
 import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 import { Text, Button, Container, Row, Column } from "../../../design-system";
 import { MyPageStyles } from "../../../design-system/styles";
@@ -68,6 +69,11 @@ export default function MyPageScreen() {
     setUserInfo(testUser);
   };
 
+  const handleLoginSuccess = () => {
+    console.log("🎉 로그인 성공! 홈으로 이동합니다.");
+    router.replace("/(tabs)/home");
+  };
+
   if (!userInfo) {
     return (
       <Container style={MyPageStyles.container}>
@@ -82,12 +88,13 @@ export default function MyPageScreen() {
           />
           <Text variant='h2'>로그인이 필요합니다</Text>
           <Text variant='body'>마이페이지를 이용하려면 로그인해주세요</Text>
-          <Button
-            title='로그인 하러가기'
-            onPress={() => router.push("/")}
-            variant='primary'
-          />
-          <View style={{ marginTop: 16 }}>
+
+          {/* 인라인 소셜 로그인 버튼들 */}
+          <View style={{ marginTop: 30, width: "100%", alignItems: "center" }}>
+            <SocialLoginButtons onSuccess={handleLoginSuccess} />
+          </View>
+
+          <View style={{ marginTop: 20 }}>
             <Button
               title='테스트 모드로 시작 (개발용)'
               onPress={handleTestLogin}

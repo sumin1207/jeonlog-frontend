@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
 import { SocialLoginButtons } from "../components/auth";
-import ServerConfigModal from "../components/auth/ServerConfigModal";
 import {
   checkServerConnection,
   authService,
@@ -26,7 +25,6 @@ export default function LoginPage() {
     "checking" | "connected" | "disconnected"
   >("checking");
   const [showServerOptions, setShowServerOptions] = useState(false);
-  const [showServerConfigModal, setShowServerConfigModal] = useState(false);
   const [serverError, setServerError] = useState<string>("");
   const [tokenInput, setTokenInput] = useState<string>("");
   const [currentServerUrl, setCurrentServerUrl] = useState<string>("");
@@ -62,10 +60,6 @@ export default function LoginPage() {
             "서버에 연결할 수 없습니다.\n\n가능한 원인:\n• 서버가 일시적으로 다운됨\n• 네트워크 연결 문제\n• 서버 URL 설정 오류\n\n잠시 후 다시 시도하거나 서버 설정을 확인해주세요.",
             [
               { text: "다시 시도", onPress: () => loadServerConfig() },
-              {
-                text: "서버 설정",
-                onPress: () => setShowServerConfigModal(true),
-              },
               { text: "확인" },
             ]
           );
@@ -93,13 +87,7 @@ export default function LoginPage() {
         Alert.alert(
           "연결 오류",
           `서버 연결 확인 중 오류가 발생했습니다:\n\n${errorMessage}`,
-          [
-            { text: "확인" },
-            {
-              text: "서버 설정",
-              onPress: () => setShowServerConfigModal(true),
-            },
-          ]
+          [{ text: "확인" }]
         );
       }
     };
@@ -107,20 +95,18 @@ export default function LoginPage() {
     loadServerConfig();
   }, []);
 
-  // 이미 로그인된 사용자는 온보딩 카테고리로 자동 리다이렉트
+  // 이미 로그인된 사용자는 홈으로 자동 리다이렉트
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
-      console.log(
-        "🔍 이미 로그인된 사용자입니다. 온보딩 카테고리로 이동합니다."
-      );
-      router.replace("/onboarding/category");
+      console.log("🔍 이미 로그인된 사용자입니다. 홈으로 이동합니다.");
+      router.replace("/(tabs)/home");
     }
   }, [isLoggedIn, isLoading, router]);
 
   const handleLoginSuccess = () => {
-    console.log("🎉 로그인 성공! 온보딩 카테고리로 이동합니다.");
-    // 로그인 성공 시 온보딩 카테고리로 리다이렉트
-    router.replace("/onboarding/category");
+    console.log("🎉 로그인 성공! 홈으로 이동합니다.");
+    // 로그인 성공 시 홈으로 리다이렉트
+    router.replace("/(tabs)/home");
   };
 
   // JWT 토큰 유효성 검사
@@ -182,7 +168,7 @@ export default function LoginPage() {
             "로그인 성공",
             `JWT 토큰으로 로그인되었습니다!\n\nID: ${userData.id}\n이메일: ${userData.email}\n이름: ${userData.name}`
           );
-          router.replace("/onboarding/category");
+          router.replace("/(tabs)/home");
           return;
         }
       } catch (corsError) {
@@ -203,7 +189,7 @@ export default function LoginPage() {
         "로그인 성공",
         `JWT 토큰으로 로그인되었습니다!\n\n이메일: ${userEmail}`
       );
-      router.replace("/onboarding/category");
+      router.replace("/(tabs)/home");
     } catch (error) {
       Alert.alert("로그인 실패", "토큰이 유효하지 않습니다.");
     }
@@ -296,11 +282,6 @@ export default function LoginPage() {
                   {serverError}
                 </Text>
               )}
-              <Button
-                title='서버 설정'
-                color='#FF6B35'
-                onPress={() => setShowServerConfigModal(true)}
-              />
             </View>
           )}
         </View>
@@ -382,82 +363,6 @@ export default function LoginPage() {
         )}
         <SocialLoginButtons onSuccess={handleLoginSuccess} />
 
-        {/* 개발용 JWT 토큰 입력 기능 */}
-        {__DEV__ && (
-          <View
-            style={{
-              margin: 20,
-              padding: 15,
-              backgroundColor: "rgba(255,255,255,0.1)",
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: "rgba(255,255,255,0.2)",
-            }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "bold",
-                marginBottom: 10,
-                color: "#fff",
-                textAlign: "center",
-              }}>
-              🔧 개발용: JWT 토큰 직접 입력
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: "#ffcccb",
-                marginBottom: 10,
-                textAlign: "center",
-                lineHeight: 16,
-              }}>
-              💡 일반 사용자는 위의 소셜 로그인 버튼을 사용하세요
-            </Text>
-            <TextInput
-              style={{
-                borderWidth: 1,
-                borderColor: "rgba(255,255,255,0.3)",
-                borderRadius: 4,
-                padding: 10,
-                marginBottom: 10,
-                backgroundColor: "rgba(255,255,255,0.1)",
-                fontSize: 12,
-                fontFamily: "monospace",
-                color: "#fff",
-              }}
-              placeholder='JWT 토큰을 여기에 붙여넣으세요'
-              placeholderTextColor='rgba(255,255,255,0.5)'
-              multiline
-              numberOfLines={4}
-              value={tokenInput}
-              onChangeText={setTokenInput}
-            />
-            <Button
-              title='토큰으로 로그인'
-              color='#FF6B35'
-              onPress={() => {
-                if (tokenInput.trim()) {
-                  handleTokenLogin(tokenInput.trim());
-                } else {
-                  Alert.alert("알림", "JWT 토큰을 입력해주세요.");
-                }
-              }}
-              disabled={!tokenInput.trim()}
-            />
-            <Text
-              style={{
-                fontSize: 11,
-                color: "rgba(255,255,255,0.7)",
-                lineHeight: 16,
-                marginTop: 8,
-                textAlign: "center",
-              }}>
-              백엔드에서 받은 JWT 토큰을 위에 붙여넣고 "토큰으로 로그인" 버튼을
-              클릭하세요.
-            </Text>
-          </View>
-        )}
-
         {/* 서버 연결 실패 시 안내 메시지 */}
         {serverStatus === "disconnected" && (
           <View
@@ -466,7 +371,7 @@ export default function LoginPage() {
               borderRadius: 8,
               padding: 10,
               marginHorizontal: 20,
-              marginTop: 10,
+              marginTop: 20,
             }}>
             <Text
               style={{ color: "#ffcccb", fontSize: 12, textAlign: "center" }}>
@@ -481,57 +386,86 @@ export default function LoginPage() {
               }}>
               로그인 시 서버 연결을 다시 시도합니다.
             </Text>
-            <Text
-              style={{
-                color: "#ffcccb",
-                fontSize: 9,
-                textAlign: "center",
-                marginTop: 4,
-                lineHeight: 11,
-              }}>
-              💡 CORS 정책으로 인해 서버 연결 확인이 제한됩니다
-            </Text>
           </View>
         )}
-        {/* 개발용: 홈으로 바로 이동 버튼 */}
-        <Button
-          title='개발용: 홈으로 이동'
-          color='#841584'
-          onPress={() => router.replace("/(tabs)/home")}
-        />
-        {/* 개발용: 온보딩 카테고리로 바로 이동 버튼 */}
-        <Button
-          title='개발용: 온보딩 카테고리로 이동'
-          color='#FF6B35'
-          onPress={() => router.replace("/onboarding/category")}
-        />
 
-        {/* 서버 설정 모달 */}
-        <ServerConfigModal
-          visible={showServerConfigModal}
-          onClose={() => setShowServerConfigModal(false)}
-          onServerChange={(newServerUrl) => {
-            setCurrentServerUrl(newServerUrl);
-            // 서버 변경 후 다시 연결 확인
-            const checkServer = async () => {
-              setServerStatus("checking");
-              try {
-                const isConnected = await checkServerConnection();
-                setServerStatus(isConnected ? "connected" : "disconnected");
-                if (!isConnected) {
-                  setServerError("서버에 연결할 수 없습니다");
-                } else {
-                  setServerError("");
-                }
-              } catch (error) {
-                setServerStatus("disconnected");
-                setServerError("서버 연결 확인 실패");
-              }
-            };
-            checkServer();
-          }}
-          currentServerUrl={currentServerUrl}
-        />
+        {/* 개발용 기능들 - 개발 모드에서만 표시 */}
+        {__DEV__ && (
+          <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
+            <Text
+              style={{
+                fontSize: 12,
+                color: "rgba(255,255,255,0.6)",
+                textAlign: "center",
+                marginBottom: 10,
+              }}>
+              🔧 개발용 기능
+            </Text>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}>
+              <Button
+                title='홈으로 이동'
+                color='#841584'
+                onPress={() => router.replace("/(tabs)/home")}
+              />
+              <Button
+                title='온보딩으로 이동'
+                color='#FF6B35'
+                onPress={() => router.replace("/onboarding/category")}
+              />
+            </View>
+
+            {/* JWT 토큰 입력 */}
+            <View
+              style={{
+                marginTop: 15,
+                padding: 10,
+                backgroundColor: "rgba(255,255,255,0.05)",
+                borderRadius: 8,
+              }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: "rgba(255,255,255,0.7)",
+                  textAlign: "center",
+                  marginBottom: 8,
+                }}>
+                JWT 토큰으로 로그인
+              </Text>
+              <TextInput
+                style={{
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.3)",
+                  borderRadius: 4,
+                  padding: 8,
+                  marginBottom: 8,
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                  fontSize: 10,
+                  fontFamily: "monospace",
+                  color: "#fff",
+                }}
+                placeholder='JWT 토큰 입력...'
+                placeholderTextColor='rgba(255,255,255,0.5)'
+                multiline
+                numberOfLines={2}
+                value={tokenInput}
+                onChangeText={setTokenInput}
+              />
+              <Button
+                title='토큰 로그인'
+                color='#FF6B35'
+                onPress={() => {
+                  if (tokenInput.trim()) {
+                    handleTokenLogin(tokenInput.trim());
+                  } else {
+                    Alert.alert("알림", "JWT 토큰을 입력해주세요.");
+                  }
+                }}
+                disabled={!tokenInput.trim()}
+              />
+            </View>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

@@ -1,13 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-  Animated,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Animated } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import HorizontalSliding from "@/components/exhibition/HorizontalSliding";
 import RecommendForYou from "@/components/exhibition/RecommendForYou";
@@ -15,12 +6,8 @@ import AgeRecommendations from "@/components/exhibition/AgeRecommendations";
 import GenderRecommendations from "@/components/exhibition/GenderRecommendations";
 import TopBar from "@/components/ui/TopBar";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useAuth } from "../../components/context/AuthContext";
-import { ExhibitionCardSkeleton } from "@/components/ui/Skeleton";
-import { BookmarkButton } from "@/components/ui";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { style as getThemedStyle } from "./Home.styles"; // Import styles from Home.styles.ts
+import { style as getThemedStyle } from "./Home.styles";
 import { Colors } from "@/design-system/theme";
 import { Spacing } from "@/design-system/theme";
 import {
@@ -32,12 +19,10 @@ import {
 
 export default function HomeScreen() {
   const { theme } = useTheme();
-  const { isLoggedIn, userInfo } = useAuth();
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("전체");
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("20-30대");
   const router = useRouter();
-  const style = getThemedStyle(theme); // Get styles based on the current theme
+  const style = getThemedStyle(theme);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   // 추천 데이터 상태
@@ -69,23 +54,7 @@ export default function HomeScreen() {
     }
   };
 
-  // AuthContext 상태 확인
   useEffect(() => {
-    console.log(
-      "🔍 Home: AuthContext 상태 - isLoggedIn:",
-      isLoggedIn,
-      "userInfo:",
-      userInfo
-    );
-  }, [isLoggedIn, userInfo]);
-
-  useEffect(() => {
-    const loadHomeData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
-      setLoading(false);
-    };
-    loadHomeData();
-
     // 추천 데이터 로딩
     fetchRecommendations();
   }, []);

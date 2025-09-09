@@ -13,7 +13,11 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../context/AuthContext";
 import useGoogleLogin from "../../hooks/useGoogleLogin";
 import useNaverLogin from "../../hooks/useNaverLogin";
-import { authService, userService } from "../../services/authService";
+import {
+  authService,
+  userService,
+  isTokenValid,
+} from "../../services/authService";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 interface SocialLoginButtonsProps {
@@ -22,7 +26,7 @@ interface SocialLoginButtonsProps {
 
 const SocialLoginButtons = ({ onSuccess }: SocialLoginButtonsProps) => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, isLoggedIn } = useAuth();
   const { promptAsync: googlePromptAsync } = useGoogleLogin();
   const { promptAsync: naverPromptAsync } = useNaverLogin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,6 +45,27 @@ const SocialLoginButtons = ({ onSuccess }: SocialLoginButtonsProps) => {
     providerPromptAsync: () => Promise<any>,
     provider: "google" | "naver"
   ) => {
+    // 이미 로그인된 사용자인 경우 토큰 유효성 검사 후 홈으로 리다이렉트
+    if (isLoggedIn) {
+      console.log("🔍 이미 로그인된 사용자입니다. 토큰 유효성 검사 중...");
+
+      try {
+        // 저장된 토큰 확인
+        const token = await authService.getToken();
+        if (token && isTokenValid(token)) {
+          console.log("✅ 토큰이 유효합니다. 홈으로 이동합니다.");
+          router.replace("/(tabs)/home");
+          return;
+        } else {
+          console.log("⚠️ 토큰이 유효하지 않습니다. 다시 로그인합니다.");
+          // 토큰이 유효하지 않으면 로그아웃 후 새로 로그인
+          await authService.logout();
+        }
+      } catch (error) {
+        console.log("⚠️ 토큰 검사 중 오류:", error);
+      }
+    }
+
     setIsLoading(true);
     try {
       console.log(`🔍 ${provider} 로그인 시작`);
