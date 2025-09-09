@@ -417,14 +417,14 @@ export default function SearchScreen() {
             SearchStyles.popularItem,
             { backgroundColor: "#34C759", padding: 10, marginBottom: 10 },
           ]}
-          onPress={() => testGetExhibitionById(1)}>
+          onPress={() => testGetExhibitionById(11)}>
           <Text
             style={{
               ...SearchStyles.popularText,
               color: "white",
               textAlign: "center",
             }}>
-            🧪 전시 상세 조회 API 테스트 (ID: 1)
+            🧪 전시 상세 조회 API 테스트 (ID: 11)
           </Text>
         </TouchableOpacity>
       </View>

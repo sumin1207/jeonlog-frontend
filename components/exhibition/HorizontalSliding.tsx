@@ -7,20 +7,25 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
-import { exhibitionData } from "../../data/exhibitionsDataStorage"; // Import from central data source
 import { Colors } from "../../design-system/theme";
 import { Spacing } from "../../design-system/theme";
 import { BookmarkButton } from "../ui";
 
 const { width } = Dimensions.get("window");
 
-// Convert the exhibition data object to an array
-const exhibitionsArray = Object.values(exhibitionData);
+interface HorizontalSlidingProps {
+  data: any[];
+  loading?: boolean;
+}
 
-const HorizontalSliding = () => {
+const HorizontalSliding = ({
+  data,
+  loading = false,
+}: HorizontalSlidingProps) => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
@@ -116,11 +121,22 @@ const HorizontalSliding = () => {
     [theme, router, itemContentWidth, imageHeight]
   );
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { height: imageHeight + 100 }]}>
+        <ActivityIndicator
+          size='large'
+          color={Colors.primary.main}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { height: imageHeight + 100 }]}>
       <FlatList
         ref={flatListRef}
-        data={exhibitionsArray} // Use the array from the central data source
+        data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         horizontal

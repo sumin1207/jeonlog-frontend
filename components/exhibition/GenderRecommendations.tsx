@@ -13,22 +13,26 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useRouter } from "expo-router";
 import { Colors } from "../../design-system/theme";
 import { Spacing } from "../../design-system/theme";
+import { BookmarkButton } from "../ui";
 
 const { width } = Dimensions.get("window");
 
-interface RecommendForYouProps {
+interface GenderRecommendationsProps {
   data: any[];
   loading?: boolean;
 }
 
-const RecommendForYou = ({ data, loading = false }: RecommendForYouProps) => {
+const GenderRecommendations = ({
+  data,
+  loading = false,
+}: GenderRecommendationsProps) => {
   const { theme } = useTheme();
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
 
   const itemContentWidth = width * 0.5;
   const imageHeight = itemContentWidth * 1.336;
-  const itemWidth = itemContentWidth + 20; // item width + margin
+  const itemWidth = itemContentWidth + 20;
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -100,6 +104,15 @@ const RecommendForYou = ({ data, loading = false }: RecommendForYouProps) => {
             </Text>
           )}
         </View>
+
+        <BookmarkButton
+          exhibitionId={item.id}
+          size={18}
+          color={theme === "dark" ? "#ccc" : "#666"}
+          activeColor='#FF6B6B'
+          style={{ position: "absolute", top: 8, right: 8 }}
+          showAlert={false}
+        />
       </TouchableOpacity>
     ),
     [theme, router, itemContentWidth, imageHeight]
@@ -203,4 +216,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecommendForYou;
+export default GenderRecommendations;

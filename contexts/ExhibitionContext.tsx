@@ -200,24 +200,42 @@ export const ExhibitionProvider: React.FC<ExhibitionProviderProps> = ({
 
   // API에서 북마크 목록 로드
   const loadBookmarksFromAPI = async () => {
+    console.log("🔄 북마크 목록 로드 시작");
+    console.log("🔐 로그인 상태:", isLoggedIn);
+
     if (!isLoggedIn) {
-      console.log("로그인되지 않아 북마크 목록을 로드할 수 없습니다.");
+      console.log("❌ 로그인되지 않아 북마크 목록을 로드할 수 없습니다.");
       return;
     }
 
     try {
+      console.log("📡 bookmarkService.getBookmarks() 호출 중...");
       const bookmarks = await bookmarkService.getBookmarks();
+      console.log("📊 API 응답 데이터:", bookmarks);
+      console.log("📊 API 응답 타입:", typeof bookmarks);
+      console.log("📊 API 응답이 배열인가:", Array.isArray(bookmarks));
+
       // API 응답에서 전시 ID 배열 추출 (API 응답 구조에 따라 조정 필요)
-      const bookmarkIds = bookmarks.map(
-        (bookmark: any) =>
-          bookmark.exhibitionId?.toString() || bookmark.id?.toString()
-      );
+      const bookmarkIds = bookmarks.map((bookmark: any) => {
+        const id = bookmark.exhibitionId?.toString() || bookmark.id?.toString();
+        console.log("🔍 북마크 ID 추출:", bookmark, "->", id);
+        return id;
+      });
+
+      console.log("📋 추출된 북마크 ID 목록:", bookmarkIds);
+
       setState((prev) => ({
         ...prev,
         BookmarkedExhibitions: bookmarkIds,
       }));
+
+      console.log("✅ 북마크 목록 상태 업데이트 완료");
     } catch (error) {
-      console.error("북마크 목록 로드 에러:", error);
+      console.error("❌ 북마크 목록 로드 에러:", error);
+      console.error(
+        "❌ 에러 상세:",
+        error instanceof Error ? error.message : String(error)
+      );
       // 에러 발생 시 기존 로컬 상태 유지
     }
   };
