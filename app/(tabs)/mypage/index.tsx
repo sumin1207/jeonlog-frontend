@@ -11,6 +11,7 @@ import { exhibitionData } from "../../../data/exhibitionsDataStorage";
 import { Text, Button, Container, Row, Column } from "../../../design-system";
 import { MyPageStyles } from "../../../design-system/styles";
 import { Colors } from "../../../design-system/theme";
+import FollowModal from "../../../components/ui/FollowModal";
 
 export default function MyPageScreen() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function MyPageScreen() {
 
   const [avatar, setAvatar] = useState<string | null>(null);
   const [bio, setBio] = useState("");
+  const [showFollowModal, setShowFollowModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -93,51 +95,10 @@ export default function MyPageScreen() {
           <View style={{ marginTop: 30, width: "100%", alignItems: "center" }}>
             <SocialLoginButtons onSuccess={handleLoginSuccess} />
           </View>
-
-          <View style={{ marginTop: 20 }}>
-            <Button
-              title='테스트 모드로 시작 (개발용)'
-              onPress={handleTestLogin}
-              variant='secondary'
-            />
-          </View>
         </View>
       </Container>
     );
   }
-
-  // 로그인 api 연동되면 나중에 수정
-  // if (!isLoggedIn || !userInfo) {
-  //   console.log(
-  //     "🔍 MyPage: 로그인 필요 - isLoggedIn:",
-  //     isLoggedIn,
-  //     "userInfo:",
-  //     userInfo
-  //   );
-  //   return (
-  //     <Container style={MyPageStyles.container}>
-  //       <View style={MyPageStyles.header}>
-  //         <Text variant="h3">마이페이지</Text>
-  //       </View>
-  //       <View style={MyPageStyles.loginRequiredContainer}>
-  //         <Ionicons
-  //           name='person-circle-outline'
-  //           size={80}
-  //           color='#ccc'
-  //         />
-  //         <Text variant="h2">로그인이 필요합니다</Text>
-  //         <Text variant="body">
-  //           마이페이지를 이용하려면 로그인해주세요
-  //         </Text>
-  //         <Button
-  //           title="로그인 하러가기"
-  //           onPress={() => router.push("/")}
-  //           variant="primary"
-  //         />
-  //       </View>
-  //     </Container>
-  //   );
-  // }
 
   console.log("🔍 MyPage: 로그인된 사용자 정보 표시 - userInfo:", userInfo);
 
@@ -182,7 +143,9 @@ export default function MyPageScreen() {
             </View>
           )}
           <Column style={MyPageStyles.profileInfo}>
-            <Text variant='bold'>{userInfo?.name ?? "석준's 전시라이프"}</Text>
+            <Text variant='bold'>
+              {userInfo?.name ?? "전린이's 전시라이프"}
+            </Text>
             <Text variant='caption'>{bio}</Text>
           </Column>
         </Row>
@@ -223,7 +186,9 @@ export default function MyPageScreen() {
               }}
             />
           </Row>
-          <TouchableOpacity style={MyPageStyles.iconButton}>
+          <TouchableOpacity
+            style={MyPageStyles.iconButton}
+            onPress={() => setShowFollowModal(true)}>
             <Ionicons
               name='person-outline'
               size={16}
@@ -285,6 +250,12 @@ export default function MyPageScreen() {
           </Row>
         </Column>
       </ScrollView>
+
+      <FollowModal
+        visible={showFollowModal}
+        onClose={() => setShowFollowModal(false)}
+        userName={userInfo?.name}
+      />
     </Container>
   );
 }

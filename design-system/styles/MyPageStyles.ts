@@ -84,9 +84,11 @@ export const MyPageStyles = StyleSheet.create({
   iconButton: {
     backgroundColor: Colors.neutral.gray200,
     borderRadius: BorderRadius.button.medium,
-    padding: 8,
+    padding: 12,
     justifyContent: "center",
     alignItems: "center",
+    minWidth: 44,
+    minHeight: 44,
   },
   divider: {
     height: Spacing.sm,
